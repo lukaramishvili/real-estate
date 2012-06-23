@@ -1,11 +1,12 @@
 ;;; load dependencies
 (push :hunchentoot-no-ssl *features*)
 (ql:quickload 'hunchentoot)
-(ql:quickload 'cl-who)
-(ql:quickload 'parenscript)
-(ql:quickload 'ironclad)
-(ql:quickload 'uuid)
-(ql:quickload 'postmodern)
+(ql:quickload :cl-who)
+(ql:quickload :parenscript)
+(ql:quickload :ironclad)
+(ql:quickload :uuid)
+(ql:quickload :postmodern)
+(ql:quickload :css-lite)
 
 ;;; declare package
 (defpackage :re
@@ -21,7 +22,9 @@
   (load (concatenate 'string *project-load-path* file-path)))
 
 (project-load "utils.lisp")
+(project-load "orm.lisp")
 (project-load "templates.lisp")
+(project-load "style.lisp")
 
 ;;;start server
 (defvar *htoot*
