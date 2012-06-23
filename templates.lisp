@@ -182,7 +182,8 @@
 
 (defun re-head (&key title)
   (head (if title title "Welcome to Project RE!")
-	:css-files '("../css/reset.css" "../css/elements.css" "../css/re.css"
+	:css-files '("../css/reset.css" "../css/elements.css" 
+		     "../css/re.css"
 		     "../css/start/jquery-ui-1.8.21.custom.css")
 	:js-files '("../css/js/jquery-1.7.2.min.js"
 		    "../css/js/jquery-ui-1.8.21.custom.min.js")
