@@ -181,7 +181,7 @@
 ;;;re-specific templates
 
 (defun re-head (&key title)
-  (head (if title title "Welcome to Project RE!")
+  (head (or title "Welcome to Project RE!")
 	:css-files '("../css/reset.css" "../css/elements.css" 
 		     "../css/re.css"
 		     "../css/start/jquery-ui-1.8.21.custom.css")
@@ -197,7 +197,7 @@
 			     (car item)))
 		 items-list)))
 
-(defun re-header(&key lang)
+(defun re-header (&key lang)
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
     (:div :id "header"
@@ -206,7 +206,6 @@
 	      (:img :id "logo" :src "../css/img/logo.png"))
 	  (:div :id "menu"
 		(cl-who:str (do-menu (menu-items 
-				      ;;re-persistence::menu-items
 				      :lang lang))))
 	  (if (session-value 'logged-in-p)
 	      (cl-who:htm
@@ -300,22 +299,5 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-;;(defun class-editor (class)
-;;  (smake 
-;;   (for-each-class-slot 
-;;    (class slot type)
-;;    (format nil type))))
-
+(defun re-firstpage ()
+  "first page")
