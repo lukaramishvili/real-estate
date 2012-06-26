@@ -29,9 +29,16 @@
 (project-load "style.lisp")
 
 ;;;start server
+#-:WINDOWS-TARGET
 (defvar *htoot*
   (hunchentoot:start
    (make-instance 'hunchentoot:easy-acceptor :port 4242)))
+
+#+:WINDOWS-TARGET
+(defvar *htoot*
+  (hunchentoot:start
+   (make-instance 'hunchentoot:acceptor :port 4242)))
+
 
 (defun default-lang () "geo")
 
