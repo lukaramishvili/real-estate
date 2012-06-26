@@ -10,8 +10,9 @@
 
 ;;; declare package
 (defpackage :re
-  (:use :common-lisp :cl-user :cl-who :ps :hunchentoot :postmodern))
-;; :ironclad ))
+  (:use :common-lisp :cl-user :hunchentoot 
+	:postmodern :cl-who :ps))
+;; :ironclad :css-lite ))
 
 (in-package :re)
 
