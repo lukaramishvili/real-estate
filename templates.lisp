@@ -295,9 +295,7 @@
 		(:a :href "./register"
 		    (re-tr :register-link))))))
 
-(defun fp-grid (w h)
-  (make-list
-   w :initial-element (make-list h :initial-element nil)))
 
 (defun re-firstpage ()
   "first page")
+
