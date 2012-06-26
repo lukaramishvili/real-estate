@@ -16,8 +16,9 @@
 
 (in-package :re)
 
-(defvar *project-load-path* "/projects/re/")
-;;(defvar *project-load-path* "D:/htdocs/lisp/re/")
+(defparameter *project-load-path* "/projects/re/")
+#+:WINDOWS-TARGET
+(defparameter *project-load-path* "D:/htdocs/lisp/re/")
 
 (defun project-load (file-path)
   (load (concatenate 'string *project-load-path* file-path)))
