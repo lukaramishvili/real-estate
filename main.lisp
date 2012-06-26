@@ -10,7 +10,7 @@
 
 ;;; declare package
 (defpackage :re
-  (:use :common-lisp :cl-user :cl-who :ps :hunchentoot))
+  (:use :common-lisp :cl-user :cl-who :ps :hunchentoot :postmodern))
 ;; :ironclad ))
 
 (in-package :re)

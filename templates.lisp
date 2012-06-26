@@ -21,7 +21,7 @@
     (:title (cl-who:str title))
     (cl-who:str
      (if (and css-files (listp css-files))
-	 (reduce #'(lambda (arg1 arg2) (concatenate 'string arg1 arg2))
+	 (reduce #'(lambda (arg1 arg2) (+s arg1 arg2))
 		 (mapcar #'(lambda (css-file) 
 			     (concatenate 
 			      'string 
@@ -183,12 +183,9 @@
 (defun re-head (&key title)
   (head (or title "Welcome to Project RE!")
 	:css-files '("../css/reset.css" "../css/elements.css" 
-		     "../css/re.css"
-		     "../css/start/jquery-ui-1.8.21.custom.css")
+		     "../css/re.css")
 	:js-files '("../css/js/jquery-1.7.2.min.js"
-		    "../css/js/jquery-ui-1.8.21.custom.min.js")
-	:more "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://webputty.commondatastorage.googleapis.com/agtzfmNzc2ZpZGRsZXIMCxIEUGFnZRjPjUcM.css\" />
-<script type=\"text/javascript\">(function(w,d){if(w.location!=w.parent.location||w.location.search.indexOf('__preview_css__')>-1){var t=d.createElement('script');t.type='text/javascript';t.async=true;t.src='http://www.webputty.net/js/agtzfmNzc2ZpZGRsZXIMCxIEUGFnZRjPjUcM';(d.body||d.documentElement).appendChild(t);}})(window,document);</script>"))
+		    "../css/js/jquery-ui-1.8.21.custom.min.js")))
 
 (defun do-menu (items-list)
   (smake (mapcar #'(lambda (item) 
@@ -229,7 +226,7 @@
       (*standard-output* nil :prologue nil :indent t)
     (:div :id "main-container"
 	  (:div :id "main"
-		(cl-who:str (re-header :lang "en"))
+		;;(cl-who:str (re-header :lang "en"))
 		;;(cl-who:str (re-home-search-bar))
 		(cl-who:str page)))))
 
@@ -292,12 +289,15 @@
 		(cl-who:str
 		 (+s
 		  (label-input "usr" :label (re-tr :username))
-		  (label-input "pwd" :label (re-tr :password) :type "password")))
+		  (label-input "pwd" :label (re-tr :password)
+			       :type "password")))
 		(:input :type "submit" :value (re-tr :btn-log-in))
 		(:a :href "./register"
 		    (re-tr :register-link))))))
 
-
+(defun fp-grid (w h)
+  (make-list
+   w :initial-element (make-list h :initial-element nil)))
 
 (defun re-firstpage ()
   "first page")
