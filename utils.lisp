@@ -104,6 +104,7 @@
 ;;; QR helper utilities
 
 (defun div-as-int (a b)
+  "a / b, C-style"
   (/ (- a (mod a b)) b))
 
 (defun array-overlay (base shadow y x)
