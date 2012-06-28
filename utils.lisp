@@ -100,3 +100,22 @@
 	(if summary (setf (getf arglist :summary)
 			  (slot-value o summary)))
 	(apply #'rss-entry arglist))))))
+
+;;; QR helper utilities
+
+(defun div-as-int (a b)
+  (/ (- a (mod a b)) b))
+
+(defun array-overlay (base shadow y x)
+  "copies 2d array shadow to a 2d array base, at specified x and y"
+  (loop for iy from 0 to (- (array-dimension shadow 0) 1)
+     do (loop for ix from 0 to (- (array-dimension shadow 1) 1)
+	   do (setf (aref base (+ y iy) (+ x ix)) (aref shadow iy ix)))))
+
+;;TODO: needs debugging, does it work?
+(defun array-overlay-1d (base shadow base-w sh-w y x)
+  "works as array-overlay, but multi-dim array items 
+   are slammed into a 1d array, in column-major order"
+  (loop for iy from 0 to (div-as-int (array-dimension shadow 0) sh-w);;includes last line
+     do (loop for ix from 0 to (- sh-w 1)
+	   do (setf (aref base (+ (* (+ y iy) base-w) (+ x ix)))(aref shadow (+ (* iy sh-w) ix))))))
