@@ -183,7 +183,7 @@
 (defun re-head (&key title)
   (head (or title "Welcome to Project RE!")
 	:css-files '("../css/reset.css" "../css/elements.css" 
-		     "../css/re.css")
+		     "../css/re.css" "re-gen.css")
 	:js-files '("../css/js/jquery-1.7.2.min.js"
 		    "../css/js/jquery-ui-1.8.21.custom.min.js")))
 
@@ -297,5 +297,9 @@
 
 
 (defun re-firstpage ()
-  "first page")
+  (cl-who:with-html-output-to-string 
+      (*standard-output* nil :prologue nil :indent t)
+    (loop for i from 0 to 9
+       do (cl-who:htm (:div :class "grid-10"
+			    "img <br> img <br>")))))
 

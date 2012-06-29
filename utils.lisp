@@ -1,5 +1,7 @@
 (in-package :re)
 
+(ql:quickload :cl-jpeg)
+
 (defun +s (&rest args)
   (apply #'concatenate
 	 (cons 'string

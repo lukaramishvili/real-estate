@@ -49,6 +49,10 @@
 	       (re-main :title "Browse Real Estate in Real Time!"
 			:body (re-firstpage)))
 
+(htoot-handler (re-css-handler "/re-gen.css" ())
+  (re-gen-css))
+	       
+
 (htoot-handler
  (account-page-handler "/account" ())
  (re-main 
