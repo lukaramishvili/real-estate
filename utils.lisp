@@ -103,6 +103,13 @@
 
 ;;; QR helper utilities
 
+(defun print-slammed-array (array w)
+  "prints 1d array as series of rows, each with [w] items"
+  (loop for i from 1 to (array-dimension array 0)
+     do (if (= 0 (mod i w))
+	    (format t "~a~T~%" (aref array (- i 1)))
+	    (format t "~a~T" (aref array (- i 1))))))
+
 (defun div-as-int (a b)
   "a / b, C-style"
   (/ (- a (mod a b)) b))
@@ -113,10 +120,20 @@
      do (loop for ix from 0 to (- (array-dimension shadow 1) 1)
 	   do (setf (aref base (+ y iy) (+ x ix)) (aref shadow iy ix)))))
 
-;;TODO: needs debugging, does it work?
 (defun array-overlay-1d (base shadow base-w sh-w y x)
   "works as array-overlay, but multi-dim array items 
-   are slammed into a 1d array, in column-major order"
+   are slammed into a 1d array, in row-major order"
   (loop for iy from 0 to (div-as-int (array-dimension shadow 0) sh-w);;includes last line
      do (loop for ix from 0 to (- sh-w 1)
-	   do (setf (aref base (+ (* (+ y iy) base-w) (+ x ix)))(aref shadow (+ (* iy sh-w) ix))))))
+	   do (let ((ind-in-sh (+ (* iy sh-w) ix)))
+		(if (< ind-in-sh (array-dimension shadow 0))
+		    (setf (aref base (+ (* (+ y iy) base-w) (+ x ix)))
+			  (aref shadow ind-in-sh)))))))
+
+;;sample usage:
+(defun test-qr (dest-file)
+  (let ((base (make-array 65536 :initial-element 0))
+	(sq (make-array 256 :initial-element 255)))
+    (progn
+      (array-overlay-1d base sq 256 16 16 0)
+      (jpeg:encode-image dest-file base 3 256 256))))
