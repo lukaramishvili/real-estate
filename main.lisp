@@ -50,6 +50,7 @@
 			:body (re-firstpage)))
 
 (htoot-handler (re-css-handler "/re-gen.css" ())
+  (setf (hunchentoot:content-type*) "text/css")
   (re-gen-css))
 	       
 
@@ -137,3 +138,33 @@
    :body (if (session-value 'logged-in-p)
 	     (re-firstpage)
 	     (login-page :redir redir))))
+
+;;; project-specific code
+
+(htoot-handler
+    (estate-edit-handler
+     "/edit-estate"
+     ((ix-estate :request-type :GET :parameter-type 'integer :init-form 0)))
+  (let ((ed-estate (or (with-re-db (get-dao 'estate ix-estate))
+		       (make-instance 'estate))))
+    (estate-edit-form ed-estate)))
+
+(htoot-handler
+    (estate-save-handler
+     "/save-estate"
+     ((ix-estate :request-type :POST :parameter-type 'integer :init-form 0)
+      (address :request-type :POST :parameter-type 'string :init-form "")
+      (telnum :request-type :POST :parameter-type 'string :init-form "")
+      (visible :request-type :POST :parameter-type 'integer :init-form 0)))
+  (if (session-value 'logged-in-p)
+      (let ((save-e
+	     (make-instance
+	      'estate :ix-user (ix-user (session-value 'user-authed))
+	      :address address :telnum telnum :visible visible)))
+	(progn
+	  (if (> ix-estate 0) (setf (ix-estate save-e) ix-estate))
+	  (with-re-db (if (save-dao save-e)
+			  "Real estate saved!"
+			  "Error while saving estate!"))))
+      "Not logged in!"))
+			

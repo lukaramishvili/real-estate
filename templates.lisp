@@ -295,6 +295,7 @@
 		(:a :href "./register"
 		    (re-tr :register-link))))))
 
+;;; project-specific code
 
 (defun re-firstpage ()
   (cl-who:with-html-output-to-string 
@@ -302,4 +303,18 @@
     (loop for i from 0 to 9
        do (cl-who:htm (:div :class "grid-10"
 			    "img <br> img <br>")))))
+
+(defun estate-edit-form (e)
+  (let ((ix-estate (if (slot-boundp e 'ix-estate)
+		       (ix-estate e) 0)))
+    (cl-who:with-html-output-to-string 
+	(*standard-output* nil :prologue nil :indent t)
+      (:form :method :post :action "./save-estate"
+	     (:input :type "hidden" :value ix-estate)
+	     (:input :type "text" :value (address e))
+	     (:input :type "text" :value (telnum e))
+	     (:input :type "text" :value (ix-main-pic e))
+	     (:input :type "text" :value (visible e))
+	     (:input :type "submit" :value "Save")))))
+
 
