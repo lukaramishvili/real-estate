@@ -63,6 +63,7 @@
   ((ix-pic :col-type serial :initarg :ix-pic :accessor ix-pic)
    (ix-estate :col-type integer :initarg :ix-estate :accessor ix-estate
 	      :initform 0)
+   (order :col-type integer :initarg :order :accessor order :initform 0)
    (path :col-type string :initarg :path :accessor path :initform ""))
   (:metaclass dao-class)
   (:keys ix-pic))

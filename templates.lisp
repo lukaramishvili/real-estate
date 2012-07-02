@@ -311,9 +311,21 @@
 	(*standard-output* nil :prologue nil :indent t)
       (:form :method :post :action "./save-estate"
 	     (:input :type "hidden" :name "ix-estate" :val ix-estate)
+	     (:input :type "hidden" :name "ix-main-pic" :val (ix-main-pic e))
 	     (cl-who:str
 	      (+s (label-input "address" :val (address e))
 		  (label-input "telnum" :val (telnum e))
-		  (label-input "ix-main-pic" :val (ix-main-pic e))
 		  (label-input "visible" :val (visible e))))
-	     (:input :type "submit" :value "Save")))))
+	     (:div 
+	      :id "estate-pics"
+	      (:div :class "estate-pic"
+		    (cl-who:str (label-input "pic-0" :type "file")))
+	      (:button :id "add-estate-pic" "Add image"))
+	     (:input :type "submit" :value "Save"))
+      (:script
+       :type "text/javascript"
+       (cl-who:str
+	(ps:ps
+	  (chain ($ "#add-estate-pic")
+		 (alert "asd"))
+	  ))))))

@@ -1,6 +1,6 @@
 ;;; load dependencies
 (push :hunchentoot-no-ssl *features*)
-(ql:quickload 'hunchentoot)
+(ql:quickload :hunchentoot)
 (ql:quickload :cl-who)
 (ql:quickload :parenscript)
 (ql:quickload :ironclad)
