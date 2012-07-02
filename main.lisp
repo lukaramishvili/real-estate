@@ -155,12 +155,14 @@
      ((ix-estate :request-type :POST :parameter-type 'integer :init-form 0)
       (address :request-type :POST :parameter-type 'string :init-form "")
       (telnum :request-type :POST :parameter-type 'string :init-form "")
+      (ix-main-pic :request-type :POST :parameter-type 'string :init-form 0)
       (visible :request-type :POST :parameter-type 'integer :init-form 0)))
   (if (session-value 'logged-in-p)
       (let ((save-e
 	     (make-instance
 	      'estate :ix-user (ix-user (session-value 'user-authed))
-	      :address address :telnum telnum :visible visible)))
+	      :address address :telnum telnum :visible visible
+	      :ix-main-pic ix-main-pic)))
 	(progn
 	  (if (> ix-estate 0) (setf (ix-estate save-e) ix-estate))
 	  (with-re-db (if (save-dao save-e)

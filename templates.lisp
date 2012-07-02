@@ -310,11 +310,10 @@
     (cl-who:with-html-output-to-string 
 	(*standard-output* nil :prologue nil :indent t)
       (:form :method :post :action "./save-estate"
-	     (:input :type "hidden" :value ix-estate)
-	     (:input :type "text" :value (address e))
-	     (:input :type "text" :value (telnum e))
-	     (:input :type "text" :value (ix-main-pic e))
-	     (:input :type "text" :value (visible e))
+	     (:input :type "hidden" :name "ix-estate" :val ix-estate)
+	     (cl-who:str
+	      (+s (label-input "address" :val (address e))
+		  (label-input "telnum" :val (telnum e))
+		  (label-input "ix-main-pic" :val (ix-main-pic e))
+		  (label-input "visible" :val (visible e))))
 	     (:input :type "submit" :value "Save")))))
-
-
