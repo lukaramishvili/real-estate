@@ -182,10 +182,9 @@
 
 (defun re-head (&key title)
   (head (or title "Welcome to Project RE!")
-	:css-files '("../css/reset.css" "../css/elements.css" 
-		     "../css/re.css" "re-gen.css")
-	:js-files '("../css/js/jquery-1.7.2.min.js"
-		    "../css/js/jquery-ui-1.8.21.custom.min.js")))
+	:css-files '("css/reset.css" "css/elements.css" 
+		     "css/re.css" "re-gen.css")
+	:js-files '("js/jquery-1.7.2.min.js")))
 
 (defun do-menu (items-list)
   (smake (mapcar #'(lambda (item) 
@@ -326,6 +325,16 @@
        :type "text/javascript"
        (cl-who:str
 	(ps:ps
+	  (defun add-pic-box ()
+	    (alert "asdasdasdasd"))
 	  (chain ($ "#add-estate-pic")
-		 (alert "asd"))
+		 (click add-pic-box))
 	  ))))))
+
+#-t (defun estate-form-pic-box ()
+  (cl-who:with-html-output-to-string 
+      (*standard-output* nil :prologue nil :indent t)
+    (:form :action where-to-post :method :post 
+	   :enctype "multipart/form-data"
+	   (:input :type :file :name param-name)
+	   (c))))

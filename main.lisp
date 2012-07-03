@@ -31,7 +31,7 @@
 ;;;start server
 (defvar *htoot*
   (hunchentoot:start
-   (make-instance 'hunchentoot:easy-acceptor :port 4242)))
+   (make-instance 'hunchentoot:easy-acceptor :port 4343)))
 
 
 (defun default-lang () "geo")
@@ -45,6 +45,18 @@
      (setf (hunchentoot:content-type*) "text/html")
      ,@body))
 
+
+;;serve css folder
+(push (create-folder-dispatcher-and-handler
+       "/css/" (pathname (+s *project-load-path* "css/")))
+      hunchentoot:*dispatch-table*)
+
+;;serve js folder
+(push (create-folder-dispatcher-and-handler
+       "/js/" (pathname (+s *project-load-path* "js/")))
+      hunchentoot:*dispatch-table*)
+      
+
 (htoot-handler (home "/" ())
 	       (re-main :title "Browse Real Estate in Real Time!"
 			:body (re-firstpage)))
@@ -52,7 +64,7 @@
 (htoot-handler (re-css-handler "/re-gen.css" ())
   (setf (hunchentoot:content-type*) "text/css")
   (re-gen-css))
-	       
+
 
 (htoot-handler
  (account-page-handler "/account" ())
@@ -144,10 +156,12 @@
 (htoot-handler
     (estate-edit-handler
      "/edit-estate"
-     ((ix-estate :request-type :GET :parameter-type 'integer :init-form 0)))
+     ((ix-estate :request-type :GET :parameter-type 'integer 
+		 :init-form 0)))
   (let ((ed-estate (or (with-re-db (get-dao 'estate ix-estate))
 		       (make-instance 'estate))))
-    (estate-edit-form ed-estate)))
+    (re-main :title "Edit real estate"
+	     :body (estate-edit-form ed-estate))))
 
 (htoot-handler
     (estate-save-handler
@@ -169,4 +183,21 @@
 			  "Real estate saved!"
 			  "Error while saving estate!"))))
       "Not logged in!"))
-			
+
+(htoot-handler
+    (remember-pic
+     "/rem-pic"
+     ((ix-pic :parameter-type 'integer :init-form 0)
+      (ix-estate :parameter-type 'integer :init-form 0)
+      (order :parameter-type 'integer)))
+  (let ((uploaded-img (post-parameter "img")))
+    (if uploaded-img
+	(destructuring-bind (path file-name content-type)
+	    uploaded-img
+	  (let ((pic-to-rem
+		 (make-instance 
+		  'pic :path path :order order :ix-estate ix-estate)))
+	    (if (> 0 ix-pic) (setf (ix-pic pic-to-rem) ix-pic))
+	    (push pic-to-rem
+		  (session-value rem-pics))
+	    "")))))
