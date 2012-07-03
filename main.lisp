@@ -184,6 +184,9 @@
 			  "Error while saving estate!"))))
       "Not logged in!"))
 
+(htoot-handler (estate-form-pic-box-handler "/estate-form-pic-box" ())
+  (estate-form-pic-box))
+
 (htoot-handler
     (remember-pic
      "/rem-pic"

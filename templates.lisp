@@ -315,26 +315,29 @@
 	      (+s (label-input "address" :val (address e))
 		  (label-input "telnum" :val (telnum e))
 		  (label-input "visible" :val (visible e))))
-	     (:div 
-	      :id "estate-pics"
-	      (:div :class "estate-pic"
-		    (cl-who:str (label-input "pic-0" :type "file")))
-	      (:button :id "add-estate-pic" "Add image"))
-	     (:input :type "submit" :value "Save"))
+	     (:div :id "estate-pics")
+	     (:button :id "add-estate-pic" "Add image"))
+      (:input :type "submit" :value "Save")
       (:script
        :type "text/javascript"
        (cl-who:str
 	(ps:ps
 	  (defun add-pic-box ()
-	    (alert "asdasdasdasd"))
+	    (chain 
+	     ($ "#estate-pics")
+	     (append 
+	      (ps:who-ps-html
+	       (:div :class "estate-pic"
+		     (:iframe :src "/estate-form-pic-box"))))))
 	  (chain ($ "#add-estate-pic")
-		 (click add-pic-box))
+		 (click (lambda () (add-pic-box) false)))
 	  ))))))
 
-#-t (defun estate-form-pic-box ()
+(defun estate-form-pic-box (&optional (ix-pic 0))
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
-    (:form :action where-to-post :method :post 
-	   :enctype "multipart/form-data"
-	   (:input :type :file :name param-name)
-	   (c))))
+    (:form :action "/rem-pic" :method :post :enctype "multipart/form-data"
+	   (:input :type "hidden" :name "ix-pic" :value ix-pic)
+	   (cl-who:str 
+	    (label-input "pic-0" :type "file"))
+	   (:input :type "submit" :value "Update image"))))
