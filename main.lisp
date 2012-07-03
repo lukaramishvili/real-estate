@@ -7,6 +7,7 @@
 (ql:quickload :uuid)
 (ql:quickload :postmodern)
 (ql:quickload :css-lite)
+(ql:quickload :cl-fad)
 
 ;;; declare package
 (defpackage :re
@@ -20,6 +21,10 @@
 #+:WINDOWS-TARGET
 (defparameter *project-load-path* "D:/htdocs/lisp/re/")
 
+(defparameter *project-tmp-dir* "/re-tmp/")
+#+:WINDOWS-TARGET
+(defparameter *project-tmp-dir* "D:/re-tmp")
+
 (defun project-load (file-path)
   (load (concatenate 'string *project-load-path* file-path)))
 
@@ -32,7 +37,6 @@
 (defvar *htoot*
   (hunchentoot:start
    (make-instance 'hunchentoot:easy-acceptor :port 4343)))
-
 
 (defun default-lang () "geo")
 
@@ -55,6 +59,14 @@
 (push (create-folder-dispatcher-and-handler
        "/js/" (pathname (+s *project-load-path* "js/")))
       hunchentoot:*dispatch-table*)
+
+;;serve temp folder
+(push (create-folder-dispatcher-and-handler
+       "/tmp/" (pathname *project-tmp-dir*))
+      hunchentoot:*dispatch-table*)
+
+(defun linkable-tmp-path (tmp-path)
+  (+s "/tmp/" (pathname-name tmp-path) "." (pathname-type tmp-path)))
       
 
 (htoot-handler (home "/" ())
@@ -160,6 +172,9 @@
 		 :init-form 0)))
   (let ((ed-estate (or (with-re-db (get-dao 'estate ix-estate))
 		       (make-instance 'estate))))
+    ;;prepare space for temporary variables
+    (if (not (session-value 'rem-pics))
+	(setf (session-value 'rem-pics) (make-hash-table :test 'equal)))
     (re-main :title "Edit real estate"
 	     :body (estate-edit-form ed-estate))))
 
@@ -184,23 +199,31 @@
 			  "Error while saving estate!"))))
       "Not logged in!"))
 
-(htoot-handler (estate-form-pic-box-handler "/estate-form-pic-box" ())
-  (estate-form-pic-box))
+(htoot-handler (estate-form-pic-box-handler "/estate-form-pic-box" 
+					    ((rem-pic-uuid :init-form "")))
+  (estate-form-pic-box rem-pic-uuid))
 
 (htoot-handler
     (remember-pic
      "/rem-pic"
-     ((ix-pic :parameter-type 'integer :init-form 0)
+     ((rem-pic-uuid :parameter-type 'string :init-form "")
+      (ix-pic :parameter-type 'integer :init-form 0)
       (ix-estate :parameter-type 'integer :init-form 0)
       (order :parameter-type 'integer)))
   (let ((uploaded-img (post-parameter "img")))
     (if uploaded-img
 	(destructuring-bind (path file-name content-type)
 	    uploaded-img
-	  (let ((pic-to-rem
-		 (make-instance 
-		  'pic :path path :order order :ix-estate ix-estate)))
+	  (let* ((uniq-rem-pic-uuid (if (plusp (length rem-pic-uuid))
+				       rem-pic-uuid 
+				       (+s (uuid:make-v4-uuid))))
+		 (path-tmp (+s *project-tmp-dir* uniq-rem-pic-uuid ".jpg"))
+		 (path-tmp-linkable (linkable-tmp-path path-tmp))
+		 (pic-to-rem
+		  (make-instance 
+		   'pic :path path-tmp :order order :ix-estate ix-estate)))
 	    (if (> 0 ix-pic) (setf (ix-pic pic-to-rem) ix-pic))
-	    (push pic-to-rem
-		  (session-value rem-pics))
-	    "")))))
+	    (cl-fad:copy-file path path-tmp :overwrite t)
+	    (setf (gethash uniq-rem-pic-uuid (session-value 'rem-pics)) 
+		  pic-to-rem)
+	    (estate-form-pic-box uniq-rem-pic-uuid))))))

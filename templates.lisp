@@ -321,23 +321,32 @@
       (:script
        :type "text/javascript"
        (cl-who:str
-	(ps:ps
-	  (defun add-pic-box ()
+	(+s (ps:ps
+	  (defun add-pic-box (rem-pic-uuid)
 	    (chain 
 	     ($ "#estate-pics")
 	     (append 
 	      (ps:who-ps-html
 	       (:div :class "estate-pic"
-		     (:iframe :src "/estate-form-pic-box"))))))
+		     (:iframe :src (+ "/estate-form-pic-box?rem-pic-uuid="
+				      rem-pic-uuid)))))))
 	  (chain ($ "#add-estate-pic")
-		 (click (lambda () (add-pic-box) false)))
-	  ))))))
+		 (click (lambda () (add-pic-box "") false)))
+	  );end main ps:ps
+	    (smake
+	     (loop for key being the hash-keys 
+		of (session-value 'rem-pics)
+		collecting (smake "addPicBox('" key "');")))
+	    ))))))
 
-(defun estate-form-pic-box (&optional (ix-pic 0))
-  (cl-who:with-html-output-to-string 
-      (*standard-output* nil :prologue nil :indent t)
-    (:form :action "/rem-pic" :method :post :enctype "multipart/form-data"
-	   (:input :type "hidden" :name "ix-pic" :value ix-pic)
-	   (cl-who:str 
-	    (label-input "pic-0" :type "file"))
-	   (:input :type "submit" :value "Update image"))))
+(defun estate-form-pic-box (&optional (rem-pic-uuid ""))
+  (let ((saved-pic (gethash rem-pic-uuid (session-value 'rem-pics))))
+    (cl-who:with-html-output-to-string 
+	(*standard-output* nil :prologue nil :indent t)
+      (:form :action "/rem-pic" :method :post :enctype "multipart/form-data"
+	     (:input :type "hidden" :name "rem-pic-uuid" :value rem-pic-uuid)
+	     (:img :src (if saved-pic (linkable-tmp-path (path saved-pic)) 
+			    "/css/img/no-pic.jpg"))
+	     (cl-who:str 
+	      (label-input "img" :type "file" :label "Choose Image:"))
+	     (:input :type "submit" :value "Update image")))))
