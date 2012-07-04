@@ -308,16 +308,18 @@
 		       (ix-estate e) 0)))
     (cl-who:with-html-output-to-string 
 	(*standard-output* nil :prologue nil :indent t)
+      (:div :id "edit-estate-form-div"
       (:form :method :post :action "./save-estate"
 	     (:input :type "hidden" :name "ix-estate" :val ix-estate)
-	     (:input :type "hidden" :name "ix-main-pic" :val (ix-main-pic e))
+	     (:input :type "hidden" :name "ix-main-pic" 
+		     :val (ix-main-pic e))
 	     (cl-who:str
 	      (+s (label-input "address" :val (address e))
 		  (label-input "telnum" :val (telnum e))
 		  (label-input "visible" :val (visible e))))
 	     (:div :id "estate-pics")
-	     (:button :id "add-estate-pic" "Add image"))
-      (:input :type "submit" :value "Save")
+	     (:button :id "add-estate-pic" "Add image")
+	     (:input :type "submit" :value "Save")))
       (:script
        :type "text/javascript"
        (cl-who:str
@@ -343,10 +345,28 @@
   (let ((saved-pic (gethash rem-pic-uuid (session-value 'rem-pics))))
     (cl-who:with-html-output-to-string 
 	(*standard-output* nil :prologue nil :indent t)
-      (:form :action "/rem-pic" :method :post :enctype "multipart/form-data"
-	     (:input :type "hidden" :name "rem-pic-uuid" :value rem-pic-uuid)
-	     (:img :src (if saved-pic (linkable-tmp-path (path saved-pic)) 
-			    "/css/img/no-pic.jpg"))
-	     (cl-who:str 
-	      (label-input "img" :type "file" :label "Choose Image:"))
-	     (:input :type "submit" :value "Update image")))))
+      (:script :type "text/javascript" :src "/js/jquery-1.7.2.min.js")
+      (:style :type "text/css" (cl-who:str (style-pic-box-iframe)))
+      (:form 
+       :action "/rem-pic" :method :post :enctype "multipart/form-data"
+       :class "form-in-pic-box-iframe"
+       (:div
+	:class "div-in-pic-box-iframe"
+	(:input :type "hidden" :name "rem-pic-uuid" :value rem-pic-uuid)
+	(:img :src (if saved-pic (linkable-tmp-path (path saved-pic)) 
+		       "/css/img/no-pic.jpg"))
+	(cl-who:str 
+	 (label-input "img" :type "file" :label "Choose Image:"))
+	;(:input :type "submit" :value "Update image")
+	(:script
+	 :type "text/javascript"
+	 (cl-who:str 
+	  (ps:ps
+	    (chain
+	     ($ "[name='img']")
+	     (change 
+	      (lambda
+		  () (chain ($ ".form-in-pic-box-iframe")
+			    (submit)
+			    ))))
+	    ))))))))

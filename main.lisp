@@ -23,7 +23,7 @@
 
 (defparameter *project-tmp-dir* "/re-tmp/")
 #+:WINDOWS-TARGET
-(defparameter *project-tmp-dir* "D:/re-tmp")
+(defparameter *project-tmp-dir* "D:/re-tmp/")
 
 (defun project-load (file-path)
   (load (concatenate 'string *project-load-path* file-path)))
@@ -98,7 +98,7 @@
    :body 
    (if 
     (session-value 'logged-in-p)
-    (re-tr :already-logged-in)
+    (redirect redir);(re-tr :already-logged-in)
     (let ((user-authed (user-if-valid usr pwd)))
       (if user-authed 
 	  (progn
@@ -170,13 +170,15 @@
      "/edit-estate"
      ((ix-estate :request-type :GET :parameter-type 'integer 
 		 :init-form 0)))
-  (let ((ed-estate (or (with-re-db (get-dao 'estate ix-estate))
-		       (make-instance 'estate))))
-    ;;prepare space for temporary variables
-    (if (not (session-value 'rem-pics))
-	(setf (session-value 'rem-pics) (make-hash-table :test 'equal)))
-    (re-main :title "Edit real estate"
-	     :body (estate-edit-form ed-estate))))
+  (if (session-value 'logged-in-p)
+      (let ((ed-estate (or (with-re-db (get-dao 'estate ix-estate))
+			   (make-instance 'estate))))
+	;;prepare space for temporary variables
+	(if (not (session-value 'rem-pics))
+	    (setf (session-value 'rem-pics) (make-hash-table :test 'equal)))
+	(re-main :title "Edit real estate"
+		 :body (estate-edit-form ed-estate)))
+      (login-page :redir "/edit-estate")))
 
 (htoot-handler
     (estate-save-handler
