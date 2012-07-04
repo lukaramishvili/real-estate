@@ -25,6 +25,10 @@
 #+:WINDOWS-TARGET
 (defparameter *project-tmp-dir* "D:/re-tmp/")
 
+(defparameter *upload-dir* "/re-uploads/")
+#+:WINDOWS-TARGET
+(defparameter *upload-dir* "D:/re-uploads/")
+
 (defun project-load (file-path)
   (load (concatenate 'string *project-load-path* file-path)))
 
@@ -66,7 +70,7 @@
       hunchentoot:*dispatch-table*)
 
 (defun linkable-tmp-path (tmp-path)
-  (+s "/tmp/" (pathname-name tmp-path) "." (pathname-type tmp-path)))
+  (+s "/tmp/" (file-namestring tmp-path)))
       
 
 (htoot-handler (home "/" ())
@@ -186,19 +190,37 @@
      ((ix-estate :request-type :POST :parameter-type 'integer :init-form 0)
       (address :request-type :POST :parameter-type 'string :init-form "")
       (telnum :request-type :POST :parameter-type 'string :init-form "")
-      (ix-main-pic :request-type :POST :parameter-type 'string :init-form 0)
+      (ix-main-pic :request-type :POST :parameter-type 'integer :init-form 0)
       (visible :request-type :POST :parameter-type 'integer :init-form 0)))
   (if (session-value 'logged-in-p)
-      (let ((save-e
-	     (make-instance
-	      'estate :ix-user (ix-user (session-value 'user-authed))
-	      :address address :telnum telnum :visible visible
-	      :ix-main-pic ix-main-pic)))
+      (let* ((save-e
+	      (make-instance
+	       'estate :ix-user (ix-user (session-value 'user-authed))
+	       :address address :telnum telnum :visible visible
+	       :ix-main-pic ix-main-pic))
+	     (e-pics
+	      (loop for k being the hash-keys of (session-value 'rem-pics)
+		 using (hash-value v)
+		 collecting v)))
 	(progn
 	  (if (> ix-estate 0) (setf (ix-estate save-e) ix-estate))
-	  (with-re-db (if (save-dao save-e)
-			  "Real estate saved!"
-			  "Error while saving estate!"))))
+	  (with-re-db 
+	    (if 
+	     (save-dao save-e)
+	     (progn
+	       (loop for e-p in e-pics
+		  do (setf (ix-estate e-p) (ix-estate save-e))
+		    (save-dao e-p);save to get insert-id
+		    (ensure-directories-exist 
+		     (smake *upload-dir* "pics/" (ix-pic e-p) "/"))
+		    (setf (path e-p) 
+			  (+s (rename-file 
+			       (path e-p)
+			       (smake *upload-dir* "pics/" (ix-pic e-p) "/" 
+				      (file-namestring (path e-p))))))
+		    (save-dao e-p));now save to update path
+	       "Real estate saved!")
+	     "Error while saving estate!"))))
       "Not logged in!"))
 
 (htoot-handler (estate-form-pic-box-handler "/estate-form-pic-box" 
@@ -211,7 +233,7 @@
      ((rem-pic-uuid :parameter-type 'string :init-form "")
       (ix-pic :parameter-type 'integer :init-form 0)
       (ix-estate :parameter-type 'integer :init-form 0)
-      (order :parameter-type 'integer)))
+      (order :parameter-type 'integer :init-form 0)))
   (let ((uploaded-img (post-parameter "img")))
     (if uploaded-img
 	(destructuring-bind (path file-name content-type)
