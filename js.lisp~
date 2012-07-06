@@ -1,0 +1,7 @@
+(in-package :re)
+
+(ql:quickload :parenscript)
+
+(defun re-main-js ()
+  (ps:ps
+   (alert 4)))

@@ -184,7 +184,10 @@
   (head (or title "Welcome to Project RE!")
 	:css-files '("css/reset.css" "css/elements.css" 
 		     "css/re.css" "re-gen.css")
-	:js-files '("js/jquery-1.7.2.min.js")))
+	:js-files '("js/jquery-1.7.2.min.js" 
+		    "http://maps.googleapis.com/maps/api/js?key=AIzaSyDl2UEh2szaf3AjDf24cj4AFN-7a0oIUM0&sensor=false"
+		    "main.js")
+	:more "<meta name=\"viewport\" content=\"initial-scale=1.0, user-scalable=no\" />"))
 
 (defun do-menu (items-list)
   (smake (mapcar #'(lambda (item) 

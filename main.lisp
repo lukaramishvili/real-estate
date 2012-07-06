@@ -36,6 +36,7 @@
 (project-load "orm.lisp")
 (project-load "templates.lisp")
 (project-load "style.lisp")
+(project-load "js.lisp")
 
 ;;;start server
 (defvar *htoot*
@@ -81,6 +82,9 @@
   (setf (hunchentoot:content-type*) "text/css")
   (re-gen-css))
 
+(htoot-handler (re-js-handler "/main.js" ())
+  (setf (hunchentoot:content-type*) "text/css")
+  (re-main-js))
 
 (htoot-handler
  (account-page-handler "/account" ())
