@@ -55,6 +55,8 @@
    (telnum :col-type string :initarg :telnum :accessor telnum :initform "")
    (ix-main-pic :col-type integer :initarg :ix-main-pic :accessor ix-main-pic
 		:initform "")
+   (loc-lat :col-type string :initarg :loc-lat :accessor loc-lat)
+   (loc-lng :col-type string :initarg :loc-lng :accessor loc-lng)
    (visible :col-type integer :initarg :visible :accessor visible :initform 0))
   (:metaclass dao-class)
   (:keys ix-estate))

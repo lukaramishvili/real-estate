@@ -11,6 +11,7 @@
   #edit-estate-form-div iframe { border:0; height:auto; width:auto; 
     width:400px; height:150px;
   }
+  #edit-estate-map { width:300px; height:300px; }
   ")
 (defun style-pic-box-iframe()
   "

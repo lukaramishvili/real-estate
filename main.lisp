@@ -195,13 +195,15 @@
       (address :request-type :POST :parameter-type 'string :init-form "")
       (telnum :request-type :POST :parameter-type 'string :init-form "")
       (ix-main-pic :request-type :POST :parameter-type 'integer :init-form 0)
+      (loc-lat :request-type :POST :parameter-type 'string :init-form "0")
+      (loc-lng :request-type :POST :parameter-type 'string :init-form "0")
       (visible :request-type :POST :parameter-type 'integer :init-form 0)))
   (if (session-value 'logged-in-p)
       (let* ((save-e
 	      (make-instance
 	       'estate :ix-user (ix-user (session-value 'user-authed))
 	       :address address :telnum telnum :visible visible
-	       :ix-main-pic ix-main-pic))
+	       :ix-main-pic ix-main-pic :loc-lat loc-lat :loc-lng loc-lng))
 	     (e-pics
 	      (loop for k being the hash-keys of (session-value 'rem-pics)
 		 using (hash-value v)

@@ -3,27 +3,27 @@
 (ql:quickload :parenscript)
 
 (defun re-main-js ()
-  (ps:ps
+  ;(ps:ps
     "
-    //this code is needed for google maps
-  /*  function initialize() {
+    function createMapForId (id, options){
     	var initPos = new google.maps.LatLng(41.5, 44.8);
-        var myOptions = {
+        var DefaultOptions = {
           center: initPos,
           zoom: 8,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
-        var map = new google.maps.Map(document.getElementById('map_canvas'),
-            myOptions);
-        //lukas code 
-	      var marker = new google.maps.Marker({
-	    	    position: initPos,
-	    	    title:'Hello World!'
-	    	});
-	
-	    	// To add the marker to the map, call setMap(); 
-	    	marker.setMap(map);
-        //end lukas code 
-      }
-  */
-      "))
+        options = options || {};
+        for(var argOpt in options){
+            DefaultOptions[argOpt] = options[argOpt];
+        }
+        var map = new google.maps.Map(document.getElementById(id),
+            DefaultOptions);
+        return map;
+    }
+    function CreateMarker(title, pos){
+      var marker = new google.maps.Marker({
+    	position: pos,
+    	title:    title
+      });
+    }
+    ");)

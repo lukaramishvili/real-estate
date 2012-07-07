@@ -311,33 +311,45 @@
 		       (ix-estate e) 0)))
     (cl-who:with-html-output-to-string 
 	(*standard-output* nil :prologue nil :indent t)
-      (:div :id "edit-estate-form-div"
-      (:form :method :post :action "./save-estate"
-	     (:input :type "hidden" :name "ix-estate" :val ix-estate)
-	     (:input :type "hidden" :name "ix-main-pic" 
-		     :val (ix-main-pic e))
-	     (cl-who:str
-	      (+s (label-input "address" :val (address e))
-		  (label-input "telnum" :val (telnum e))
-		  (label-input "visible" :val (visible e))))
-	     (:div :id "estate-pics")
-	     (:button :id "add-estate-pic" "Add image")
-	     (:input :type "submit" :value "Save")))
+      (:div 
+       :id "edit-estate-form-div"
+       (:form 
+	:method :post :action "./save-estate"
+	(:input :type "hidden" :name "ix-estate" :val ix-estate)
+	(:input :type "hidden" :name "ix-main-pic" 
+		:val (ix-main-pic e))
+	(cl-who:str
+	 (+s (label-input "address" :val (address e))
+	     (label-input "telnum" :val (telnum e))
+	     (label-input "visible" :val (visible e))))
+	(:h4 "Click on the map to set location")
+	(:div :id "estate-pics")
+	(:button :id "add-estate-pic" "Add image")
+	(:input :type "hidden" :id "loc-lat" :name "loc-lat" :value "0")
+	(:input :type "hidden" :id "loc-lng" :name "loc-lng" :value "0")
+	(:div :id "edit-estate-map")
+	(:input :type "submit" :value "Save")))
       (:script
        :type "text/javascript"
        (cl-who:str
 	(+s (ps:ps
-	  (defun add-pic-box (rem-pic-uuid)
-	    (chain 
-	     ($ "#estate-pics")
-	     (append 
-	      (ps:who-ps-html
-	       (:div :class "estate-pic"
-		     (:iframe :src (+ "/estate-form-pic-box?rem-pic-uuid="
-				      rem-pic-uuid)))))))
-	  (chain ($ "#add-estate-pic")
-		 (click (lambda () (add-pic-box "") false)))
-	  );end main ps:ps
+	      (defvar estate-map (create-map-for-id "edit-estate-map"))
+	      (google.maps.event.add-listener 
+	       estate-map "click" 
+	       (lambda (event)
+		 (chain ($ "#loc-lat") (val (event.lat-lng.lat)))
+		 (chain ($ "#loc-lng") (val (event.lat-lng.lng)))))
+	      (defun add-pic-box (rem-pic-uuid)
+		(chain 
+		 ($ "#estate-pics")
+		 (append 
+		  (ps:who-ps-html
+		   (:div :class "estate-pic"
+			 (:iframe :src (+ "/estate-form-pic-box?rem-pic-uuid="
+					  rem-pic-uuid)))))))
+	      (chain ($ "#add-estate-pic")
+		     (click (lambda () (add-pic-box "") false)))
+	      );end main ps:ps
 	    (smake
 	     (loop for key being the hash-keys 
 		of (session-value 'rem-pics)
