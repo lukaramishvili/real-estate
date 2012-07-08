@@ -20,10 +20,11 @@
             DefaultOptions);
         return map;
     }
-    function CreateMarker(title, pos){
+    function createMarker(title, pos){
       var marker = new google.maps.Marker({
     	position: pos,
     	title:    title
       });
+      return marker;
     }
     ");)

@@ -334,11 +334,21 @@
        (cl-who:str
 	(+s (ps:ps
 	      (defvar estate-map (create-map-for-id "edit-estate-map"))
+	      (defvar loc-marker 
+		(create-marker "Real estate map location"
+			       (new (google.maps.-lat-lng 0 0))))
 	      (google.maps.event.add-listener 
 	       estate-map "click" 
 	       (lambda (event)
-		 (chain ($ "#loc-lat") (val (event.lat-lng.lat)))
-		 (chain ($ "#loc-lng") (val (event.lat-lng.lng)))))
+		 (let ((lat (event.lat-lng.lat)) (lng (event.lat-lng.lng)))
+		   (chain ($ "#loc-lat") (val lat))
+		   (chain ($ "#loc-lng") (val lng))
+		   (chain loc-marker
+			  (set-position
+			   (new (google.maps.-lat-lng lat
+						      lng))))
+		 (chain loc-marker (set-map estate-map))
+		 t)))
 	      (defun add-pic-box (rem-pic-uuid)
 		(chain 
 		 ($ "#estate-pics")
