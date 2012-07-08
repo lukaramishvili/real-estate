@@ -325,8 +325,8 @@
 	(:h4 "Click on the map to set location")
 	(:div :id "estate-pics")
 	(:button :id "add-estate-pic" "Add image")
-	(:input :type "hidden" :id "loc-lat" :name "loc-lat" :value "0")
-	(:input :type "hidden" :id "loc-lng" :name "loc-lng" :value "0")
+	(:input :type "hidden" :id "loc-lat" :name "loc-lat" :value (loc-lat e))
+	(:input :type "hidden" :id "loc-lng" :name "loc-lng" :value (loc-lng e))
 	(:div :id "edit-estate-map")
 	(:input :type "submit" :value "Save")))
       (:script
@@ -336,7 +336,9 @@
 	      (defvar estate-map (create-map-for-id "edit-estate-map"))
 	      (defvar loc-marker 
 		(create-marker "Real estate map location"
-			       (new (google.maps.-lat-lng 0 0))))
+			       (new (google.maps.-lat-lng 
+				     (lisp (loc-lat e)) 
+				     (lisp (loc-lng e))))))
 	      (google.maps.event.add-listener 
 	       estate-map "click" 
 	       (lambda (event)
