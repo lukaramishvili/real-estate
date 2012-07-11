@@ -304,9 +304,13 @@
 (defun re-firstpage ()
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
-    (loop for i from 0 to 9
-       do (cl-who:htm (:div :class "grid-10"
-			    "img <br> img <br>")))))
+    (loop for img in 
+	 (with-re-db (pomo:select-dao 'pic))
+       do (cl-who:htm 
+	   (:div 
+	    :class "grid-10"
+	    (cl-who:str 
+	     (+s "<img src='" (linkable-pic-path img) "' /><br>")))))))
 
 (defun estate-edit-form (e)
   (let ((ix-estate (if (slot-boundp e 'ix-estate)

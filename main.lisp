@@ -70,8 +70,17 @@
        "/tmp/" (pathname *project-tmp-dir*))
       hunchentoot:*dispatch-table*)
 
+;;serve temp folder
+(push (create-folder-dispatcher-and-handler
+       "/uploads/" (pathname *upload-dir*))
+      hunchentoot:*dispatch-table*)
+
 (defun linkable-tmp-path (tmp-path)
   (+s "/tmp/" (file-namestring tmp-path)))
+
+(defun linkable-pic-path (p)
+  (declare (type pic p))
+  (smake "/uploads/pics/" (ix-pic p) "/" (file-namestring (path p))))
       
 
 (htoot-handler (home "/" ())
