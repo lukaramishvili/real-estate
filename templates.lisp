@@ -182,9 +182,11 @@
 
 (defun re-head (&key title)
   (head (or title "Welcome to Project RE!")
-	:css-files '("css/reset.css" "css/elements.css" 
+	:css-files '("css/smoothness/jquery-ui-1.8.21.custom.css"
+		     "css/reset.css" "css/elements.css" 
 		     "css/re.css" "re-gen.css")
 	:js-files '("js/jquery-1.7.2.min.js" 
+		    "js/jquery-ui-1.8.21.custom.min.js"
 		    "http://maps.googleapis.com/maps/api/js?key=AIzaSyDl2UEh2szaf3AjDf24cj4AFN-7a0oIUM0&sensor=false"
 		    "main.js")
 	:more "<meta name=\"viewport\" content=\"initial-scale=1.0, user-scalable=no\" />"))
@@ -322,9 +324,9 @@
 	 (+s (label-input "address" :val (address e))
 	     (label-input "telnum" :val (telnum e))
 	     (label-input "visible" :val (visible e))))
-	(:h4 "Click on the map to set location")
+	(:h4 "write address in the box or click on the map to set location")
 	(:div :id "estate-pics")
-	(:button :id "add-estate-pic" "Add image")
+	(:button :id "add-estate-pic" :type "button" "Add image")
 	(:input :type "hidden" :id "loc-lat" :name "loc-lat" :value (loc-lat e))
 	(:input :type "hidden" :id "loc-lng" :name "loc-lng" :value (loc-lng e))
 	(:div :id "edit-estate-map")
@@ -339,6 +341,7 @@
 			       (new (google.maps.-lat-lng 
 				     (lisp (loc-lat e)) 
 				     (lisp (loc-lng e))))))
+	      (chain loc-marker (set-map estate-map))
 	      (google.maps.event.add-listener 
 	       estate-map "click" 
 	       (lambda (event)
@@ -349,7 +352,6 @@
 			  (set-position
 			   (new (google.maps.-lat-lng lat
 						      lng))))
-		 (chain loc-marker (set-map estate-map))
 		 t)))
 	      (defun add-pic-box (rem-pic-uuid)
 		(chain 
@@ -361,6 +363,8 @@
 					  rem-pic-uuid)))))))
 	      (chain ($ "#add-estate-pic")
 		     (click (lambda () (add-pic-box "") false)))
+	      (-map-marker-A-C-Combo "#input_address" "#loc-lat" "#loc-lng"
+				estate-map loc-marker)
 	      );end main ps:ps
 	    (smake
 	     (loop for key being the hash-keys 
