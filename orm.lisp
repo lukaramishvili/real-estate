@@ -57,14 +57,53 @@
 		:initform "")
    (loc-lat :col-type string :initarg :loc-lat :accessor loc-lat :initform "0")
    (loc-lng :col-type string :initarg :loc-lng :accessor loc-lng :initform "0")
-   (visible :col-type integer :initarg :visible :accessor visible :initform 0))
+   (visible :col-type integer :initarg :visible :accessor visible :initform 0)
+
+   (apt-type :col-type string :initarg :apt-type 
+	     :accessor apt-type :initform "")
+   (status :col-type string :initarg :status :accessor status :initform "")
+   (pst-code :col-type string :initarg :pst-code :accessor pst-code 
+	     :initform "")
+   (munic :col-type string :initarg :munic :accessor munic :initform "")
+   (ix-country :col-type integer :initarg :ix-country :accessor ix-country 
+	       :iniform 0)
+   (constr :col-type string :initarg :constr :accessor constr :initform "")
+   (total :col-type integer :initarg :total :accessor total :initform 0)
+   (land :col-type integer :initarg :land :accessor land :initform 0)
+   (desc :col-type string :initarg :desc :accessor desc :initform "")
+   (zmh :col-type string :initarg :zmh :accessor zmh :initform "")
+   (price :col-type decimal :initarg :price :accessor price :initform 0)
+   (since :col-type integer :initarg :since :accessor since :initform 0)
+   (bedrooms :col-type integer :initarg :bedrooms 
+	     :accessor bedrooms :initform 0)
+   (bathrooms :col-type integer :initarg :bathrooms 
+	      :accessor bathrooms :initform 0)
+   (terrace-p :col-type integer :initarg :terrace-p 
+	      :accessor terrace-p :initform 0)
+   (garden-p :col-type integer :initarg :garden-p 
+	     :accessor garden-p :initform 0)
+   (parking-lots :col-type integer :initarg :pstking-lots 
+		 :accessor parking-slots :initform 0)
+   (building-permit :col-type integer :initarg :building-permit 
+		    :accessor building-permit :initform 0)
+   (destination :col-type string :initarg :destination 
+		:accessor destination :initform "")
+   (summons :col-type string :initarg :summons 
+	    :accessor summons :initform "")
+   (preemption :col-type string :initarg :preemption 
+	       :accessor preemption :initform "")
+   (subdiv-permit :col-type string :initarg :subdiv-permi 
+		  :accessor subdiv-permit :initform "")
+   (epc :col-type decimal :initarg :epc :accessor epc :initform 0)
+   (kad-ink :col-type decimal :initarg :kad-ink :initform 0)
+   )
   (:metaclass dao-class)
   (:keys ix-estate))
 
 (defclass pic ()
   ((ix-pic :col-type serial :initarg :ix-pic :accessor ix-pic)
-   (ix-estate :col-type integer :initarg :ix-estate :accessor ix-estate
-	      :initform 0)
+   (ix-estate :col-type integer :initarg :ix-estate 
+	      :accessor ix-estate :initform 0)
    (order :col-type integer :initarg :order :accessor order :initform 0)
    (path :col-type string :initarg :path :accessor path :initform ""))
   (:metaclass dao-class)
