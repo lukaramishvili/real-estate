@@ -48,6 +48,28 @@
 
 ;;;;;;;; project-specific code
 
+(defun apt-type-options ()
+  (list "apartment" "house" "land" "office" 
+	"commercial" "garage" "new"))
+
+(defun status-options ()
+  (list "sale" "rent"))
+
+(defun all-countries ()
+  (list (list 1 "Belgium") (list 2 "Niederlands")))
+
+(defun constr-options ()
+  (list "detached" "terraced" "semi-detached"))
+
+(defun summons-options ()
+  (list (list "nvt" "NVT") (list "vt" "VT")))
+
+(defun preemption-options ()
+  (list (list "nvt" "NVT") (list "vt" "VT")))
+
+(defun subdiv-permit-options ()
+  (list (list "nvt" "NVT") (list "vt" "VT")))
+
 (defclass estate ()
   ((ix-estate :col-type serial :initarg :ix-estate :accessor ix-estate)
    (ix-user :col-type integer :initarg :ix-user :accessor ix-user :initform 0)
