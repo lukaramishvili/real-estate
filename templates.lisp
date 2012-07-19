@@ -17,7 +17,8 @@
   (cl-who:with-html-output-to-string 
    (*standard-output* nil :prologue nil :indent t)
    (:head
-    (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
+    (:meta :http-equiv "Content-Type" 
+	   :content "text/html; charset=utf-8")
     (:title (cl-who:str title))
     (cl-who:str
      (if (and css-files (listp css-files))
@@ -31,14 +32,16 @@
        ""))
     (cl-who:str
      (if (and js-files (listp js-files))
-	 (reduce #'(lambda (arg1 arg2) (concatenate 'string arg1 arg2))
-		 (mapcar #'(lambda (js-file) 
-			     (concatenate 
-			      'string 
-			      "<script type=\"text/javascript\" src=\"" 
-			      js-file "\"></script>"))
+	 (reduce #'(lambda (arg1 arg2) 
+		     (concatenate 'string arg1 arg2))
+		 (mapcar 
+		  #'(lambda (js-file) 
+		      (concatenate 
+		       'string 
+		       "<script type=\"text/javascript\" src=\"" 
+		       js-file "\"></script>"))
 			 js-files))
-       ""))
+	 ""))
     (cl-who:str (smake (or more ""))))))
 
 (defun simple-page (heading text)
@@ -52,11 +55,12 @@
   `(labels ((do-row (,row other-rows)
 	      (append 
 	       (mapcar 
-		#'(lambda (form) (if (symbolp form) (getf ,row form) form))
+		#'(lambda (form) 
+		    (if (symbolp form) (getf ,row form) form))
 		,@body)
 	       (if other-rows
 		   (do-row (car other-rows) (cdr other-rows))
-		   NIL))))
+		   nil))))
      (do-row (car ,rows) (cdr ,rows))))
 
 (defmacro do-table-to-s ((rows row) &body body)
@@ -73,7 +77,7 @@
 		,@body)
 	       (if other-objs
 		   (do-obj (car other-objs) (cdr other-objs))
-		   NIL))))
+		   nil))))
      (do-obj (car ,objs) (cdr ,objs))))
 
 ;;;do class instance list like this:
@@ -82,12 +86,16 @@
 (defmacro do-objects-to-s ((objs obj) &body body)
   `(smake (do-objects (,objs ,obj) ,@body)))
 
-(defmacro for-each-class-slot ((class-name-sym slot slot-type) &body body)
+(defmacro for-each-class-slot 
+    ((class-name-sym slot slot-type) &body body)
   `(labels 
        ((do-slots (slots)
-	  (let* ((,slot (car slots)) (,slot-type (slot-value ,slot 'type)))
-	    (append (list ,@body) (if (cdr slots) (do-slots (cdr slots)))))))
-     (do-slots (closer-mop:class-slots (find-class ,class-name-sym)))))
+	  (let* ((,slot (car slots)) 
+		 (,slot-type (slot-value ,slot 'type)))
+	    (append (list ,@body) 
+		    (if (cdr slots) (do-slots (cdr slots)))))))
+     (do-slots (closer-mop:class-slots 
+		(find-class ,class-name-sym)))))
 
 (defun script-tag (code)
   (cl-who:with-html-output-to-string 
@@ -117,40 +125,47 @@
 	    (cl-who:str (or ,label ,name)))))
 
 (defun label-select (name &key options val direct-selectbox)
-  "makes <label..><select><option..>*</>. if direct-selectbox
-   is passed, its inserted instead of generated select tag"
+  "makes <label..><select><option..>*</>. if direct-selectbox is passed, 
+  its inserted instead of generated select tag. options can be either 
+  ((val lbl) (val lbl)), or (opt opt); on lack of lbl, opt will be used."
   (cl-who:with-html-output-to-string 
    (*standard-output* nil :prologue nil :indent t)
-   (:label :for (+s "input_" name)
+   (:label :for (+s "select_" name)
 	   :id (+s "label_" name) :class "label-left"
 	   (cl-who:str name))
    (if direct-selectbox
        (cl-who:str direct-selectbox)
-     (cl-who:htm
-      (:select :id (+s "input_" name)
-	       :name name
-	       (loop for option in options
-		     do (htm
-			 (:option :value (car option)
-				  (if (eql (car option) val)
-				      :selected
-				    "")
-				  (str (cadr option))))))))))
+       (cl-who:htm 
+	(:select 
+	 :id (+s "input_" name) :name name
+	 (loop for option in options
+	    do (let ((opt-val (if (listp option) 
+				  (car option) 
+				  option))
+		     (opt-lbl (if (listp option) 
+				  (or (cadr option) (car option)) 
+				  option)))
+		 (if (equal opt-val val)
+		     (htm (:option :value opt-val :selected "selected" 
+				   (str opt-lbl)))
+		     (htm (:option :value opt-val (str opt-lbl)))))))))))
 
-(defun selectbox-from-class (&key select-name class-name value-slot label-slot
-				  not-selected-option)
+(defun selectbox-from-class (&key select-name class-name value-slot 
+			     label-slot not-selected-option)
   "gen <select> from class items. if passed, first item val will be not-sel.."
   (cl-who:with-html-output-to-string
-   (*standard-output* nil :prologue nil :indent t)
-   (:select
-    :name select-name
-    (if not-selected-option
-	(cl-who:htm (:option :value not-selected-option "Not Selected")))
-    (loop for item in (all-of-class class-name)
-	  collecting 
+      (*standard-output* nil :prologue nil :indent t)
+    (:select
+     :name select-name
+     (if not-selected-option
+	 (cl-who:htm (:option :value not-selected-option 
+			      "Not Selected")))
+     (loop for item in (all-of-class class-name)
+	collecting 
 	  (cl-who:htm (:option 
 		       :value (slot-value item value-slot)
-		       (cl-who:str (slot-value item label-slot))))))))
+		       (cl-who:str 
+			(slot-value item label-slot))))))))
 
 (defun label-datepicker
   (name &key (val (get-universal-time)))
@@ -220,11 +235,6 @@
 
 
 
-
-
-
-
-
 (defun main-template (page)
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
@@ -241,34 +251,30 @@
 (defun account-page (ix-user)
   (let* ((acc-user (single-user ix-user))
 	 (acc-company (single-company (ix-company acc-user)))
-	 (user-vacancies (filter-vacancies :ix-user (smake ix-user))))
+	 (user-vacancies (filter-vacancies 
+			  :ix-user (smake ix-user))))
     (cl-who:with-html-output-to-string
 	(*standard-output* nil :prologue nil :indent t)
       (if acc-company
 	  (cl-who:htm
 	   (:p (:a :href (smake "./company?ix-company="
 				(ix-company acc-company))))))
-      (if (plusp (length user-vacancies))
-	  (cl-who:htm
-	   (:div
-	    :id "user-vacancies"
-	    (loop for vac in user-vacancies
-	       do (cl-who:htm
-		   (:p (:a :href (smake "./vacancy?ix-vacancy="
-					(ix-vacancy vac))
-			   (cl-who:str (company-name-geo vac)
-				       " - " 
-				       (name-geo (emp-pos vac))))
-		       (:a :href (smake "./edit-vacancy?ix-vacancy="
-					(ix-vacancy vac))
-			   "Edit"))))))))))
+      (if 
+       (plusp (length user-vacancies))
+       (cl-who:htm
+	(:div
+	 :id "user-vacancies"
+	 (loop for vac in user-vacancies
+	    do (cl-who:htm
+		(:p (:a :href (smake "./vacancy?ix-vacancy="
+				     (ix-vacancy vac))
+			(cl-who:str (company-name-geo vac)
+				    " - " 
+				    (name-geo (emp-pos vac))))
+		    (:a :href (smake "./edit-vacancy?ix-vacancy="
+				     (ix-vacancy vac))
+			"Edit"))))))))))
 
-
-
-
-
-
-  
 
 (defun register-page (&key reg-token)
   (cl-who:with-html-output-to-string 
@@ -310,7 +316,8 @@
 	   (:div 
 	    :class "grid-10"
 	    (cl-who:str 
-	     (+s "<img src='" (linkable-pic-path img) "' /><br>")))))))
+	     (+s "<img src='" (linkable-pic-path img) 
+		 "' /><br>")))))))
 
 (defun estate-edit-form (e)
   (let ((ix-estate (if (slot-boundp e 'ix-estate)
@@ -327,6 +334,39 @@
 	(cl-who:str
 	 (+s (label-input "address" :val (address e))
 	     (label-input "telnum" :val (telnum e))
+	     (label-select "apt-type" 
+			   :options '("apartment" "house" "land" "office" 
+				      "commercial" "garage" "new")
+			   :val (apt-type e))
+	     (label-select "status" :options '("sale" "rent")
+			   :val (status e))
+	     (label-input "pst-code" :val (pst-code e))
+	     (label-input "munic" :val (munic e))
+	     (label-select "ix-country" :options '((1 "Belgium") (2 "Niederlands"))
+			   :val (ix-country e))
+	     (label-select "constr" :options '("detached" "terraced" "semi-detached") 
+			   :val (constr e))
+	     (label-input "total" :val (total e) :label "Total m2")
+	     (label-input "land" :val (land e) :label "Land area m2")
+	     (label-input "desc" :val (desc e) :label "Description")
+	     (label-input "zmh" :val (zmh e) :label "ZMH Reference")
+	     (label-input "price" :val (price e))
+	     (label-input "since" :val (since e) :label "Date added")
+	     (label-input "bedrooms" :val (bedrooms e) :label "Bedroom count")
+	     (label-input "bathrooms" :val (bathrooms e) :label "Bathroom count")
+	     (label-checkbox "terrace-p" :val 1 :checked (< 0 (terrace-p e)))
+	     (label-checkbox "garden-p" :val 1 :checked (< 0 (garden-p e)))
+	     (label-input "parking-lots" :val (parking-lots e))
+	     (label-input "building-permit-p" :val (building-permit-p e))
+	     (label-input "destination" :val (destination e))
+	     (label-select "summons" :options '(("nvt" "NVT") ("vt" "VT")) 
+						:val (summons e))
+	     (label-select "preemption" :options '(("nvt" "NVT") ("vt" "VT")) 
+			   :val (preemption e))
+	     (label-select "subdiv-permit" :options '(("nvt" "NVT") ("vt" "VT")) 
+			   :val (subdiv-permit e))
+	     (label-input "epc" :val (epc e) :label "EPC")
+	     (label-input "kad-ink" :val (kad-ink e) :label "K.I.")
 	     (label-input "visible" :val (visible e))))
 	(:h4 "write address in the box or click on the map to set location")
 	(:div :id "estate-pics")

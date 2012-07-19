@@ -82,10 +82,10 @@
 	      :accessor terrace-p :initform 0)
    (garden-p :col-type integer :initarg :garden-p 
 	     :accessor garden-p :initform 0)
-   (parking-lots :col-type integer :initarg :pstking-lots 
-		 :accessor parking-slots :initform 0)
-   (building-permit :col-type integer :initarg :building-permit 
-		    :accessor building-permit :initform 0)
+   (parking-lots :col-type integer :initarg :parking-lots 
+		 :accessor parking-lots :initform 0)
+   (building-permit-p :col-type integer :initarg :building-permit-p 
+		    :accessor building-permit-p :initform 0)
    (destination :col-type string :initarg :destination 
 		:accessor destination :initform "")
    (summons :col-type string :initarg :summons 
