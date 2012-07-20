@@ -206,13 +206,46 @@
       (ix-main-pic :request-type :POST :parameter-type 'integer :init-form 0)
       (loc-lat :request-type :POST :parameter-type 'string :init-form "0")
       (loc-lng :request-type :POST :parameter-type 'string :init-form "0")
-      (visible :request-type :POST :parameter-type 'integer :init-form 0)))
+      (visible :request-type :POST :parameter-type 'integer :init-form 0)
+      
+      (apt-type :request-type :POST :parameter-type 'string :init-form "")
+      (status :request-type :POST :parameter-type 'string :init-form "")
+      (pst-code :request-type :POST :parameter-type 'string :init-form "")
+      (munic :request-type :POST :parameter-type 'string :init-form "")
+      (ix-country :request-type :POST :parameter-type 'integer :init-form 0)
+      (constr :request-type :POST :parameter-type 'string :init-form "")
+      (total :request-type :POST :parameter-type 'integer :init-form 0)
+      (land :request-type :POST :parameter-type 'integer :init-form 0)
+      (desc :request-type :POST :parameter-type 'string :init-form "")
+      (zmh :request-type :POST :parameter-type 'string :init-form "")
+      (price :request-type :POST :parameter-type 'string :init-form 0)
+      (since :request-type :POST :parameter-type 'integer :init-form 0)
+      (bedrooms :request-type :POST :parameter-type 'integer :init-form 0)
+      (bathrooms :request-type :POST :parameter-type 'integer :init-form 0)
+      (terrace-p :request-type :POST :parameter-type 'integer :init-form 0)
+      (garden-p :request-type :POST :parameter-type 'integer :init-form 0)
+      (parking-lots :request-type :POST :parameter-type 'integer :init-form 0)
+      (building-permit-p :request-type :POST :parameter-type 'integer :init-form 0)
+      (destination :request-type :POST :parameter-type 'string :init-form "")
+      (summons :request-type :POST :parameter-type 'string :init-form "")
+      (preemption :request-type :POST :parameter-type 'string :init-form "")
+      (subdiv-permit :request-type :POST :parameter-type 'string :init-form "")
+      (epc :request-type :POST :parameter-type 'string :init-form 0)
+      (kad-ink :request-type :POST :parameter-type 'string :init-form 0)))
   (if (session-value 'logged-in-p)
       (let* ((save-e
 	      (make-instance
 	       'estate :ix-user (ix-user (session-value 'user-authed))
 	       :address address :telnum telnum :visible visible
-	       :ix-main-pic ix-main-pic :loc-lat loc-lat :loc-lng loc-lng))
+	       :ix-main-pic ix-main-pic :loc-lat loc-lat :loc-lng loc-lng
+	        
+	       :apt-type apt-type :status status :pst-code pst-code :munic munic 
+	       :ix-country ix-country :constr constr :total total :land land 
+	       :desc desc :zmh zmh :price price :since since :bedrooms bedrooms 
+	       :bathrooms bathrooms :terrace-p terrace-p :garden-p garden-p 
+	       :parking-lots parking-lots :building-permit-p building-permit-p 
+	       :destination destination :summons summons :preemption preemption 
+	       :subdiv-permit subdiv-permit :epc epc :kad-ink kad-ink))
 	     (e-pics
 	      (loop for k being the hash-keys of (session-value 'rem-pics)
 		 using (hash-value v)

@@ -88,13 +88,13 @@
 	     :initform "")
    (munic :col-type string :initarg :munic :accessor munic :initform "")
    (ix-country :col-type integer :initarg :ix-country :accessor ix-country 
-	       :iniform 0)
+	       :initform 0)
    (constr :col-type string :initarg :constr :accessor constr :initform "")
    (total :col-type integer :initarg :total :accessor total :initform 0)
    (land :col-type integer :initarg :land :accessor land :initform 0)
    (desc :col-type string :initarg :desc :accessor desc :initform "")
    (zmh :col-type string :initarg :zmh :accessor zmh :initform "")
-   (price :col-type decimal :initarg :price :accessor price :initform 0)
+   (price :col-type float :initarg :price :accessor price :initform 0)
    (since :col-type integer :initarg :since :accessor since :initform 0)
    (bedrooms :col-type integer :initarg :bedrooms 
 	     :accessor bedrooms :initform 0)
@@ -116,8 +116,8 @@
 	       :accessor preemption :initform "")
    (subdiv-permit :col-type string :initarg :subdiv-permi 
 		  :accessor subdiv-permit :initform "")
-   (epc :col-type decimal :initarg :epc :accessor epc :initform 0)
-   (kad-ink :col-type decimal :initarg :kad-ink :initform 0)
+   (epc :col-type float :initarg :epc :accessor epc :initform 0)
+   (kad-ink :col-type float :initarg :kad-ink :accessor kad-ink :initform 0)
    )
   (:metaclass dao-class)
   (:keys ix-estate))
