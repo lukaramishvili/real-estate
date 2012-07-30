@@ -267,6 +267,7 @@
 			       (smake *upload-dir* "pics/" (ix-pic e-p) "/" 
 				      (file-namestring (path e-p))))))
 		    (save-dao e-p));now save to update path
+	       (setf (session-value 'rem-pics) nil)
 	       "Real estate saved!")
 	     "Error while saving estate!"))))
       "Not logged in!"))

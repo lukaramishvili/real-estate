@@ -332,8 +332,7 @@
 	(:input :type "hidden" :name "ix-main-pic" 
 		:val (ix-main-pic e))
 	(cl-who:str
-	 (+s (label-input "address" :val (address e))
-	     (label-input "telnum" :val (telnum e))
+	 (+s (label-input "telnum" :val (telnum e))
 	     (label-select "apt-type" 
 			   :options (apt-type-options)
 			   :val (apt-type e))
@@ -366,7 +365,8 @@
 			   :val (subdiv-permit e))
 	     (label-input "epc" :val (epc e) :label "EPC")
 	     (label-input "kad-ink" :val (kad-ink e) :label "K.I.")
-	     (label-input "visible" :val (visible e))))
+	     (label-input "visible" :val (visible e))
+	     (label-input "address" :val (address e))))
 	(:h4 "write address in the box or click on the map to set location")
 	(:div :id "estate-pics")
 	(:button :id "add-estate-pic" :type "button" "Add image")
