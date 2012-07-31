@@ -307,17 +307,24 @@
 
 ;;; project-specific code
 
+(defun uneven-grid (w h)
+  (loop for iw from 0 to w
+       collecting
+       (loop for ih from 0 to h)
+       collecting :medium))
+
 (defun re-firstpage ()
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
-    (loop for img in 
-	 (with-re-db (pomo:select-dao 'pic))
-       do (cl-who:htm 
-	   (:div 
-	    :class "grid-10"
-	    (cl-who:str 
-	     (+s "<img src='" (linkable-pic-path img) 
-		 "' /><br>")))))))
+    (let ((fp-pics (with-re-db (pomo:select-dao 'pic))))
+      ;;TODO: populate a grid (generated with uneven-grid) with fp-pics
+	    (loop for img in fp-pics
+	       do (cl-who:htm 
+		   (:div 
+		    :class "grid-10"
+		    (cl-who:str 
+		     (+s "<img src='" (linkable-pic-path img) 
+			 "' /><br>"))))))))
 
 (defun estate-edit-form (e)
   (let ((ix-estate (if (slot-boundp e 'ix-estate)

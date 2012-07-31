@@ -6,6 +6,11 @@
   (css-lite:css ((div) ((:position "absolute")
 	       (:left x) (:top y) (:width w) (:height h)))))
 
+(defun style-firstpage ()
+  "
+  
+  ")
+
 (defun style-edit-estate-form ()
   "
   #edit-estate-form-div { padding:20px; }
@@ -42,4 +47,5 @@
      (("#main") ((:position "absolute") (:left "0px") (:top "0px")
 		 (:width "100%" :height "100%")))
      ((".grid-10") ((:width "10%") (:float "left") (:height "100%"))))
+   (style-firstpage)
    (style-edit-estate-form)))
