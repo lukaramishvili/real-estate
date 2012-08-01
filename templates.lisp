@@ -307,16 +307,59 @@
 
 ;;; project-specific code
 
-(defun uneven-grid (w h)
-  (loop for iw from 0 to w
-       collecting
-       (loop for ih from 0 to h)
-       collecting :medium))
+(defun uneven-grid (w h &key square)
+  (loop for iw from 0 to (- w 1)
+     collecting
+       (loop for ih from 0 to (- h 1)
+	  collecting :min)));; :min :none :square
+
+(defun fill-grid (grid bucket)
+  "grid should be ret'ed by uneven-grid; 
+   bucket should be (list :minimals (list ...) :squares (list ...))"
+  (let ((h (length grid))
+	(w (length (car grid)))
+	(ret (copy-tree grid))
+	(minimals (getf bucket :minimals))
+	(squares (getf bucket :squares)))
+    (loop for ih from 0 to (- h 1)
+       do
+	 (loop for iw from 0 to (- w 1)
+	    do (let ((current (nth iw (nth ih ret))))
+		 (case current
+		   (:min (setf (nth iw (nth ih ret)) 
+			       (or (pop minimals) "")))
+		   (:square 
+		    (setf (nth iw (nth ih ret)) 
+			  (or (pop squares) "")))
+		   (:none (setf (nth iw (nth ih ret)) ""))))))
+    ret))
 
 (defun re-firstpage ()
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
-    (let ((fp-pics (with-re-db (pomo:select-dao 'pic))))
+    (cl-who:str
+     (with-re-db
+       (let* ((normal-size-pics 
+	       (mapcar (lambda (p) 
+			 (+s  "<img src='" (linkable-pic-path p) 
+			      "' class='img-min' />"))
+		       (pomo:select-dao 'pic)))
+	      (2x2-size-pics 
+	       (mapcar (lambda (p) 
+			 (+s  "<img src='" (linkable-pic-path p) 
+			      "' class='img-sq' />"))
+		       (pomo:select-dao 'pic)))
+	      (grid-width 10);;decide width based on total img count
+	      (grid (uneven-grid grid-width 10))
+	      (filled-grid (fill-grid grid (list :minimals normal-size-pics 
+						 :squares 2x2-size-pics))))
+	 (apply 
+	  #'+s 
+	  (loop for i from 0 to (1- (length filled-grid))
+	     collecting (+s "<div class='grid-10'>" 
+			    (reduce #'+s (nth i filled-grid)) "</div>"))))))))
+
+	
       ;;TODO: populate a grid (generated with uneven-grid) with fp-pics
 	    (loop for img in fp-pics
 	       do (cl-who:htm 

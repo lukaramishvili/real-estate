@@ -8,7 +8,8 @@
 
 (defun style-firstpage ()
   "
-  
+  .grid-10 { width:10%; float:left; height:100%; }
+  .grid-10 img { width:100%; height:9.8%; display:block; margin:1px; }
   ")
 
 (defun style-edit-estate-form ()
