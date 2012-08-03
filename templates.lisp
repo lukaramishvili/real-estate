@@ -339,20 +339,24 @@
       (*standard-output* nil :prologue nil :indent t)
     (cl-who:str
      (with-re-db
-       (let* ((normal-size-pics 
-	       (mapcar (lambda (p) 
-			 (+s  "<img src='" (linkable-pic-path p) 
-			      "' class='img-min' />"))
-		       (pomo:select-dao 'pic)))
-	      (2x2-size-pics 
-	       (mapcar (lambda (p) 
-			 (+s  "<img src='" (linkable-pic-path p) 
-			      "' class='img-sq' />"))
-		       (pomo:select-dao 'pic)))
-	      (grid-width 10);;decide width based on total img count
-	      (grid (uneven-grid grid-width 10))
-	      (filled-grid (fill-grid grid (list :minimals normal-size-pics 
-						 :squares 2x2-size-pics))))
+       (let* 
+	   ((normal-size-pics 
+	     (mapcar 
+	      (lambda (p) 
+		(+s "<a href='javascript:void(0)' class='fp-estate-link' " 
+		    " ixestate='" (ix-estate p) "'>"
+		    "<img src='" (linkable-pic-path p) 
+		    "' class='img-min' />" "</a>"))
+	      (pomo:select-dao 'pic)))
+	    (2x2-size-pics 
+	     (mapcar (lambda (p) 
+		       (+s  "<img src='" (linkable-pic-path p) 
+			    "' class='img-sq' />"))
+		     (pomo:select-dao 'pic)))
+	    (grid-width 10);;decide width based on total img count
+	    (grid (uneven-grid grid-width 10))
+	    (filled-grid (fill-grid grid (list :minimals normal-size-pics 
+					       :squares 2x2-size-pics))))
 	 (apply 
 	  #'+s 
 	  (loop for i from 0 to (1- (length filled-grid))
@@ -361,13 +365,13 @@
 
 	
       ;;TODO: populate a grid (generated with uneven-grid) with fp-pics
-	    (loop for img in fp-pics
+	    #+nil(loop for img in normal-size-pics
 	       do (cl-who:htm 
 		   (:div 
 		    :class "grid-10"
 		    (cl-who:str 
 		     (+s "<img src='" (linkable-pic-path img) 
-			 "' /><br>"))))))))
+			 "' /><br>")))))
 
 
 (defun estate-edit-form (e)

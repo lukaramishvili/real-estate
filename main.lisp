@@ -3,6 +3,7 @@
 (ql:quickload :hunchentoot)
 (ql:quickload :cl-who)
 (ql:quickload :parenscript)
+(ql:quickload :cl-json)
 (ql:quickload :ironclad)
 (ql:quickload :uuid)
 (ql:quickload :postmodern)
@@ -300,3 +301,19 @@
 	    (setf (gethash uniq-rem-pic-uuid (session-value 'rem-pics)) 
 		  pic-to-rem)
 	    (estate-form-pic-box uniq-rem-pic-uuid))))))
+
+(htoot-handler 
+    (get-estate-handler "/get-estate" ((id :parameter-type 'integer))) 
+  (with-re-db
+    (let ((e (get-dao 'estate id)))
+      (if e
+	  (json:encode-json-plist-to-string 
+	   (list :address (address e)
+		 :telnum (telnum e)
+		 :apt-type (apt-type e)
+		 :status (status e)
+		 :pst-code (pst-code e)
+		 :munic (munic e)
+		 ;TODO:etc
+		 ))
+	  "{}"))))

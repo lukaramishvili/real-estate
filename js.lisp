@@ -3,8 +3,45 @@
 (ql:quickload :parenscript)
 
 (defun re-main-js ()
-  ;(ps:ps
-    "
+  (+s 
+   (ps:ps
+     (defun get-estate (id callback)
+       (chain 
+	$ (ajax
+	   (create
+	    url "./get-estate"
+	    data (create id id)
+	    data-type "json"
+	    success (lambda (d)
+		      (callback d))
+	    error (lambda ())
+	    )))
+       (return false))
+     
+     (defun gen-estate-div (e)
+       (var div "<div>")
+       (for-in (k e)
+	       (setf div (+ div k ": " (@ e k) "<br>")))
+       (setf div (+ div "</div>"))
+       div)
+
+     (defun show-estate-div (estate-div)
+       (alert estate-div))
+     
+     (defun view-e (id)
+       (get-estate 
+	id (lambda (e)
+	     (if (!= e null)
+		 (progn (show-estate-div (gen-estate-div e)))
+		 (alert "Loading estate failed, please try again."))
+	     e))
+       (return false))
+     (chain ($ ".fp-estate-link")
+	    (live "click" (lambda () 
+			    (view-e (chain ($ this) (attr "ixestate")))
+			    false)))
+     );end ps:ps
+     "
     function createMapForId (id, options){
     	var initPos = new google.maps.LatLng(41.5, 44.8);
         var DefaultOptions = {
@@ -69,5 +106,5 @@
 	    });
 	  });	  
     }
-    /*end MapMarkerACCombo*/
-    ");)
+    /*end function MapMarkerACCombo*/
+    "))
