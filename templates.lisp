@@ -369,6 +369,7 @@
 		     (+s "<img src='" (linkable-pic-path img) 
 			 "' /><br>"))))))))
 
+
 (defun estate-edit-form (e)
   (let ((ix-estate (if (slot-boundp e 'ix-estate)
 		       (ix-estate e) 0)))
