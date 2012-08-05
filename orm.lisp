@@ -130,3 +130,10 @@
    (path :col-type string :initarg :path :accessor path :initform ""))
   (:metaclass dao-class)
   (:keys ix-pic))
+
+(defun pics-for-firstpage ()
+  (with-re-db
+    (mapcar (lambda (ix-pic) 
+	      (car (select-dao 'pic (:= :ix-pic ix-pic))))
+	    (query (:select :ix-main-pic :from :estate) 
+		   :list))))

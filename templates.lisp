@@ -199,9 +199,11 @@
   (head (or title "Welcome to Project RE!")
 	:css-files '("css/smoothness/jquery-ui-1.8.21.custom.css"
 		     "css/reset.css" "css/elements.css" 
+		     "css/fancybox/jquery.fancybox.css"
 		     "css/re.css" "re-gen.css")
 	:js-files '("js/jquery-1.7.2.min.js" 
 		    "js/jquery-ui-1.8.21.custom.min.js"
+		    "js/jquery.fancybox.pack.js"
 		    "http://maps.googleapis.com/maps/api/js?key=AIzaSyDl2UEh2szaf3AjDf24cj4AFN-7a0oIUM0&sensor=false"
 		    "main.js")
 	:more "<meta name=\"viewport\" content=\"initial-scale=1.0, user-scalable=no\" />"))
@@ -343,16 +345,16 @@
 	   ((normal-size-pics 
 	     (mapcar 
 	      (lambda (p) 
-		(+s "<a href='javascript:void(0)' class='fp-estate-link' " 
+		(+s "<a href='#view-estate' class='fp-estate-link' " 
 		    " ixestate='" (ix-estate p) "'>"
 		    "<img src='" (linkable-pic-path p) 
 		    "' class='img-min' />" "</a>"))
-	      (pomo:select-dao 'pic)))
+	      (pics-for-firstpage)))
 	    (2x2-size-pics 
 	     (mapcar (lambda (p) 
 		       (+s  "<img src='" (linkable-pic-path p) 
 			    "' class='img-sq' />"))
-		     (pomo:select-dao 'pic)))
+		     (pics-for-firstpage)))
 	    (grid-width 10);;decide width based on total img count
 	    (grid (uneven-grid grid-width 10))
 	    (filled-grid (fill-grid grid (list :minimals normal-size-pics 
@@ -361,7 +363,8 @@
 	  #'+s 
 	  (loop for i from 0 to (1- (length filled-grid))
 	     collecting (+s "<div class='grid-10'>" 
-			    (reduce #'+s (nth i filled-grid)) "</div>"))))))))
+			    (reduce #'+s (nth i filled-grid)) "</div>"))))))
+    (:div :id "view-estate")))
 
 	
       ;;TODO: populate a grid (generated with uneven-grid) with fp-pics

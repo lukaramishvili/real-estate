@@ -26,7 +26,7 @@
        div)
 
      (defun show-estate-div (estate-div)
-       (alert estate-div))
+       (chain ($ "#view-estate") (html estate-div)))
      
      (defun view-e (id)
        (get-estate 
@@ -39,7 +39,8 @@
      (chain ($ ".fp-estate-link")
 	    (live "click" (lambda () 
 			    (view-e (chain ($ this) (attr "ixestate")))
-			    false)))
+			    false))
+	    (fancybox))
      );end ps:ps
      "
     function createMapForId (id, options){
