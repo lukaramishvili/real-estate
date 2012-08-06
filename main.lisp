@@ -307,13 +307,22 @@
   (with-re-db
     (let ((e (get-dao 'estate id)))
       (if e
-	  (json:encode-json-plist-to-string 
-	   (list :address (address e)
-		 :telnum (telnum e)
-		 :apt-type (apt-type e)
-		 :status (status e)
-		 :pst-code (pst-code e)
-		 :munic (munic e)
-		 ;TODO:etc
-		 ))
+	  (json:encode-json-plist-to-string
+	   (list 
+	    :main-pic (pic-to-hashtable (ix-main-pic e)
+					:make-path-linkable t)
+	    :other-pics (mapcar (lambda (p)
+				  (pic-to-hashtable 
+				   p :make-path-linkable t))
+				(estate-nonmain-pics e))
+	    :fields (alexandria:plist-hash-table 
+		     (list :address (address e)
+			   :telnum (telnum e)
+			   :apt-type (apt-type e)
+			   :status (status e)
+			   :pst-code (pst-code e)
+			   :munic (munic e)
+			   :ix-country (ix-country e)
+			   ;;TODO:etc
+			   ))))
 	  "{}"))))

@@ -133,7 +133,38 @@
 
 (defun pics-for-firstpage ()
   (with-re-db
-    (mapcar (lambda (ix-pic) 
-	      (car (select-dao 'pic (:= :ix-pic ix-pic))))
-	    (query (:select :ix-main-pic :from :estate) 
-		   :list))))
+    (remove-if-not 
+     (lambda (x) x)
+     (mapcar (lambda (ix-pic) 
+	       (car (select-dao 'pic (:= :ix-pic (car ix-pic)))))
+	     (query (:select :ix-main-pic :from :estate
+			     :where (:> :ix-main-pic 0))) 
+	     ))));here was :list but didn't work for some reason
+
+(defun pic-to-hashtable (pic &key (make-path-linkable nil))
+  "make hashtable from an integer or 'pic class instance "
+  (let ((p (cond ((integerp pic) (with-re-db 
+				   (car (select-dao 'pic (:= :ix-pic pic)))))
+		 ((equalp (find-class 'pic) (class-of pic)) pic))))
+    (if p
+	(alexandria:plist-hash-table 
+	 (list :ix-pic (ix-pic p)
+	       :ix-estate (ix-estate p)
+	       :order (order p)
+	       :path (if make-path-linkable
+			 (linkable-pic-path p)
+			 (path p)))
+	 :test #'equal))))
+
+(defun estate-nonmain-pics (estate)
+    (let ((e (cond ((integerp estate) 
+		    (with-re-db 
+		      (car (select-dao 'estate (:= :ix-estate estate)))))
+		   ((equalp (find-class 'estate) (class-of estate)) 
+		    estate))))
+      (if e
+	  (with-re-db 
+	    (select-dao 
+	     'pic 
+	     (:and (:= :ix-estate (ix-estate e)) 
+		   (:!= :ix-pic (ix-main-pic e))))))))

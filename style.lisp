@@ -8,8 +8,10 @@
 
 (defun style-firstpage ()
   "
-  .grid-10 { width:10%; float:left; height:100%; }
-  .grid-10 img { width:100%; height:9.8%; display:block; margin:1px; }
+  body { background-color:black; }
+  #search-bar { position:fixed; left:0px; top:0px; }
+  .grid-10 { width:20%; float:left; height:100%; }
+  .grid-10 a { width:100%; height:18.6%; display:block; margin:1px; }
   #view-estate { display:none; width:800px; height:500px; }
   #view-estate #main-img { width:250px; height:250px; }
   #view-estate #other-imgs img { width:50px; height:50px; }

@@ -2,6 +2,13 @@
 
 (ql:quickload :parenscript)
 
+(defpsmacro $$ (selector &body chains)
+  `(chain (j-query ,selector)
+      ,@chains))
+
+(defpsmacro += (var &rest what-to-append)
+      `(setf ,var (+ ,var ,@what-to-append)))
+
 (defun re-main-js ()
   (+s 
    (ps:ps
@@ -19,14 +26,24 @@
        (return false))
      
      (defun gen-estate-div (e)
-       (var div "<div>")
-       (for-in (k e)
-	       (setf div (+ div k ": " (@ e k) "<br>")))
-       (setf div (+ div "</div>"))
-       div)
+       (let ((fields (@ e fields))
+	     (main-pic (@ e main-pic))
+	     (other-pics (@ e other-pics)))
+	 (var div "<div>")
+	 (+= div (+ "<img id='main-img' src='" 
+		    (@ main-pic path) "' />"))
+	 (+= div "<div id='other-imgs'>")
+	 (for-in (op other-pics)
+		 (+= div "<img src='" 
+		     (@ (aref other-pics op) path) "' />"))
+	 (+= div "</div>")
+	 (for-in (k fields)
+		 (+= div k ": " (aref fields k) "<br>"))
+	 (+= div "</div>")
+	 div))
 
      (defun show-estate-div (estate-div)
-       (chain ($ "#view-estate") (html estate-div)))
+       ($$ "#view-estate" (html estate-div)))
      
      (defun view-e (id)
        (get-estate 
@@ -36,11 +53,11 @@
 		 (alert "Loading estate failed, please try again."))
 	     e))
        (return false))
-     (chain ($ ".fp-estate-link")
-	    (live "click" (lambda () 
-			    (view-e (chain ($ this) (attr "ixestate")))
-			    false))
-	    (fancybox))
+     ($$ ".fp-estate-link"
+	 (live "click" (lambda () 
+			 (view-e ($$ this (attr "ixestate")))
+			 false))
+	 (fancybox))
      );end ps:ps
      "
     function createMapForId (id, options){
