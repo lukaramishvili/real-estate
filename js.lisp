@@ -30,15 +30,23 @@
 	     (main-pic (@ e main-pic))
 	     (other-pics (@ e other-pics)))
 	 (var div "<div>")
+	 (+= div "<div id='estate-images'>")
 	 (+= div (+ "<img id='main-img' src='" 
 		    (@ main-pic path) "' />"))
 	 (+= div "<div id='other-imgs'>")
 	 (for-in (op other-pics)
 		 (+= div "<img src='" 
 		     (@ (aref other-pics op) path) "' />"))
-	 (+= div "</div>")
+	 (+= div "</div>");</#other-imgs>
+	 (+= div "</div>");</#estate-images>
+	 (+= div "<div id='estate-fields'>")
 	 (for-in (k fields)
 		 (+= div k ": " (aref fields k) "<br>"))
+	 (+= div "</div>");</#estate-fields>
+	 (+= div "<div id='estate-map-div'>")
+	 (+= div "<div id='single-estate-map'>")
+	 (+= div "</div>");</#estate-map>
+	 (+= div "</div>");</#estate-map-div>
 	 (+= div "</div>")
 	 div))
 
@@ -49,7 +57,15 @@
        (get-estate 
 	id (lambda (e)
 	     (if (!= e null)
-		 (progn (show-estate-div (gen-estate-div e)))
+		 (progn (show-estate-div (gen-estate-div e))
+			(defvar estate-map 
+			  (create-map-for-id "single-estate-map"))
+			(defvar loc-marker 
+			  (create-marker "Real estate map location"
+					 (new (google.maps.-lat-lng 
+					       (@ e loc-lat)
+					       (@ e loc-lat)))))
+			(chain loc-marker (set-map estate-map)))
 		 (alert "Loading estate failed, please try again."))
 	     e))
        (return false))
