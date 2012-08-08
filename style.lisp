@@ -25,7 +25,7 @@
 
 (defun style-edit-estate-form ()
   "
-  body { background-color:white; }
+  #edit-estate-form-div { background-color:white; }
   #edit-estate-form-div { padding:20px; }
   #edit-estate-form-div iframe { border:0; height:auto; width:auto; 
     width:400px; height:150px;
