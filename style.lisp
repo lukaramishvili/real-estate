@@ -13,7 +13,7 @@
   .grid-10 { width:20%; float:left; height:100%; }
   .grid-10 a { width:100%; height:18.6%; display:block; margin:1px; }
   #view-estate { display:none; width:900px; height:500px; }
-  #view-estate #main-img { width:250px; height:250px; }
+  #view-estate #estate-main-img { width:250px; height:250px; }
   #view-estate #estate-images { width:250px; float:left; margin-right:20px; }
   #view-estate #other-imgs { width:250px; }
   #view-estate #other-imgs img { width:50px; height:50px; }
@@ -25,6 +25,7 @@
 
 (defun style-edit-estate-form ()
   "
+  body { background-color:white; }
   #edit-estate-form-div { padding:20px; }
   #edit-estate-form-div iframe { border:0; height:auto; width:auto; 
     width:400px; height:150px;

@@ -168,9 +168,9 @@
 			(slot-value item label-slot))))))))
 
 (defun label-datepicker
-  (name &key (val (get-universal-time)))
+  (name &key (val (get-universal-time)) label)
   (let ((value (* 1000 (unix-time-from-universal val))))
-    (+s (label-input (+s "datepicker_" name))
+    (+s (label-input (+s "datepicker_" name) :label (or label name))
 	(+s "<input type='hidden' name='" name "' "
 	    " id='input_" name "' value='" value "' />")
 	(script-tag
@@ -414,7 +414,7 @@
 	     (label-input "desc" :val (desc e) :label "Description")
 	     (label-input "zmh" :val (zmh e) :label "ZMH Reference")
 	     (label-input "price" :val (price e))
-	     (label-input "since" :val (since e) :label "Date added")
+	     (label-datepicker "since" :val (since e) :label "Date added")
 	     (label-input "bedrooms" :val (bedrooms e) :label "Bedroom count")
 	     (label-input "bathrooms" :val (bathrooms e) :label "Bathroom count")
 	     (label-checkbox "terrace-p" :val 1 :checked (< 0 (terrace-p e)))
@@ -430,7 +430,7 @@
 			   :val (subdiv-permit e))
 	     (label-input "epc" :val (epc e) :label "EPC")
 	     (label-input "kad-ink" :val (kad-ink e) :label "K.I.")
-	     (label-input "visible" :val (visible e))
+	     (label-checkbox "visible" :val 1 :checked (< 0 (visible e)))
 	     (label-input "address" :val (address e))))
 	(:h4 "write address in the box or click on the map to set location")
 	(:div :id "estate-pics")

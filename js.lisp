@@ -31,12 +31,16 @@
 	     (other-pics (@ e other-pics)))
 	 (var div "<div>")
 	 (+= div "<div id='estate-images'>")
-	 (+= div (+ "<img id='main-img' src='" 
-		    (@ main-pic path) "' />"))
+	 (+= div "<a href='" (@ main-pic path) 
+	     "' id='estate-main-img-a' "
+	     " rel='estate-gallery'>" "<img id='estate-main-img' src='" 
+	     (@ main-pic path) "' /></a>")
 	 (+= div "<div id='other-imgs'>")
-	 (for-in (op other-pics)
-		 (+= div "<img src='" 
-		     (@ (aref other-pics op) path) "' />"))
+	 (for-in 
+	  (op other-pics)
+	  (let ((next-img (@ (aref other-pics op) path)))
+	    (+= div "<a href='" next-img "' rel='estate-gallery'>"
+		"<img src='" next-img "' /></a>")))
 	 (+= div "</div>");</#other-imgs>
 	 (+= div "</div>");</#estate-images>
 	 (+= div "<div id='estate-fields'>")
@@ -57,15 +61,20 @@
        (get-estate 
 	id (lambda (e)
 	     (if (!= e null)
-		 (progn (show-estate-div (gen-estate-div e))
-			(defvar estate-map 
-			  (create-map-for-id "single-estate-map"))
-			(defvar loc-marker 
-			  (create-marker "Real estate map location"
-					 (new (google.maps.-lat-lng 
-					       (@ e loc-lat)
-					       (@ e loc-lat)))))
-			(chain loc-marker (set-map estate-map)))
+		 (progn 
+		   (show-estate-div (gen-estate-div e))
+		   ($$ "#estate-main-img-a,#other-imgs > a" (fancybox))
+					;($$ "" (fancybox))
+		   (defvar estate-loc (new (google.maps.-lat-lng 
+					    (@ e loc-lat)
+					    (@ e loc-lat))))
+		   (defvar estate-map 
+		     (create-map-for-id "single-estate-map"))
+		   (defvar loc-marker 
+		     (create-marker "Real estate map location"
+				    estate-loc))
+		   (chain loc-marker (set-map estate-map))
+		   (chain estate-map (set-center estate-loc)))
 		 (alert "Loading estate failed, please try again."))
 	     e))
        (return false))

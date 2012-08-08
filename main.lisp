@@ -303,7 +303,8 @@
 	    (estate-form-pic-box uniq-rem-pic-uuid))))))
 
 (htoot-handler 
-    (get-estate-handler "/get-estate" ((id :parameter-type 'integer))) 
+    (get-estate-handler "/get-estate" 
+			((id :parameter-type 'integer)))
   (with-re-db
     (let ((e (get-dao 'estate id)))
       (if e
@@ -324,5 +325,7 @@
 			   :munic (munic e)
 			   :ix-country (ix-country e)
 			   ;;TODO:etc
-			   ))))
+			   ))
+	    :loc-lat (loc-lat e)
+	    :loc-lng (loc-lng e)))
 	  "{}"))))
