@@ -42,6 +42,7 @@
 	    (+= div "<a href='" next-img "' rel='estate-gallery'>"
 		"<img src='" next-img "' /></a>")))
 	 (+= div "</div>");</#other-imgs>
+	 (+= div "<a id='estate-toggle-fav'>Favorite</a>")
 	 (+= div "</div>");</#estate-images>
 	 (+= div "<div id='estate-fields'>")
 	 (for-in (k fields)

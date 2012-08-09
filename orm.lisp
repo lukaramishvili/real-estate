@@ -114,7 +114,7 @@
 	    :accessor summons :initform "")
    (preemption :col-type string :initarg :preemption 
 	       :accessor preemption :initform "")
-   (subdiv-permit :col-type string :initarg :subdiv-permi 
+   (subdiv-permit :col-type string :initarg :subdiv-permit 
 		  :accessor subdiv-permit :initform "")
    (epc :col-type float :initarg :epc :accessor epc :initform 0)
    (kad-ink :col-type float :initarg :kad-ink :accessor kad-ink :initform 0)
@@ -168,3 +168,8 @@
 	     'pic 
 	     (:and (:= :ix-estate (ix-estate e)) 
 		   (:!= :ix-pic (ix-main-pic e))))))))
+
+(defun get-country (ix-country)
+  (loop for i in (all-countries) 
+     do (if (= (car i) ix-country) 
+	    (return (cadr i)))))
