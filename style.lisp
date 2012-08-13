@@ -7,9 +7,20 @@
 	       (:left x) (:top y) (:width w) (:height h)))))
 
 (defun style-firstpage ()
-  "
+  (+s
+   "
   body { background-color:black; }
-  #search-bar { position:fixed; left:0px; top:0px; }
+  #search-bar { position:fixed; left:-250px; top:0px; width:250px; height:100%;
+    background-color:white; }
+  #btn-toggle-search { position:absolute; right:-40px; top:50%; color:white; }
+
+  #search-bar input,#search-bar label,#search-bar select 
+      { float:left; display:block; margin-bottom:4px; }
+  #search-bar label { width:100px; }
+  #search-bar label.label-left { clear: left; }
+  #search-bar label.label-right { clear: right; }
+  #search-bar input[type='checkbox'] { clear:left; margin-right:135px; }
+
   .grid-10 { width:20%; float:left; height:100%; }
   .grid-10 a { width:100%; height:18.6%; display:block; margin:1px; }
   #view-estate { display:none; width:900px; height:500px; }
@@ -21,7 +32,7 @@
   #view-estate #estate-map-div { width:250px; float:left; height:250px;
       margin-right:20px; }
   #view-estate #single-estate-map { width:250px; height:250px; }
-  ")
+  "))
 
 (defun style-edit-estate-form ()
   "

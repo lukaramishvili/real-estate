@@ -371,7 +371,30 @@
 	       (+s "<div class='grid-10'>" 
 		   (reduce #'+s (nth i filled-grid)) "</div>"))))))
     (:div :id "view-estate")
-    (:div :id "search-bar")))
+    (:div 
+     :id "search-bar"
+     (:a :href "javascript:void(0)" :id "btn-toggle-search"
+	 "Search")
+     (cl-who:str 
+      (+s
+       (label-select "apt-type" :options (apt-type-options))
+       (label-select "status" :options (status-options))
+       (label-select "ix-country" :options (all-countries))
+       (label-select "constr" :options (constr-options))
+       (label-input "total-min")
+       (label-input "total-max")
+       (label-input "price-min")
+       (label-input "price-max")
+       (label-input "bedrooms-min")
+       (label-input "bathrooms-min")
+       (label-checkbox "terrace")
+       (label-checkbox "garden")
+       (label-checkbox "building-permit")
+       (label-select "summons" :options (summons-options))
+       (label-select "preemption" :options (preemption-options))
+       (label-select "subdiv-permit" :options (subdiv-permit-options))
+       )))
+    (cl-who:str (script-tag (fp-search-js)))))
 
 	
       ;;TODO: populate a grid (generated with uneven-grid) with fp-pics

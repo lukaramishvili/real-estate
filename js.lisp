@@ -152,3 +152,13 @@
     }
     /*end function MapMarkerACCombo*/
     "))
+
+(defun fp-search-js ()
+  (+s "
+  var fSearchOpen = false;
+  $('#btn-toggle-search').click(function(){
+       $('#search-bar').animate({ 'left' : fSearchOpen ? -250 : 0 }, 'slow');
+       $('#main').animate({ 'padding-left' : fSearchOpen ? 0 : 250 }, 'slow');
+       fSearchOpen = !fSearchOpen;
+   });
+  "))
