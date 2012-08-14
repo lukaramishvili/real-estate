@@ -154,11 +154,30 @@
     "))
 
 (defun fp-search-js ()
-  (+s "
+  (+s 
+   "
   var fSearchOpen = false;
   $('#btn-toggle-search').click(function(){
        $('#search-bar').animate({ 'left' : fSearchOpen ? -250 : 0 }, 'slow');
        $('#main').animate({ 'padding-left' : fSearchOpen ? 0 : 250 }, 'slow');
        fSearchOpen = !fSearchOpen;
    });
-  "))
+  "
+   (ps
+     (defun load-results ()
+       ($.ajax
+	(create 
+	 :url "/filter" :type :post :data-type :json
+	 :data 
+	 (create 
+	  :preds (-j-s-o-n.stringify 
+		  (create :pred1 "val1"
+			  :pred2 "val2"
+			  ;;TODO: insert real predicate names here
+			  ))))
+	))
+     ($$ "#search-bar select"
+	 (change (lambda () (load-results))))
+     ($$ "#search-bar input"
+	 (blur (lambda () (load-results))))
+     )))
