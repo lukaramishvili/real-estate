@@ -1,6 +1,7 @@
 (in-package :re)
 
 (ql:quickload :cl-jpeg)
+(ql:quickload :closer-mop)
 
 (defun +s (&rest args)
   (apply #'concatenate
@@ -32,6 +33,22 @@
 (defun universal-time-from-unix (unix-time)
   (let ((unix-difference (encode-universal-time 0 0 0 1 1 1970 0)))
     (+ unix-time unix-difference)))
+
+(defun slot-name-symbols (class-name)
+  "returns a list of slot names for class-name CLOS class using closer-mop"
+  (mapcar #'closer-mop:slot-definition-name 
+	  (closer-mop:class-slots (closer-mop::find-class class-name))))
+
+(defun valid-slot-p (class-name slot-name)
+  "returns t if class-name has slot slot-name"
+  (let ((slotname-sym 
+	 (cond ((keywordp slot-name) (intern (symbol-name slot-name)))
+	       ((symbolp slot-name) slot-name)
+	       ((stringp slot-name) (intern (string-upcase slot-name))))))
+    (if (member slotname-sym (slot-name-symbols class-name))
+	t)))
+
+;;; cl-rss
 
 (defun rss-skeleton
   (&key (title "") (link-self "") (link-alt "") (subtitle "")

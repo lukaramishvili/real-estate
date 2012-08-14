@@ -95,18 +95,18 @@
    (desc :col-type string :initarg :desc :accessor desc :initform "")
    (zmh :col-type string :initarg :zmh :accessor zmh :initform "")
    (price :col-type float :initarg :price :accessor price :initform 0)
-   (since :col-type integer :initarg :since :accessor since :initform 0)
+   (since :col-type bigint :initarg :since :accessor since :initform 0)
    (bedrooms :col-type integer :initarg :bedrooms 
 	     :accessor bedrooms :initform 0)
    (bathrooms :col-type integer :initarg :bathrooms 
 	      :accessor bathrooms :initform 0)
-   (terrace-p :col-type integer :initarg :terrace-p 
+   (terrace-p :col-type boolean :initarg :terrace-p 
 	      :accessor terrace-p :initform 0)
-   (garden-p :col-type integer :initarg :garden-p 
+   (garden-p :col-type boolean :initarg :garden-p 
 	     :accessor garden-p :initform 0)
    (parking-lots :col-type integer :initarg :parking-lots 
 		 :accessor parking-lots :initform 0)
-   (building-permit-p :col-type integer :initarg :building-permit-p 
+   (building-permit-p :col-type boolean :initarg :building-permit-p 
 		    :accessor building-permit-p :initform 0)
    (destination :col-type string :initarg :destination 
 		:accessor destination :initform "")
@@ -203,3 +203,63 @@
 	 :epc (epc e)
 	 :kad-ink (kad-ink e)
 	 )))
+
+#+nil 
+(defmacro filter-estates (filters-alist)
+  `(let ((f-a (remove-if-not 
+	       (lambda(aitem)
+		 (valid-slot-p 'estate (car aitem)))
+	       ,filters-alist))
+	 (apt-type (if assoc)
+	 )
+     (with-re-db 
+       (select-dao 
+	'estate
+	(:and 
+	 t
+	 ,@(if (assoc :apt-type f-a)
+	       '(:= :apt-type (car (assoc :apt-type f-a))))))
+	))))
+
+(defun filter-estates (filters-alist)
+  (let* ((fa filters-alist)
+	 (apt-type (cdr (assoc :apt-type fa)))
+	 (status (cdr (assoc :status fa)))
+	 (ix-country (cdr (assoc :ix-country fa)))
+	 (constr (cdr (assoc :constr fa)))
+	 (total-min (cdr (assoc :total-min fa)))
+	 (total-max (cdr (assoc :total-max fa)))
+	 (price-min (cdr (assoc :price-min fa)))
+	 (price-max (cdr (assoc :price-max fa)))
+	 (bedrooms-min (cdr (assoc :bedrooms-min fa)))
+	 (bathrooms-min (cdr (assoc :bathrooms-min fa)))
+	 (terrace (cdr (assoc :terrace fa)))
+	 (garden (cdr (assoc :garden fa)))
+	 (building-permit (cdr (assoc :building-permit fa)))
+	 (summons (cdr (assoc :summons fa)))
+	 (preemption (cdr (assoc :preemption fa)))
+	 (subdiv-permit (cdr (assoc :subdiv-permit fa))))
+    (with-re-db
+      (eval 
+       `(select-dao 
+	 'estate
+	 (:and 
+	  t
+	  ,(if apt-type `(:= :apt-type ,apt-type) t)
+	  ,(if status `(:= :status ,status) t)
+	  ,(if ix-country `(:= :ix-country ,ix-country) t)
+	  ,(if constr `(:= :constr ,constr) t)
+	  ,(if total-min `(:>= :total ,total-min) t)
+	  ,(if total-max `(:<= :total ,total-max) t)
+	  ,(if price-min `(:>= :price ,price-min) t)
+	  ,(if price-max `(:<= :price ,price-max) t)
+	  ,(if bedrooms-min `(:<= :bedrooms ,bedrooms-min) t)
+	  ,(if bathrooms-min `(:<= :bathrooms ,bathrooms-min) t)
+	  ,(if terrace `(:= :terrace-p ,terrace) t)
+	  ,(if garden `(:= :garden-p ,garden) t)
+	  ,(if building-permit `(:= :building-permit-p ,building-permit) t)
+	  ,(if summons `(:= :summons ,summons) t)
+	  ,(if preemption `(:= :preemption ,preemption) t)
+	  ,(if subdiv-permit `(:= :subdiv-permit ,subdiv-permit) t))
+	 ))))))))
+

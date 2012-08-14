@@ -164,17 +164,45 @@
    });
   "
    (ps
+     (defun inp-pos-val (selector)
+       (let ((val ($$ selector (val))))
+	 (and (< 0 (@ val length))
+	      (< 0 val))))
+
+     (defun gen-json-filter ()
+       (var ff (create 
+		:apt-type ($$ "#input_apt-type" (val))
+		:status ($$ "#input_status" (val))
+		:ix-country ($$ "#input_ix-country" (val))
+		:constr ($$ "#input_counstr" (val))
+		:terrace (@ (@ ($$ "#input_terrace") 0) :checked)
+		:garden (@ (@ ($$ "#input_garden") 0) :checked)
+		:building-permit (@ (@ ($$ "#input_building-permit") 0) 
+                                    :checked)
+		:summons ($$ "#input_summons" (val))
+		:preemption ($$ "#input_preemption" (val))
+		:subdiv-permit ($$ "#input_subdiv-permit" (val))
+		))
+       (if (inp-pos-val "#input_total-min")
+	   (setf (@ ff :total-min) ($$ "#input_total-min" (val))))
+       (if (inp-pos-val "#input_total-max")
+	   (setf (@ ff :total-max) ($$ "#input_total-max" (val))))
+       (if (inp-pos-val "#input_price-min") 
+	   (setf (@ ff :price-min) ($$ "#input_price-min" (val))))
+       (if (inp-pos-val "#input_price-max")
+	   (setf (@ ff :price-max) ($$ "#input_price-max" (val))))
+       (if (inp-pos-val "#input_bedrooms-min")
+	   (setf (@ ff :bedrooms-min) ($$ "#input_bedrooms-min" (val))))
+       (if (inp-pos-val "#input_bedrooms-min") 
+	   (setf (@ ff :bathrooms-min) ($$ "#input_bathrooms-min" (val))))
+       ff)
      (defun load-results ()
        ($.ajax
 	(create 
-	 :url "/filter" :type :post :data-type :json
-	 :data 
-	 (create 
-	  :preds (-j-s-o-n.stringify 
-		  (create :pred1 "val1"
-			  :pred2 "val2"
-			  ;;TODO: insert real predicate names here
-			  ))))
+	 url "/filter" type :post data-type :json
+	 data (create :preds (-j-s-o-n.stringify 
+			       (gen-json-filter)))
+	 success (lambda (data) (console.log data)))
 	))
      ($$ "#search-bar select"
 	 (change (lambda () (load-results))))
