@@ -158,8 +158,8 @@
    "
   var fSearchOpen = false;
   $('#btn-toggle-search').click(function(){
-       $('#search-bar').animate({ 'left' : fSearchOpen ? -250 : 0 }, 'slow');
-       $('#main').animate({ 'padding-left' : fSearchOpen ? 0 : 250 }, 'slow');
+       $('#search-bar').animate({ 'left' : fSearchOpen ? -272 : 0 }, 'slow');
+       //$('#main').animate({ 'padding-left' : fSearchOpen ? 0 : 250 }, 'slow');
        fSearchOpen = !fSearchOpen;
    });
   "
@@ -204,8 +204,17 @@
 			       (gen-json-filter)))
 	 success (lambda (data) (console.log data)))
 	))
+
+     (var timeout-on-change 0)
      ($$ "#search-bar select"
 	 (change (lambda () (load-results))))
      ($$ "#search-bar input"
-	 (blur (lambda () (load-results))))
+	 (keydown (lambda ()
+		    ;;when the user types filters, update results
+		    ;;but update according only to last change
+		    (clear-timeout timeout-on-change)
+		    (setf timeout-on-change 
+			  (set-timeout (lambda ()
+					 (load-results))
+				       2200)))))
      )))

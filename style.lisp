@@ -11,9 +11,10 @@
    "
   body { background-color:black; }
   #search-bar { position:fixed; left:-250px; top:0px; width:250px; height:100%;
-    background-color:#333; }
-  #btn-toggle-search { position:absolute; right:-60px; top:50%; color:white;
-    display:block; width:70px; height:70px;
+    background:transparent url(css/img/gray-bg.png) left top repeat; 
+    padding:12px 10px 0px 12px; }
+  #btn-toggle-search { position:absolute; right:-25px; top:45%; color:white;
+    display:block; width:45px; height:45px;
     background:transparent url(css/img/search-btn.png) left top no-repeat; }
 
   #search-bar input,#search-bar label,#search-bar select 
@@ -21,7 +22,7 @@
   #search-bar label { width:100px; color:#ccc; }
   #search-bar label.label-left { clear: left; }
   #search-bar label.label-right { clear: right; }
-  #search-bar input[type='checkbox'] { clear:left; margin-right:135px; }
+  #search-bar input[type='checkbox'] { clear:left; }
 
   #fp-pics { height:100%; }
   .grid-10 { width:20%; float:left; height:100%; }
