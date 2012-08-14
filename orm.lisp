@@ -261,5 +261,4 @@
 	  ,(if summons `(:= :summons ,summons) t)
 	  ,(if preemption `(:= :preemption ,preemption) t)
 	  ,(if subdiv-permit `(:= :subdiv-permit ,subdiv-permit) t))
-	 ))))))))
-
+	 )))))

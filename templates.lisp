@@ -339,42 +339,44 @@
 (defun re-firstpage ()
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
-    (cl-who:str
-     (with-re-db
-       (let* 
-	   ((normal-size-pics 
-	     (mapcar 
-	      (lambda (p) 
-		(+s 
-		 "<a href='#view-estate' class='fp-estate-link' " 
-		 " ixestate='" (ix-estate p) "'" 
-		 " style='background:transparent url(" 
-		 (linkable-pic-path p)") center center no-repeat;' " 
-		 ">"
-		;"<img src='" (linkable-pic-path p) "' class='img-min' />" 
-		    "</a>"))
-	      (pics-for-firstpage)))
-	    (2x2-size-pics 
-	     (mapcar (lambda (p) 
-		       (+s  "<img src='" (linkable-pic-path p) 
-			    "' class='img-sq' />"))
-		     (pics-for-firstpage)))
-	    (grid-width 5);;decide width based on total img count
-	    (grid-height 5)
-	    (grid (uneven-grid grid-width grid-height))
-	    (filled-grid (fill-grid grid (list :minimals normal-size-pics 
-					       :squares 2x2-size-pics))))
-	 (apply 
-	  #'+s 
-	  (loop for i from 0 to (1- (length filled-grid))
-	     collecting 
-	       (+s "<div class='grid-10'>" 
-		   (reduce #'+s (nth i filled-grid)) "</div>"))))))
+    (:div 
+     :id "fp-pics"
+     (cl-who:str
+      (with-re-db
+	(let* 
+	    ((normal-size-pics 
+	      (mapcar 
+	       (lambda (p) 
+		 (+s 
+		  "<a href='#view-estate' class='fp-estate-link' " 
+		  " ixestate='" (ix-estate p) "'" 
+		  " style='background:transparent url(" 
+		  (linkable-pic-path p)") center center no-repeat;' " 
+		  ">"
+		  ;;"<img src='" (linkable-pic-path p) "' class='img-min' />" 
+		  "</a>"))
+	       (pics-for-firstpage)))
+	     (2x2-size-pics 
+	      (mapcar (lambda (p) 
+			(+s  "<img src='" (linkable-pic-path p) 
+			     "' class='img-sq' />"))
+		      (pics-for-firstpage)))
+	     (grid-width 5);;decide width based on total img count
+	     (grid-height 5)
+	     (grid (uneven-grid grid-width grid-height))
+	     (filled-grid (fill-grid grid (list :minimals normal-size-pics 
+						:squares 2x2-size-pics))))
+	  (apply 
+	   #'+s 
+	   (loop for i from 0 to (1- (length filled-grid))
+	      collecting 
+		(+s "<div class='grid-10'>" 
+		    (reduce #'+s (nth i filled-grid)) "</div>")))))))
     (:div :id "view-estate")
     (:div 
      :id "search-bar"
      (:a :href "javascript:void(0)" :id "btn-toggle-search"
-	 "Search")
+	 "&nbsp;")
      (cl-who:str 
       (+s
        (label-select "apt-type" :options (apt-type-options))

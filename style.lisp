@@ -11,16 +11,19 @@
    "
   body { background-color:black; }
   #search-bar { position:fixed; left:-250px; top:0px; width:250px; height:100%;
-    background-color:white; }
-  #btn-toggle-search { position:absolute; right:-40px; top:50%; color:white; }
+    background-color:#333; }
+  #btn-toggle-search { position:absolute; right:-60px; top:50%; color:white;
+    display:block; width:70px; height:70px;
+    background:transparent url(css/img/search-btn.png) left top no-repeat; }
 
   #search-bar input,#search-bar label,#search-bar select 
       { float:left; display:block; margin-bottom:4px; }
-  #search-bar label { width:100px; }
+  #search-bar label { width:100px; color:#ccc; }
   #search-bar label.label-left { clear: left; }
   #search-bar label.label-right { clear: right; }
   #search-bar input[type='checkbox'] { clear:left; margin-right:135px; }
 
+  #fp-pics { height:100%; }
   .grid-10 { width:20%; float:left; height:100%; }
   .grid-10 a { width:100%; height:18.6%; display:block; margin:1px; }
   #view-estate { display:none; width:900px; height:500px; }
