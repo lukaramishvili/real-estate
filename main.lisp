@@ -198,6 +198,28 @@
 		 :body (estate-edit-form ed-estate)))
       (login-page :redir "/edit-estate")))
 
+;;;returns a list of success (bool), ix-estate, error message
+(defun save-estate-and-pics (ix-estate save-e e-pics)
+  (progn
+    (if (> ix-estate 0) (setf (ix-estate save-e) ix-estate))
+    (with-re-db 
+      (if 
+       (save-dao save-e)
+       (progn
+	 (loop for e-p in e-pics
+	    do (setf (ix-estate e-p) (ix-estate save-e))
+	      (save-dao e-p);save to get insert-id
+	      (ensure-directories-exist 
+	       (smake *upload-dir* "pics/" (ix-pic e-p) "/"))
+	      (setf (path e-p) 
+		    (+s (rename-file 
+			 (path e-p)
+			 (smake *upload-dir* "pics/" (ix-pic e-p) "/" 
+				(file-namestring (path e-p))))))
+	      (save-dao e-p));now save to update path
+	 (list t (ix-estate save-e) "Real estate saved!"))
+       (list nil ix-estate "Error while saving estate!")))))
+
 (htoot-handler
     (estate-save-handler
      "/save-estate"
@@ -237,40 +259,27 @@
       (let* ((save-e
 	      (make-instance
 	       'estate :ix-user (ix-user (session-value 'user-authed))
-	       :address address :telnum telnum :visible visible
+	       :address address :telnum telnum :visible (> visible 0)
 	       :ix-main-pic ix-main-pic :loc-lat loc-lat :loc-lng loc-lng
 	        
 	       :apt-type apt-type :status status :pst-code pst-code :munic munic 
 	       :ix-country ix-country :constr constr :total total :land land 
 	       :desc desc :zmh zmh :price price :since since :bedrooms bedrooms 
-	       :bathrooms bathrooms :terrace-p terrace-p :garden-p garden-p 
-	       :parking-lots parking-lots :building-permit-p building-permit-p 
+	       :bathrooms bathrooms :terrace-p (> terrace-p 0) 
+	       :garden-p (> garden-p 0) :parking-lots parking-lots 
+	       :building-permit-p (> building-permit-p 0)
 	       :destination destination :summons summons :preemption preemption 
 	       :subdiv-permit subdiv-permit :epc epc :kad-ink kad-ink))
 	     (e-pics
 	      (loop for k being the hash-keys of (session-value 'rem-pics)
 		 using (hash-value v)
 		 collecting v)))
-	(progn
-	  (if (> ix-estate 0) (setf (ix-estate save-e) ix-estate))
-	  (with-re-db 
-	    (if 
-	     (save-dao save-e)
-	     (progn
-	       (loop for e-p in e-pics
-		  do (setf (ix-estate e-p) (ix-estate save-e))
-		    (save-dao e-p);save to get insert-id
-		    (ensure-directories-exist 
-		     (smake *upload-dir* "pics/" (ix-pic e-p) "/"))
-		    (setf (path e-p) 
-			  (+s (rename-file 
-			       (path e-p)
-			       (smake *upload-dir* "pics/" (ix-pic e-p) "/" 
-				      (file-namestring (path e-p))))))
-		    (save-dao e-p));now save to update path
-	       (setf (session-value 'rem-pics) nil)
-	       "Real estate saved!")
-	     "Error while saving estate!"))))
+	(destructuring-bind
+	      (success-p ix-saved-e error-message)
+	    (save-estate-and-pics ix-estate save-e e-pics)
+	  ;;if saved successfully, remove images in session
+	  (if success-p (setf (session-value 'rem-pics) nil))
+	  error-message))
       "Not logged in!"))
 
 (htoot-handler (estate-form-pic-box-handler "/estate-form-pic-box" 

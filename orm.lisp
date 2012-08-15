@@ -76,10 +76,10 @@
    (address :col-type string :initarg :address :accessor address :initform "")
    (telnum :col-type string :initarg :telnum :accessor telnum :initform "")
    (ix-main-pic :col-type integer :initarg :ix-main-pic :accessor ix-main-pic
-		:initform "")
+		:initform 0)
    (loc-lat :col-type string :initarg :loc-lat :accessor loc-lat :initform "0")
    (loc-lng :col-type string :initarg :loc-lng :accessor loc-lng :initform "0")
-   (visible :col-type integer :initarg :visible :accessor visible :initform 0)
+   (visible :col-type boolean :initarg :visible :accessor visible :initform 0)
 
    (apt-type :col-type string :initarg :apt-type 
 	     :accessor apt-type :initform "")
