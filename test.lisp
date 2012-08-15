@@ -35,7 +35,7 @@
    :ix-country (random-car-from (all-countries))
    :constr (random-from (constr-options)) :total (random 300) 
    :land (random 2000) :desc (random-string (random 2000))
-   :zmh (random-string 6 :bag "0123456789") :price (random 500000)
+   :zmh (random-string 6 :bag "0123456789") :price (random 500000.0)
    :since (+ 3554007995 (random 30000)) :bedrooms (random 5)
    :bathrooms (random 6) :terrace-p (random-bool) :garden-p (random-bool)
    :parking-lots (random 6) :building-permit-p (random-bool)
@@ -43,7 +43,7 @@
    :summons (random-car-from (summons-options))
    :preemption (random-car-from (preemption-options))
    :subdiv-permit (random-car-from (subdiv-permit-options))
-   :epc (random 145) :kad-ink (random 5000)))
+   :epc (random 145.0) :kad-ink (random 5000.0)))
 
 (defun cook-temp-pic-file ()
   "copies a img file to a temp location, and returns path"
