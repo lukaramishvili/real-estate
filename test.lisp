@@ -56,7 +56,7 @@
 
 (defun make-random-temp-pic ()
   (make-instance 'pic :path (cook-temp-pic-file)
-		 :order 0 :ix-estate 0)))
+		 :order 0 :ix-estate 0))
 
 (defun add-random-estate-with-pics (pic-count)
   (let ((e (make-random-estate))
