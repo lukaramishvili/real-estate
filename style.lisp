@@ -16,6 +16,9 @@
   #btn-toggle-search { position:absolute; right:-25px; top:45%; color:white;
     display:block; width:45px; height:45px;
     background:transparent url(css/img/search-btn.png) left top no-repeat; }
+  
+  .fancybox-skin { background:transparent url(css/img/gray-bg.png) 
+      left top repeat !important; }
 
   #search-bar input,#search-bar label,#search-bar select 
       { float:left; display:block; margin-bottom:4px; }
@@ -27,7 +30,7 @@
   #fp-pics { height:100%; }
   .grid-10 { width:20%; float:left; height:100%; }
   .grid-10 a { width:100%; height:18.6%; display:block; margin:1px; }
-  #view-estate { display:none; width:900px; height:500px; }
+  #view-estate { display:none; width:900px; height:500px; color:white; }
   #view-estate #estate-main-img { width:250px; height:250px; }
   #view-estate #estate-images { width:250px; float:left; margin-right:20px; }
   #view-estate #other-imgs { width:250px; }
