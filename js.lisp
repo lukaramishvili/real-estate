@@ -221,43 +221,45 @@
 		 (next-row-skip-count 0))
 	     (for-in 
 	      (ie es)
-	      (var this-pic-4x-p false)
-	      (if (and (== col-offset 1) (== row-offset 1))
-		  (setf this-pic-4x-p true))
-	      (when this-pic-4x-p 
-		(+= this-row-skip-count 1)
-		;;prepare a count of how many images to skip on next row
-		(+= next-row-skip-count 2))
-	      (var td-4x-spec (if this-pic-4x-p
-				  " class='td-4x' colspan='2' rowspan='2' "
-				  ""))
-	      (let ((e (aref es ie)))
-		(var e-gen (+ "<td align='left' valign='top' " td-4x-spec ">" 
-			      "<a href='#view-estate' " 
-			      " class='fp-estate-link'" 
-			      " ixestate=" (@ e ix-estate) ">"
-			      "<img src='" (@ (@ e main-pic) path)  
-			      "' /></a></td>"))
-		(+= tbl e-gen))
-	      (+= col-offset 1)
-	      ;;start new tr
-	      (when (>= (+ col-offset this-row-skip-count) img-per-row) 
-		(+= tbl "</tr>")
-		(setf col-offset 0)
-		(+= row-offset 1)
-		;;here, we are starting a new row
-		;;on this row, skip images 2x count of this row's 4x images
-		(setf this-row-skip-count next-row-skip-count)
-		;;ain't no big images on new row yet, so there's nothing to skip
-		(setf next-row-skip-count 0)
-		;;start new table
-		(when (>= row-offset img-per-col)
-		  (setf row-offset 0)
-		  (+= tbl (+ "</table></div>" tbl-def))
-		  ;;temporarily stop after displaying first table
-		  (break))
-		(+= tbl "<tr>"))
-	     ))
+	      (when
+		  (and (@ e ix-estate) (@ e main-pic))
+		(var this-pic-4x-p false)
+		(if (and (== col-offset 1) (== row-offset 1))
+		    (setf this-pic-4x-p true))
+		(when this-pic-4x-p 
+		  (+= this-row-skip-count 1)
+		  ;;prepare a count of how many images to skip on next row
+		  (+= next-row-skip-count 2))
+		(var td-4x-spec (if this-pic-4x-p
+				    " class='td-4x' colspan='2' rowspan='2' "
+				    ""))
+		(let ((e (aref es ie)))
+		  (var e-gen (+ "<td align='left' valign='top' " td-4x-spec ">" 
+				"<a href='#view-estate' " 
+				" class='fp-estate-link'" 
+				" ixestate=" (@ e ix-estate) ">"
+				"<img src='" (@ (@ e main-pic) path)  
+				"' /></a></td>"))
+		  (+= tbl e-gen))
+		(+= col-offset 1)
+		;;start new tr
+		(when (>= (+ col-offset this-row-skip-count) img-per-row) 
+		  (+= tbl "</tr>")
+		  (setf col-offset 0)
+		  (+= row-offset 1)
+		  ;;here, we are starting a new row
+		  ;;on this row, skip images 2x count of this row's 4x images
+		  (setf this-row-skip-count next-row-skip-count)
+		  ;;ain't no big imgs on new row yet, so there's nothing to skip
+		  (setf next-row-skip-count 0)
+		  ;;start new table
+		  (when (>= row-offset img-per-col)
+		    (setf row-offset 0)
+		    (+= tbl (+ "</table></div>" tbl-def))
+		    ;;temporarily stop after displaying first table
+		    (break))
+		  (+= tbl "<tr>"))
+		)))
 	   (+= tbl "</tr></table></div>")
 	   ($$ "#fp-pics" (append tbl))
 	   (console.log data)))
