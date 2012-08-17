@@ -48,27 +48,47 @@
 
 ;;;;;;;; project-specific code
 
-(defun apt-type-options ()
-  (list "apartment" "house" "land" "office" 
-	"commercial" "garage" "new"))
+(defun spec-f-p (filter)
+  "specific-filter-p: returns true if the filter is specific 
+   (not including everything)"
+  (and filter 
+       (not (string= filter "*"))))
 
-(defun status-options ()
-  (list "sale" "rent"))
+(defun apt-type-options (&key not-sel)
+  (concatenate 'list 
+	       (if not-sel (list "*"))
+	       (list "apartment" "house" "land" "office" 
+		     "commercial" "garage" "new")))
 
-(defun all-countries ()
-  (list (list 1 "Belgium") (list 2 "Niederlands")))
+(defun status-options (&key not-sel)
+  (concatenate 'list 
+	       (if not-sel (list "*"))
+  (list "sale" "rent")))
 
-(defun constr-options ()
-  (list "detached" "terraced" "semi-detached"))
+(defun all-countries (&key not-sel)
+  (concatenate 'list 
+	       (if not-sel (list "*"))
+  (list (list 1 "Belgium") (list 2 "Niederlands"))))
 
-(defun summons-options ()
-  (list (list "nvt" "NVT") (list "vt" "VT")))
+(defun constr-options (&key not-sel)
+  (concatenate 'list 
+	       (if not-sel (list "*"))
+  (list "detached" "terraced" "semi-detached")))
 
-(defun preemption-options ()
-  (list (list "nvt" "NVT") (list "vt" "VT")))
+(defun summons-options (&key not-sel)
+  (concatenate 'list 
+	       (if not-sel (list "*"))
+  (list (list "nvt" "NVT") (list "vt" "VT"))))
 
-(defun subdiv-permit-options ()
-  (list (list "nvt" "NVT") (list "vt" "VT")))
+(defun preemption-options (&key not-sel)
+  (concatenate 'list 
+	       (if not-sel (list "*"))
+  (list (list "nvt" "NVT") (list "vt" "VT"))))
+
+(defun subdiv-permit-options (&key not-sel)
+  (concatenate 'list 
+	       (if not-sel (list "*"))
+  (list (list "nvt" "NVT") (list "vt" "VT"))))
 
 (defclass estate ()
   ((ix-estate :col-type serial :initarg :ix-estate :accessor ix-estate)
@@ -245,10 +265,10 @@
 	 'estate
 	 (:and 
 	  t
-	  ,(if apt-type `(:= :apt-type ,apt-type) t)
-	  ,(if status `(:= :status ,status) t)
-	  ,(if ix-country `(:= :ix-country ,ix-country) t)
-	  ,(if constr `(:= :constr ,constr) t)
+	  ,(if (spec-f-p apt-type) `(:= :apt-type ,apt-type) t)
+	  ,(if (spec-f-p status) `(:= :status ,status) t)
+	  ,(if (spec-f-p ix-country) `(:= :ix-country ,ix-country) t)
+	  ,(if (spec-f-p constr) `(:= :constr ,constr) t)
 	  ,(if total-min `(:>= :total ,total-min) t)
 	  ,(if total-max `(:<= :total ,total-max) t)
 	  ,(if price-min `(:>= :price ,price-min) t)
@@ -258,7 +278,7 @@
 	  ,(if terrace `(:= :terrace-p ,terrace) t)
 	  ,(if garden `(:= :garden-p ,garden) t)
 	  ,(if building-permit `(:= :building-permit-p ,building-permit) t)
-	  ,(if summons `(:= :summons ,summons) t)
-	  ,(if preemption `(:= :preemption ,preemption) t)
-	  ,(if subdiv-permit `(:= :subdiv-permit ,subdiv-permit) t))
+	  ,(if (spec-f-p summons) `(:= :summons ,summons) t)
+	  ,(if (spec-f-p preemption) `(:= :preemption ,preemption) t)
+	  ,(if (spec-f-p subdiv-permit) `(:= :subdiv-permit ,subdiv-permit) t))
 	 )))))

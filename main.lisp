@@ -313,7 +313,8 @@
 
 (defun estate-for-json (e)
   (json:encode-json-plist-to-string
-   (list :main-pic (pic-to-hashtable (ix-main-pic e)
+   (list :ix-estate (ix-estate e)
+	 :main-pic (pic-to-hashtable (ix-main-pic e)
 				     :make-path-linkable t)
 	 :other-pics (mapcar (lambda (p)
 			       (pic-to-hashtable 

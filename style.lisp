@@ -28,6 +28,12 @@
   #search-bar input[type='checkbox'] { clear:left; }
 
   #fp-pics { height:100%; }
+  /*#fp-pics a img {  }*/
+  #fp-pics .table-cont { /*width:1500px;*/ float:left; }
+  .fp-estate-link img { width:150px; height:150px; margin:0px 1px 0px 1px; }
+  td.td-4x a img { width:300px; height:300px; }
+  
+  
   .grid-10 { width:20%; float:left; height:100%; }
   .grid-10 a { width:100%; height:18.6%; display:block; margin:1px; }
   #view-estate { display:none; width:900px; height:500px; color:white; }
