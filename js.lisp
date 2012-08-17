@@ -222,7 +222,8 @@
 	     (for-in 
 	      (ie es)
 	      (when
-		  (and (@ e ix-estate) (@ e main-pic))
+		  (and (@ (aref es ie) ix-estate) 
+		       (@ (aref es ie) main-pic))
 		(var this-pic-4x-p false)
 		(if (and (== col-offset 1) (== row-offset 1))
 		    (setf this-pic-4x-p true))
