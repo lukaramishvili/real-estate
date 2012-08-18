@@ -182,6 +182,22 @@
 			       alt-format "@")))
 	    ""))))))
 
+
+
+(defun fb-like-btn (url &key (w 170) (h 35))
+  (+s "<iframe src='//www.facebook.com/plugins/like.php?href=" url 
+      "&amp;send=false&amp;layout=standard&amp;width=" w 
+      "&amp;show_faces=false&amp;action=like&amp;colorscheme=dark&amp;" 
+      "font=arial&amp;height=" h "' scrolling='no' frameborder='0' " 
+      " style='border:none; overflow:hidden; width:" w "px; height:" h 
+      "px;' allowTransparency='true'></iframe>"))
+  
+
+(defun fb-share-btn (url &key (caption "Share On Facebook"))
+  (+s "<a rel='nofollow' href='http://www.facebook.com/share.php?u=" url
+      "' onclick='return fbs_click()' target='_blank' class='fb_share_link'>"
+      caption "</a>"))
+
 ;;sample usage: 
 ;;(for-each-class-slot ('foo slot type)
 ;;  (format nil "next slot type is: ~a" type))

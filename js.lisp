@@ -151,6 +151,29 @@
 	  });	  
     }
     /*end function MapMarkerACCombo*/
+    
+    /* facebook share */
+    function fbs_click() {u=location.href;t=document.title;
+        window.open('http://www.facebook.com/sharer.php?u='
+        + encodeURIComponent(u)+'&t='+encodeURIComponent(t),'sharer',
+        'toolbar=0,status=0,width=626,height=436');return false;
+    }
+    /* end facebook share */
+    /* generate fb like btn */
+    function fbLikeBtn(arg_url){
+      var url = encodeURIComponent(arg_url);
+      var w = 170;
+      var h = 35;
+      return '<iframe src=\\'//www.facebook.com/plugins/like.php?href=' + url + '&amp;send=false&amp;layout=standard&amp;width='+ w + '&amp;show_faces=false&amp;action=like&amp;colorscheme=dark&amp;font=arial&amp;height=' + h + '\\' scrolling=\\'no\\' frameborder=\\'0\\' style=\\'border:none; overflow:hidden; width:' + w + 'px; height:' + h + 'px;\\' allowTransparency=\\'true\\'></iframe>';
+    }
+    /* end generate fb like btn */
+    /* generate facebook share btn */
+    function fbShareBtn (url, arg_caption){
+      var caption = arg_caption ? arg_caption : 'Share on Facebook';
+      return '<a rel=\\'nofollow\\' href=\\'http://www.facebook.com/share.php?u=' + url + '\\' onclick=\\'return fbs_click()\\' target=\\'_blank\\' class=\\'fb_share_link\\'>' + caption + '</a>';
+    }
+    /* end generate facebook share btn */
+    
     "))
 
 (defun fp-search-js ()

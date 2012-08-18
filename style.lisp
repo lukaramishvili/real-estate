@@ -45,6 +45,12 @@
   #view-estate #estate-map-div { width:250px; float:left; height:250px;
       margin-right:20px; }
   #view-estate #single-estate-map { width:250px; height:250px; }
+  
+  
+  
+  html .fb_share_link { padding:2px 0 0 20px; height:16px; 
+    background:url(http://static.ak.facebook.com/images/share/facebook_share_icon.gif?6:26981) no-repeat top left; }
+
   "))
 
 (defun style-edit-estate-form ()
