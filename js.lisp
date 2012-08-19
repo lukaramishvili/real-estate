@@ -59,6 +59,7 @@
        ($$ "#view-estate" (html estate-div)))
      
      (defun view-e (id)
+       ($$ "#fp-preloader" (show))
        (get-estate 
 	id (lambda (e)
 	     (if (!= e null)
@@ -78,6 +79,7 @@
 		   (chain estate-map (set-center estate-loc)))
 		 (alert "Loading estate failed, please try again."))
 	     e))
+       ($$ "#fp-preloader" (hide))
        (return false))
      ($$ ".fp-estate-link"
 	 (live "click" (lambda () 
@@ -220,6 +222,7 @@
 	   (setf (@ ff :bathrooms-min) ($$ "#input_bathrooms-min" (val))))
        ff)
      (defun load-results ()
+       ($$ "#fp-preloader" (show))
        ($.ajax
 	(create 
 	 url "/filter" type :post data-type :json
@@ -227,6 +230,7 @@
 			       (gen-json-filter)))
 	 success 
 	 (lambda (data)
+	   ($$ "#fp-preloader" (hide))
 	   ;;store received estates in es
 	   (var es (new (-array)))
 	   (for-in (raw-e data)

@@ -389,6 +389,7 @@
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
     (:div :id "fp-pics")
+    (:img :id "fp-preloader" :src "css/img/preloader.gif")
     (:div :id "view-estate")
     (:div 
      :id "search-bar"

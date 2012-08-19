@@ -33,6 +33,7 @@
   .fp-estate-link img { width:150px; height:150px; margin:0px 1px 0px 1px; }
   td.td-4x a img { width:300px; height:300px; }
   
+  #fp-preloader { position:absolute; left:50%; top:50%; z-index:3000; }
   
   .grid-10 { width:20%; float:left; height:100%; }
   .grid-10 a { width:100%; height:18.6%; display:block; margin:1px; }
