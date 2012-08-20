@@ -21,10 +21,15 @@
 	       :value :from :tr
 	       :where (:and (:= :lang (string-downcase (smake lang)))
 			    (:= :keyword (string-downcase (smake keyword)))))
-	      :single))))
+	      :single)
+       (string-capitalize 
+	(string-downcase (substitute #\Space #\- (+s keyword)))))))
 
 (defun obfuscate-password (passwd)
   (hash-password (+s "sloboda" passwd)))
+
+(defun valid-acc-types ()
+  (list "simple" "broker"))
 
 (defclass user ()
   ((ix-user :col-type serial :initarg :ix-user :reader ix-user)
@@ -45,6 +50,11 @@
 			     (:= :passwd (obfuscate-password pass))))))
       (if (< 0 (length matched-users))
 	  (car matched-users)))))
+
+(defun save-user (user)
+  (with-re-db 
+    (insert-dao user)
+    (ix-user user)))
 
 ;;;;;;;; project-specific code
 

@@ -128,7 +128,7 @@
 
 (htoot-handler
  (register-page-handler
-  "/register" ())
+  "/register" ((type :parameter-type 'string :init-form "simple")))
  (re-main
   :title (re-tr :register-page-title)
   :body
@@ -137,23 +137,27 @@
     (let ((reg-token (+s (uuid:make-v4-uuid))))
       (progn
 	(setf (session-value 'reg-token) reg-token)
-	(register-page :reg-token reg-token))))))
+	(register-page :reg-token reg-token :acc-type type))))))
 
 (htoot-handler
  (register-handler
   "/register-handler"
   ((usr :request-type :POST :parameter-type 'string :init-form nil)
    (pwd :request-type :POST :parameter-type 'string :init-form nil)
-   (reg-token :request-type :POST :parameter-type 'string :init-form nil)))
+   (reg-token :request-type :POST :parameter-type 'string :init-form nil)
+   (acc-type :request-type :POST :parameter-type 'string :init-form "simple")))
  (if (session-value 'logged-in-p)
      (re-tr :already-logged-in)
    (if (and usr pwd reg-token
 	    (plusp (length usr)) (plusp (length pwd))
 	    (string= (session-value 'reg-token) reg-token))
-       (let ((usr-to-save
+       (let* ((checked-type (if (member acc-type (valid-acc-types))
+			     checked-type "simple"))
+	      (usr-to-save
 	      (make-instance 'user
 			     :login-name usr
-			     :passwd (hash-password pwd))))
+			     :passwd (hash-password pwd)
+			     :acc-type checked-type)))
 	 (if (plusp (save-user usr-to-save))
 	     (re-tr :registration-successful)
 	     (re-tr :couldnt-register-correct-errors)))
@@ -341,3 +345,6 @@
 	       (filter-estates pred))))))
 ;;pred is an alist like ((:APT-TYPE "new")(:STATUS "sale"))
 ;;apt-type filter can be gotten using (cdr (assoc :apt-type pred))
+
+(htoot-handler (contact-page-handler "/contact" ())
+  (contact-page))

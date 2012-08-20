@@ -220,6 +220,7 @@
 	:js-files '("js/jquery-1.7.2.min.js" 
 		    "js/jquery-ui-1.8.21.custom.min.js"
 		    "js/jquery.fancybox.pack.js"
+		    "js/jquery.mousewheel.min.js"
 		    "http://maps.googleapis.com/maps/api/js?key=AIzaSyDl2UEh2szaf3AjDf24cj4AFN-7a0oIUM0&sensor=false"
 		    "main.js")
 	:more "<meta name=\"viewport\" content=\"initial-scale=1.0, user-scalable=no\" />"))
@@ -294,18 +295,21 @@
 			"Edit"))))))))))
 
 
-(defun register-page (&key reg-token)
-  (cl-who:with-html-output-to-string 
-   (*standard-output* nil :prologue nil :indent t)
-   (:div :id "register-form-div"
-	 (:form :method "post" :action "./register-handler"
-		(:h1 "Register")
-		(:input :type "hidden" :name "reg-token" :value reg-token)
-		(cl-who:str
-		 (+s
-		  (label-input "usr" :label "Username:")
-		  (label-input "pwd" :label "Password:" :type "password")))
-		(:input :type "submit" :value "Register")))))
+(defun register-page (&key reg-token acc-type)
+  (let ((checked-type (if (member acc-type (valid-acc-types)) 
+		  acc-type :simple)))
+    (cl-who:with-html-output-to-string 
+	(*standard-output* nil :prologue nil :indent t)
+      (:div :id "register-form-div"
+	    (:form :method "post" :action "./register-handler"
+		   (:h1 "Register")
+		   (:input :type "hidden" :name "reg-token" :value reg-token)
+		   (:input :type "hidden" :name "acc-type" :value checked-type)
+		   (cl-who:str
+		    (+s
+		     (label-input "usr" :label "Username:")
+		     (label-input "pwd" :label "Password:" :type "password")))
+		   (:input :type "submit" :value "Register"))))))
   
 
 (defun login-page (&key (redir "/"))
@@ -388,6 +392,12 @@
 (defun re-firstpage ()
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
+    (:div 
+     :id "top-menu"
+     (:a :href "javascript:toggleSearchBar();" "Search")
+     (:a :href "./register" "Register")
+     (:a :href "./register?type=broker" "Register as Broker")
+     (:a :href "./contact" :id "top-contact-link" "Contact"))
     (:div :id "fp-pics")
     (:img :id "fp-preloader" :src "css/img/preloader.gif")
     (:div :id "view-estate")
@@ -553,3 +563,10 @@
 			    (submit)
 			    ))))
 	    ))))))))
+
+(defun contact-page ()
+    (cl-who:with-html-output-to-string 
+	(*standard-output* nil :prologue nil :indent t)
+  (:h1 "Contact us")
+  (:p "You can contact us by calling +995 11 22 33")))
+

@@ -10,6 +10,12 @@
   (+s
    "
   body { background-color:black; }
+  
+  #top-menu { height:32px; background-color:#111; padding:9px 0px 0px 32px; }
+  #top-menu a { color:white; background-color:#444; border-radius:3px;
+    padding:4px 6px; margin-right:20px; display:block; float:left; }
+  #top-menu #top-contact-link { float:right; }
+  
   #search-bar { position:fixed; left:-250px; top:0px; width:250px; height:100%;
     background:transparent url(css/img/gray-bg.png) left top repeat; 
     padding:12px 10px 0px 12px; }
@@ -27,7 +33,7 @@
   #search-bar label.label-right { clear: right; }
   #search-bar input[type='checkbox'] { clear:left; }
 
-  #fp-pics { height:100%; }
+  #fp-pics { /*height:100%;*/ }
   /*#fp-pics a img {  }*/
   #fp-pics .table-cont { /*width:1500px;*/ float:left; }
   .fp-estate-link img { width:150px; height:150px; margin:0px 1px 0px 1px; }

@@ -11,6 +11,20 @@
 
 (defun re-main-js ()
   (+s 
+   "
+   var lastPage = 1;
+   var wCarImg = 1300;//carousel image width
+
+   $('html').mousewheel(function(event, delta) {
+	$('html')[0].scrollLeft -= (delta * 100);
+    event.preventDefault();
+    //
+	var carScroll = $('html')[0].scrollLeft;
+    if((1 + (carScroll - carScroll%wCarImg)/wCarImg) != lastPage){
+        lastPage = 1 + ((carScroll - carScroll%wCarImg)/wCarImg);
+    }
+   });
+   "
    (ps:ps
      (defun get-estate (id callback)
        (chain 
@@ -182,11 +196,16 @@
   (+s 
    "
   var fSearchOpen = false;
+  function toggleSearchBar(){
+    $('#search-bar').animate({ 'left' : fSearchOpen ? -272 : 0 }, 'slow');
+    $('#top-menu').animate({ 'padding-left' : fSearchOpen ? 12 : 282 }, 
+      'slow');
+    //$('#main').animate({ 'padding-left' : fSearchOpen ? 0 : 250 }, 'slow');
+    fSearchOpen = !fSearchOpen;
+  }
   $('#btn-toggle-search').click(function(){
-       $('#search-bar').animate({ 'left' : fSearchOpen ? -272 : 0 }, 'slow');
-       //$('#main').animate({ 'padding-left' : fSearchOpen ? 0 : 250 }, 'slow');
-       fSearchOpen = !fSearchOpen;
-   });
+    toggleSearchBar();
+  });
   "
    (ps
      (defun inp-pos-val (selector)
