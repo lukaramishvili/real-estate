@@ -200,7 +200,7 @@
     $('#search-bar').animate({ 'left' : fSearchOpen ? -272 : 0 }, 'slow');
     $('#top-menu').animate({ 'padding-left' : fSearchOpen ? 12 : 282 }, 
       'slow');
-    //$('#main').animate({ 'padding-left' : fSearchOpen ? 0 : 250 }, 'slow');
+    $('#main').animate({ 'padding-left' : fSearchOpen ? 0 : 250 }, 'slow');
     fSearchOpen = !fSearchOpen;
   }
   $('#btn-toggle-search').click(function(){
@@ -246,7 +246,8 @@
 	(create 
 	 url "/filter" type :post data-type :json
 	 data (create :preds (-j-s-o-n.stringify 
-			       (gen-json-filter)))
+			       (gen-json-filter))
+		      :short "t")
 	 success 
 	 (lambda (data)
 	   ($$ "#fp-preloader" (hide))

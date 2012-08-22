@@ -315,18 +315,22 @@
 		  pic-to-rem)
 	    (estate-form-pic-box uniq-rem-pic-uuid))))))
 
-(defun estate-for-json (e)
+(defun estate-for-json (e &key short)
   (json:encode-json-plist-to-string
-   (list :ix-estate (ix-estate e)
-	 :main-pic (pic-to-hashtable (ix-main-pic e)
-				     :make-path-linkable t)
-	 :other-pics (mapcar (lambda (p)
-			       (pic-to-hashtable 
-				p :make-path-linkable t))
-			     (estate-nonmain-pics e))
-	 :fields (estate-to-hash-table e)
-	 :loc-lat (loc-lat e)
-	 :loc-lng (loc-lng e))))
+   (if short
+       (list :ix-estate (ix-estate e)
+	     :main-pic (pic-to-hashtable (ix-main-pic e)
+					 :make-path-linkable t))
+       (list :ix-estate (ix-estate e)
+	     :main-pic (pic-to-hashtable (ix-main-pic e)
+					 :make-path-linkable t)
+	     :other-pics (mapcar (lambda (p)
+				   (pic-to-hashtable 
+				    p :make-path-linkable t))
+				 (estate-nonmain-pics e))
+	     :fields (estate-to-hash-table e)
+	     :loc-lat (loc-lat e)
+	     :loc-lng (loc-lng e)))))
 
 (htoot-handler 
     (get-estate-handler "/get-estate" 
@@ -337,11 +341,15 @@
 	  (estate-for-json e)
 	  "{}"))))
 
-(htoot-handler (filter-handler "/filter" (preds)) 
+(htoot-handler 
+    (filter-handler "/filter" 
+		    ((preds :init-form "[]")
+		     (short :parameter-type 'keyword :init-form nil)))
   (let ((pred (json:decode-json-from-string preds))) 
     (with-re-db 
       (json:encode-json-to-string 
-       (mapcar #'estate-for-json
+       (mapcar (lambda (e)
+		 (estate-for-json e :short short))
 	       (filter-estates pred))))))
 ;;pred is an alist like ((:APT-TYPE "new")(:STATUS "sale"))
 ;;apt-type filter can be gotten using (cdr (assoc :apt-type pred))
