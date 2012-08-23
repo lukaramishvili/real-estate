@@ -24,6 +24,21 @@
         lastPage = 1 + ((carScroll - carScroll%wCarImg)/wCarImg);
     }
    });
+
+   function estateIdFromArgument(a){
+     var m = a.match('estate-[0-9]+');
+     if(m){
+       var d = m[0].toString().match('[0-9]+');
+        return d ? d[0] : 0;
+     }
+     else{
+       return 0;
+     }
+   }
+   function linkForEstate (ix){
+     //TODO: generate using document.location
+     return 'http://localhost:4343/#estate-' + ix;
+   }
    "
    (ps:ps
      (defun get-estate (id callback)
@@ -56,7 +71,9 @@
 	    (+= div "<a href='" next-img "' rel='estate-gallery'>"
 		"<img src='" next-img "' /></a>")))
 	 (+= div "</div>");</#other-imgs>
-	 (+= div "<a id='estate-toggle-fav'>Favorite</a>")
+	 (+= div "<a id='estate-toggle-fav'>Favorite</a>" "<br><br>")
+	 (+= div (fb-like-btn (link-for-estate (@ e ix-estate))) "<br><br>")
+	 (+= div (fb-share-btn (link-for-estate (@ e ix-estate))) "<br><br>")
 	 (+= div "</div>");</#estate-images>
 	 (+= div "<div id='estate-fields'>")
 	 (for-in (k fields)
