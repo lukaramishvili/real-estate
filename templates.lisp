@@ -400,7 +400,10 @@
      (:a :href "./contact" :id "top-contact-link" "Contact"))
     (:div :id "fp-pics")
     (:img :id "fp-preloader" :src "css/img/preloader.gif")
-    (:div :id "view-estate")
+    (:div :id "view-estate"
+	  (:a :id "e-close-btn" 
+	      :href "javascript:hideEstateDiv();void(0)")
+	  (:div :id "view-estate-inner"))
     (:div 
      :id "search-bar"
      (:a :href "javascript:void(0)" :id "btn-toggle-search"

@@ -43,7 +43,14 @@
   
   .grid-10 { width:20%; float:left; height:100%; }
   .grid-10 a { width:100%; height:18.6%; display:block; margin:1px; }
-  #view-estate { display:none; width:900px; height:500px; color:white; }
+  #view-estate { display:none; width:100%; height:100%; color:white;
+    position:absolute; left:0px; top:0px;
+    background:transparent url(css/img/gray-bg.png) left top repeat; }
+  #e-close-btn { display:block; position:absolute; right:20px; top:20px;
+    background:transparent url(css/fancybox/fancybox_sprite.png) 
+      0px 0px no-repeat; width:36px; height:36px; cursor:pointer;
+    z-index:6045; }
+  #view-estate-inner { padding:30px 60px; }
   #view-estate #estate-main-img { width:250px; height:250px; }
   #view-estate #estate-images { width:250px; float:left; margin-right:20px; }
   #view-estate #other-imgs { width:250px; }

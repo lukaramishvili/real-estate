@@ -344,13 +344,15 @@
 (htoot-handler 
     (filter-handler "/filter" 
 		    ((preds :init-form "[]")
-		     (short :parameter-type 'keyword :init-form nil)))
+		     (short :parameter-type 'keyword :init-form nil)
+		     (count :parameter-type 'integer :init-form 33)
+		     (offset :parameter-type 'integer :init-form 0)))
   (let ((pred (json:decode-json-from-string preds))) 
     (with-re-db 
       (json:encode-json-to-string 
        (mapcar (lambda (e)
 		 (estate-for-json e :short short))
-	       (filter-estates pred))))))
+	       (filter-estates pred :count count :offset offset))))))
 ;;pred is an alist like ((:APT-TYPE "new")(:STATUS "sale"))
 ;;apt-type filter can be gotten using (cdr (assoc :apt-type pred))
 

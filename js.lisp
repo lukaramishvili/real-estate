@@ -12,24 +12,49 @@
 (defun re-main-js ()
   (+s 
    "
-   var lastPage = 1;
+   //by default, one page = 9x4 images
+   var imgsPerRow = 9;
+   var imgsPerCol = 4;
+   var bigImgsPerPage = 1;
+   
+   //ch - img count horizontally, cv - img count vertically
+   function imgsNeededPerPage (ch, cv, bigImgCount){
+     return ch * cv - bigImgCount * 3;
+   }
+   
+   function imgsLoadedForNow(){
+     return $('.fp-estate-link').length;
+   }
+   
+   var currPage = 1;
+   var lastPage = 1;//max. page no. that's currently loaded
    var wCarImg = 1300;//carousel image width
+   var fAllowFurtherScrolling = true;
 
    $('html').mousewheel(function(event, delta) {
-	$('html')[0].scrollLeft -= (delta * 100);
-    event.preventDefault();
-    //
-	var carScroll = $('html')[0].scrollLeft;
-    if((1 + (carScroll - carScroll%wCarImg)/wCarImg) != lastPage){
-        lastPage = 1 + ((carScroll - carScroll%wCarImg)/wCarImg);
-    }
+     if(fAllowFurtherScrolling){
+       $('html')[0].scrollLeft -= (delta * 100);
+       event.preventDefault();
+     }
+     //
+     var carScroll = $('html')[0].scrollLeft;
+     if((1 + (carScroll - carScroll%wCarImg)/wCarImg) != lastPage){
+       currPage = 1 + ((carScroll - carScroll%wCarImg)/wCarImg);
+       if(currPage >= lastPage){
+         fAllowFurtherScrolling = false;
+         loadResults(33, imgsLoadedForNow(), function(){
+           fAllowFurtherScrolling = true;
+         });
+       }
+       lastPage = Math.max(currPage, lastPage);
+     }
    });
 
    function estateIdFromArgument(a){
      var m = a.match('estate-[0-9]+');
      if(m){
        var d = m[0].toString().match('[0-9]+');
-        return d ? d[0] : 0;
+       return d ? d[0] : 0;
      }
      else{
        return 0;
@@ -86,8 +111,14 @@
 	 (+= div "</div>")
 	 div))
 
-     (defun show-estate-div (estate-div)
-       ($$ "#view-estate" (html estate-div)))
+     (defun fill-estate-div (estate-div)
+       ($$ "#view-estate-inner" (html estate-div)))
+
+     (defun show-estate-div ()
+       ($$ "#view-estate" (show)))
+     
+     (defun hide-estate-div ()
+       ($$ "#view-estate" (hide)))       
      
      (defun view-e (id)
        ($$ "#fp-preloader" (show))
@@ -95,28 +126,30 @@
 	id (lambda (e)
 	     (if (!= e null)
 		 (progn 
-		   (show-estate-div (gen-estate-div e))
+		   (fill-estate-div (gen-estate-div e))
 		   ($$ "#estate-main-img-a,#other-imgs > a" (fancybox))
 					;($$ "" (fancybox))
-		   (defvar estate-loc (new (google.maps.-lat-lng 
-					    (@ e loc-lat)
-					    (@ e loc-lat))))
-		   (defvar estate-map 
-		     (create-map-for-id "single-estate-map"))
-		   (defvar loc-marker 
-		     (create-marker "Real estate map location"
-				    estate-loc))
-		   (chain loc-marker (set-map estate-map))
-		   (chain estate-map (set-center estate-loc)))
+		   (when (not (= "undefined" (typeof google)))
+		     (defvar estate-loc (new (google.maps.-lat-lng 
+					      (@ e loc-lat)
+					      (@ e loc-lat))))
+		     (defvar estate-map 
+		       (create-map-for-id "single-estate-map"))
+		     (defvar loc-marker 
+		       (create-marker "Real estate map location"
+				      estate-loc))
+		     (chain loc-marker (set-map estate-map))
+		     (chain estate-map (set-center estate-loc)))
+		   (show-estate-div))
 		 (alert "Loading estate failed, please try again."))
 	     e))
        ($$ "#fp-preloader" (hide))
        (return false))
+
      ($$ ".fp-estate-link"
 	 (live "click" (lambda () 
 			 (view-e ($$ this (attr "ixestate")))
-			 false))
-	 (fancybox))
+			 false)))
      );end ps:ps
      "
     function createMapForId (id, options){
@@ -214,9 +247,10 @@
    "
   var fSearchOpen = false;
   function toggleSearchBar(){
+    hideEstateDiv();
     $('#search-bar').animate({ 'left' : fSearchOpen ? -272 : 0 }, 'slow');
-    $('#top-menu').animate({ 'padding-left' : fSearchOpen ? 12 : 282 }, 
-      'slow');
+    /*$('#top-menu').animate({ 'padding-left' : fSearchOpen ? 12 : 282 }, 
+      'slow');*/
     $('#main').animate({ 'padding-left' : fSearchOpen ? 0 : 250 }, 'slow');
     fSearchOpen = !fSearchOpen;
   }
@@ -257,14 +291,19 @@
        (if (inp-pos-val "#input_bedrooms-min") 
 	   (setf (@ ff :bathrooms-min) ($$ "#input_bathrooms-min" (val))))
        ff)
-     (defun load-results ()
+     
+     (defun load-results (count offset callback)
        ($$ "#fp-preloader" (show))
        ($.ajax
 	(create 
 	 url "/filter" type :post data-type :json
 	 data (create :preds (-j-s-o-n.stringify 
 			       (gen-json-filter))
-		      :short "t")
+		      :short "t" 
+		      :count (or count (imgs-needed-per-page 
+					imgs-per-row imgs-per-col 
+					big-imgs-per-page))
+		      :offset (or offset 0))
 	 success 
 	 (lambda (data)
 	   ($$ "#fp-preloader" (hide))
@@ -322,25 +361,40 @@
 		    (setf row-offset 0)
 		    (+= tbl (+ "</table></div>" tbl-def))
 		    ;;temporarily stop after displaying first table
-		    (break))
+		    ;(break)
+		    )
 		  (+= tbl "<tr>"))
 		)))
 	   (+= tbl "</tr></table></div>")
 	   ($$ "#fp-pics" (append tbl))
-	   (console.log data)))
-	))
+	   (console.log data)
+	   (if (not (= "undefined" (typeof callback)))
+	       (chain callback (call))))
+	)))
 
      (var timeout-on-change 0)
      ($$ "#search-bar select"
-	 (change (lambda () (load-results))))
+	 (change (lambda () 
+		   (load-results (imgs-needed-per-page 
+				  imgs-per-row imgs-per-col 
+				  big-imgs-per-page)
+				 0
+			     ))))
      ($$ "#search-bar input"
 	 (keydown (lambda ()
 		    ;;when the user types filters, update results
 		    ;;but update according only to last change
 		    (clear-timeout timeout-on-change)
 		    (setf timeout-on-change 
-			  (set-timeout (lambda ()
-					 (load-results))
-				       2200)))))
+			  (set-timeout 
+			   (lambda ()
+			     (load-results (imgs-needed-per-page 
+					    imgs-per-row imgs-per-col 
+					    big-imgs-per-page)
+					   0))
+			   2200)))))
      ($$ document (ready (lambda ()
-			   (load-results)))))))
+			   (load-results (imgs-needed-per-page 
+					    imgs-per-row imgs-per-col 
+					    big-imgs-per-page)
+					 0)))))))

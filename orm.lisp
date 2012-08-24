@@ -251,7 +251,7 @@
 	       '(:= :apt-type (car (assoc :apt-type f-a))))))
 	))))
 
-(defun filter-estates (filters-alist)
+(defun filter-estates (filters-alist &key (count 10000) (offset 0))
   (let* ((fa filters-alist)
 	 (apt-type (cdr (assoc :apt-type fa)))
 	 (status (cdr (assoc :status fa)))
@@ -271,24 +271,27 @@
 	 (subdiv-permit (cdr (assoc :subdiv-permit fa))))
     (with-re-db
       (eval 
-       `(select-dao 
+       `(query-dao 
 	 'estate
-	 (:and 
-	  t
-	  ,(if (spec-f-p apt-type) `(:= :apt-type ,apt-type) t)
-	  ,(if (spec-f-p status) `(:= :status ,status) t)
-	  ,(if (spec-f-p ix-country) `(:= :ix-country ,ix-country) t)
-	  ,(if (spec-f-p constr) `(:= :constr ,constr) t)
-	  ,(if total-min `(:>= :total ,total-min) t)
-	  ,(if total-max `(:<= :total ,total-max) t)
-	  ,(if price-min `(:>= :price ,price-min) t)
-	  ,(if price-max `(:<= :price ,price-max) t)
-	  ,(if bedrooms-min `(:<= :bedrooms ,bedrooms-min) t)
-	  ,(if bathrooms-min `(:<= :bathrooms ,bathrooms-min) t)
-	  ,(if terrace `(:= :terrace-p ,terrace) t)
-	  ,(if garden `(:= :garden-p ,garden) t)
-	  ,(if building-permit `(:= :building-permit-p ,building-permit) t)
-	  ,(if (spec-f-p summons) `(:= :summons ,summons) t)
-	  ,(if (spec-f-p preemption) `(:= :preemption ,preemption) t)
-	  ,(if (spec-f-p subdiv-permit) `(:= :subdiv-permit ,subdiv-permit) t))
-	 )))))
+	 (:select 
+	  :* :from :estate :where
+	  (:and 
+	   t
+	   ,(if (spec-f-p apt-type) `(:= :apt-type ,apt-type) t)
+	   ,(if (spec-f-p status) `(:= :status ,status) t)
+	   ,(if (spec-f-p ix-country) `(:= :ix-country ,ix-country) t)
+	   ,(if (spec-f-p constr) `(:= :constr ,constr) t)
+	   ,(if total-min `(:>= :total ,total-min) t)
+	   ,(if total-max `(:<= :total ,total-max) t)
+	   ,(if price-min `(:>= :price ,price-min) t)
+	   ,(if price-max `(:<= :price ,price-max) t)
+	   ,(if bedrooms-min `(:<= :bedrooms ,bedrooms-min) t)
+	   ,(if bathrooms-min `(:<= :bathrooms ,bathrooms-min) t)
+	   ,(if terrace `(:= :terrace-p ,terrace) t)
+	   ,(if garden `(:= :garden-p ,garden) t)
+	   ,(if building-permit `(:= :building-permit-p ,building-permit) t)
+	   ,(if (spec-f-p summons) `(:= :summons ,summons) t)
+	   ,(if (spec-f-p preemption) `(:= :preemption ,preemption) t)
+	   ,(if (spec-f-p subdiv-permit) 
+		`(:= :subdiv-permit ,subdiv-permit) t))
+	  ))))))
