@@ -42,9 +42,10 @@
        currPage = 1 + ((carScroll - carScroll%wCarImg)/wCarImg);
        if(currPage >= lastPage){
          fAllowFurtherScrolling = false;
-         loadResults(33, imgsLoadedForNow(), function(){
-           fAllowFurtherScrolling = true;
-         });
+         loadResults({ count: 99, offset: imgsLoadedForNow(), 
+           callback: function(){
+             fAllowFurtherScrolling = true;
+           }, clearPrevs: false });
        }
        lastPage = Math.max(currPage, lastPage);
      }
@@ -292,94 +293,95 @@
 	   (setf (@ ff :bathrooms-min) ($$ "#input_bathrooms-min" (val))))
        ff)
      
-     (defun load-results (count offset callback)
-       ($$ "#fp-preloader" (show))
-       ($.ajax
-	(create 
-	 url "/filter" type :post data-type :json
-	 data (create :preds (-j-s-o-n.stringify 
-			       (gen-json-filter))
-		      :short "t" 
-		      :count (or count (imgs-needed-per-page 
-					imgs-per-row imgs-per-col 
-					big-imgs-per-page))
-		      :offset (or offset 0))
-	 success 
-	 (lambda (data)
-	   ($$ "#fp-preloader" (hide))
-	   ;;store received estates in es
-	   (var es (new (-array)))
-	   (for-in (raw-e data)
-		   (chain es (push (eval (+ "(" (aref data raw-e) ")")))))
-	   ;;clear existing estates
-	   ($$ "#fp-pics > *" (remove))
-	   ;;add received estates to document
-	   (var tbl-def 
-		(+ "<div class='table-cont'>" 
-		    "<table border='0' cellspacing='0' cellpadding='0'><tr>"))
-	   (var tbl tbl-def)
-	   (let ((img-per-row 9) (img-per-col 4)
-		 (row-offset 0) (col-offset 0)
-		 (this-row-skip-count 0)
-		 (next-row-skip-count 0))
-	     (for-in 
-	      (ie es)
-	      (when
-		  (and (@ (aref es ie) ix-estate) 
-		       (@ (aref es ie) main-pic))
-		(var this-pic-4x-p false)
-		(if (and (== col-offset 1) (== row-offset 1))
-		    (setf this-pic-4x-p true))
-		(when this-pic-4x-p 
-		  (+= this-row-skip-count 1)
-		  ;;prepare a count of how many images to skip on next row
-		  (+= next-row-skip-count 2))
-		(var td-4x-spec (if this-pic-4x-p
-				    " class='td-4x' colspan='2' rowspan='2' "
-				    ""))
-		(let ((e (aref es ie)))
-		  (var e-gen (+ "<td align='left' valign='top' " td-4x-spec ">" 
-				"<a href='#view-estate' " 
-				" class='fp-estate-link'" 
-				" ixestate=" (@ e ix-estate) ">"
-				"<img src='" (@ (@ e main-pic) path)  
-				"' /></a></td>"))
-		  (+= tbl e-gen))
-		(+= col-offset 1)
-		;;start new tr
-		(when (>= (+ col-offset this-row-skip-count) img-per-row) 
-		  (+= tbl "</tr>")
-		  (setf col-offset 0)
-		  (+= row-offset 1)
-		  ;;here, we are starting a new row
-		  ;;on this row, skip images 2x count of this row's 4x images
-		  (setf this-row-skip-count next-row-skip-count)
-		  ;;ain't no big imgs on new row yet, so there's nothing to skip
-		  (setf next-row-skip-count 0)
-		  ;;start new table
-		  (when (>= row-offset img-per-col)
-		    (setf row-offset 0)
-		    (+= tbl (+ "</table></div>" tbl-def))
-		    ;;temporarily stop after displaying first table
-		    ;(break)
-		    )
-		  (+= tbl "<tr>"))
-		)))
-	   (+= tbl "</tr></table></div>")
-	   ($$ "#fp-pics" (append tbl))
-	   (console.log data)
-	   (if (not (= "undefined" (typeof callback)))
-	       (chain callback (call))))
-	)))
+     (defun load-results (args)
+       (let* ((args (or args (create)))
+	      (count (or (@ args count) (* 3 (imgs-needed-per-page 
+					      imgs-per-row imgs-per-col 
+					      big-imgs-per-page))))
+	      (offset (or (@ args offset) 0))
+	      (callback (@ args callback))
+	      (clear-prevs (or (@ args clear-prevs) true)))
+	 ($$ "#fp-preloader" (show))
+	 ($.ajax
+	  (create 
+	   url "/filter" type :post data-type :json
+	   data (create :preds (-j-s-o-n.stringify 
+				(gen-json-filter))
+			:short "t" 
+			:count count
+			:offset offset)
+	   success 
+	   (lambda (data)
+	     ($$ "#fp-preloader" (hide))
+	     ;;store received estates in es
+	     (var es (new (-array)))
+	     (for-in (raw-e data)
+		     (chain es (push (eval (+ "(" (aref data raw-e) ")")))))
+	     ;;clear existing estates
+	     (if clear-prevs 
+		 ($$ "#fp-pics > *" (remove)))
+	     ;;add received estates to document
+	     (var tbl-def 
+		  (+ "<div class='table-cont'>" 
+		     "<table border='0' cellspacing='0' cellpadding='0'><tr>"))
+	     (var tbl tbl-def)
+	     (let ((img-per-row 9) (img-per-col 4)
+		   (row-offset 0) (col-offset 0)
+		   (this-row-skip-count 0)
+		   (next-row-skip-count 0))
+	       (for-in 
+		(ie es)
+		(when
+		    (and (@ (aref es ie) ix-estate) 
+			 (@ (aref es ie) main-pic))
+		  (var this-pic-4x-p false)
+		  (if (and (== col-offset 1) (== row-offset 1))
+		      (setf this-pic-4x-p true))
+		  (when this-pic-4x-p 
+		    (+= this-row-skip-count 1)
+		    ;;prepare a count of how many images to skip on next row
+		    (+= next-row-skip-count 2))
+		  (var td-4x-spec (if this-pic-4x-p
+				      " class='td-4x' colspan='2' rowspan='2' "
+				      ""))
+		  (let ((e (aref es ie)))
+		    (var e-gen (+ "<td align='left' valign='top' " 
+				  td-4x-spec ">" 
+				  "<a href='#view-estate' " 
+				  " class='fp-estate-link'" 
+				  " ixestate=" (@ e ix-estate) ">"
+				  "<img src='" (@ (@ e main-pic) path)  
+				  "' /></a></td>"))
+		    (+= tbl e-gen))
+		  (+= col-offset 1)
+		  ;;start new tr
+		  (when (>= (+ col-offset this-row-skip-count) img-per-row) 
+		    (+= tbl "</tr>")
+		    (setf col-offset 0)
+		    (+= row-offset 1)
+		    ;;here, we are starting a new row
+		    ;;on this row, skip images 2x count of this row's 4x images
+		    (setf this-row-skip-count next-row-skip-count)
+		    ;;ain't no big imgs on new row yet,so there's nothing to skip
+		    (setf next-row-skip-count 0)
+		    ;;start new table
+		    (when (>= row-offset img-per-col)
+		      (setf row-offset 0)
+		      (+= tbl (+ "</table></div>" tbl-def)))
+		    (+= tbl "<tr>"))
+		  )))
+	     (+= tbl "</tr></table></div>")
+	     ($$ "#fp-pics" (append tbl))
+	     (console.log data)
+	     (if (not (= "undefined" (typeof callback)))
+		 (chain callback (call))))
+	   ))))
 
      (var timeout-on-change 0)
      ($$ "#search-bar select"
 	 (change (lambda () 
-		   (load-results (imgs-needed-per-page 
-				  imgs-per-row imgs-per-col 
-				  big-imgs-per-page)
-				 0
-			     ))))
+		   (load-results))))
+
      ($$ "#search-bar input"
 	 (keydown (lambda ()
 		    ;;when the user types filters, update results
@@ -388,13 +390,7 @@
 		    (setf timeout-on-change 
 			  (set-timeout 
 			   (lambda ()
-			     (load-results (imgs-needed-per-page 
-					    imgs-per-row imgs-per-col 
-					    big-imgs-per-page)
-					   0))
+			     (load-results))
 			   2200)))))
      ($$ document (ready (lambda ()
-			   (load-results (imgs-needed-per-page 
-					    imgs-per-row imgs-per-col 
-					    big-imgs-per-page)
-					 0)))))))
+			   (load-results)))))))
