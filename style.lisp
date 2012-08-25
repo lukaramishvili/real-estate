@@ -90,9 +90,16 @@
   
   #estate-pics { clear:both; }
   ")
+
 (defun style-pic-box-iframe()
   "
   .div-in-pic-box-iframe img { max-width:150px; height:80px; }
+  ")
+
+(defun style-contact-page()
+  "
+  h1 { color:white; font-size:16px; }
+  .text { color:white; color:12px; }
   ")
 
 (defun re-gen-css ()

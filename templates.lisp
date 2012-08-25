@@ -1,5 +1,5 @@
 (ql:quickload 'cl-who)
-;(ql:quickload 'closer-mop)
+					;(ql:quickload 'closer-mop)
 
 ;;(defpackage :re-templates
 ;;  (:use :common-lisp :cl-user :closer-mop :cl-who))
@@ -10,39 +10,39 @@
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue t :indent t)
     (:html :xmlns "http://www.w3.org/1999/xhtml"
-     (cl-who:str head)
-     (:body (cl-who:str body)))))
+	   (cl-who:str head)
+	   (:body (cl-who:str body)))))
 
 (defun head (title &key css-files js-files more)
   (cl-who:with-html-output-to-string 
-   (*standard-output* nil :prologue nil :indent t)
-   (:head
-    (:meta :http-equiv "Content-Type" 
-	   :content "text/html; charset=utf-8")
-    (:title (cl-who:str title))
-    (cl-who:str
-     (if (and css-files (listp css-files))
-	 (reduce #'(lambda (arg1 arg2) (+s arg1 arg2))
-		 (mapcar #'(lambda (css-file) 
-			     (concatenate 
-			      'string 
-			      "<link rel=\"stylesheet\" href=\"" 
-			      css-file "\">"))
-			 css-files))
-       ""))
-    (cl-who:str
-     (if (and js-files (listp js-files))
-	 (reduce #'(lambda (arg1 arg2) 
-		     (concatenate 'string arg1 arg2))
-		 (mapcar 
-		  #'(lambda (js-file) 
-		      (concatenate 
-		       'string 
-		       "<script type=\"text/javascript\" src=\"" 
-		       js-file "\"></script>"))
-			 js-files))
-	 ""))
-    (cl-who:str (smake (or more ""))))))
+      (*standard-output* nil :prologue nil :indent t)
+    (:head
+     (:meta :http-equiv "Content-Type" 
+	    :content "text/html; charset=utf-8")
+     (:title (cl-who:str title))
+     (cl-who:str
+      (if (and css-files (listp css-files))
+	  (reduce #'(lambda (arg1 arg2) (+s arg1 arg2))
+		  (mapcar #'(lambda (css-file) 
+			      (concatenate 
+			       'string 
+			       "<link rel=\"stylesheet\" href=\"" 
+			       css-file "\">"))
+			  css-files))
+	  ""))
+     (cl-who:str
+      (if (and js-files (listp js-files))
+	  (reduce #'(lambda (arg1 arg2) 
+		      (concatenate 'string arg1 arg2))
+		  (mapcar 
+		   #'(lambda (js-file) 
+		       (concatenate 
+			'string 
+			"<script type=\"text/javascript\" src=\"" 
+			js-file "\"></script>"))
+		   js-files))
+	  ""))
+     (cl-who:str (smake (or more ""))))))
 
 (defun simple-page (heading text)
   (cl-who:with-html-output-to-string 
@@ -73,7 +73,7 @@
 		#'(lambda (form) 
 		    (if (and ,obj (symbolp form))
 			(slot-value ,obj form) 
-		      form))
+			form))
 		,@body)
 	       (if other-objs
 		   (do-obj (car other-objs) (cdr other-objs))
@@ -99,9 +99,15 @@
 
 (defun script-tag (code)
   (cl-who:with-html-output-to-string 
-   (*standard-output* nil :prologue nil :indent t)
-   (:script :type "text/javascript"
-	    (cl-who:str code))))
+      (*standard-output* nil :prologue nil :indent t)
+    (:script :type "text/javascript"
+	     (cl-who:str code))))
+
+(defun style-tag (code)
+  (cl-who:with-html-output-to-string 
+      (*standard-output* nil :prologue nil :indent t)
+    (:style :type "text/css"
+	     (cl-who:str code))))
 
 (defun label-input (name &key val label (type "text"))
   (cl-who:with-html-output-to-string 
@@ -115,40 +121,40 @@
 
 (defmacro label-checkbox (name &key val label checked)
   `(cl-who:with-html-output-to-string 
-    (*standard-output* nil :prologue nil :indent t)
-    (:input :type "checkbox" :id (+s "input_" ,name)
-	    :value (or (smake ,val) "")
-	    :name ,name
-	    ,@(if checked (list :checked "checked")))
-    (:label :for (+s "input_" ,name)
-	    :id (+s "label_" ,name) :class "label-right"
-	    (cl-who:str (or ,label ,name)))))
+       (*standard-output* nil :prologue nil :indent t)
+     (:input :type "checkbox" :id (+s "input_" ,name)
+	     :value (or (smake ,val) "")
+	     :name ,name
+	     ,@(if checked (list :checked "checked")))
+     (:label :for (+s "input_" ,name)
+	     :id (+s "label_" ,name) :class "label-right"
+	     (cl-who:str (or ,label ,name)))))
 
 (defun label-select (name &key options val direct-selectbox)
   "makes <label..><select><option..>*</>. if direct-selectbox is passed, 
   its inserted instead of generated select tag. options can be either 
   ((val lbl) (val lbl)), or (opt opt); on lack of lbl, opt will be used."
   (cl-who:with-html-output-to-string 
-   (*standard-output* nil :prologue nil :indent t)
-   (:label :for (+s "select_" name)
-	   :id (+s "label_" name) :class "label-left"
-	   (cl-who:str name))
-   (if direct-selectbox
-       (cl-who:str direct-selectbox)
-       (cl-who:htm 
-	(:select 
-	 :id (+s "input_" name) :name name
-	 (loop for option in options
-	    do (let ((opt-val (if (listp option) 
-				  (car option) 
-				  option))
-		     (opt-lbl (if (listp option) 
-				  (or (cadr option) (car option)) 
-				  option)))
-		 (if (equal opt-val val)
-		     (htm (:option :value opt-val :selected "selected" 
-				   (str opt-lbl)))
-		     (htm (:option :value opt-val (str opt-lbl)))))))))))
+      (*standard-output* nil :prologue nil :indent t)
+    (:label :for (+s "select_" name)
+	    :id (+s "label_" name) :class "label-left"
+	    (cl-who:str name))
+    (if direct-selectbox
+	(cl-who:str direct-selectbox)
+	(cl-who:htm 
+	 (:select 
+	  :id (+s "input_" name) :name name
+	  (loop for option in options
+	     do (let ((opt-val (if (listp option) 
+				   (car option) 
+				   option))
+		      (opt-lbl (if (listp option) 
+				   (or (cadr option) (car option)) 
+				   option)))
+		  (if (equal opt-val val)
+		      (htm (:option :value opt-val :selected "selected" 
+				    (str opt-lbl)))
+		      (htm (:option :value opt-val (str opt-lbl)))))))))))
 
 (defun selectbox-from-class (&key select-name class-name value-slot 
 			     label-slot not-selected-option)
@@ -168,7 +174,7 @@
 			(slot-value item label-slot))))))))
 
 (defun label-datepicker
-  (name &key (val (get-universal-time)) label)
+    (name &key (val (get-universal-time)) label)
   (let ((value (* 1000 (unix-time-from-universal val))))
     (+s (label-input (+s "datepicker_" name) :label (or label name))
 	(+s "<input type='hidden' name='" name "' "
@@ -176,11 +182,11 @@
 	(script-tag
 	 (eval
 	  `(ps:ps
-	    (chain ($ ,(+s "#input_datepicker_" name))
-		   (datepicker
-		    (ps:create alt-field ,(+s "#input_" name)
-			       alt-format "@")))
-	    ""))))))
+	     (chain ($ ,(+s "#input_datepicker_" name))
+		    (datepicker
+		     (ps:create alt-field ,(+s "#input_" name)
+				alt-format "@")))
+	     ""))))))
 
 
 
@@ -191,7 +197,7 @@
       "font=arial&amp;height=" h "' scrolling='no' frameborder='0' " 
       " style='border:none; overflow:hidden; width:" w "px; height:" h 
       "px;' allowTransparency='true'></iframe>"))
-  
+
 
 (defun fb-share-btn (url &key (caption "Share On Facebook"))
   (+s "<a rel='nofollow' href='http://www.facebook.com/share.php?u=" url
@@ -202,12 +208,12 @@
 ;;(for-each-class-slot ('foo slot type)
 ;;  (format nil "next slot type is: ~a" type))
 
-;code reuse
-;(defmacro do-table-to-s ((rows row) &body body)
-;  `(format nil "~{~a~}" ,`(labels ((do-row (,row)
-;	      (append (list ,@body)
-;		    (if (cdr ,row) (do-row (cdr ,row)) NIL ))))
-;     (do-row ,rows))))
+					;code reuse
+					;(defmacro do-table-to-s ((rows row) &body body)
+					;  `(format nil "~{~a~}" ,`(labels ((do-row (,row)
+					;	      (append (list ,@body)
+					;		    (if (cdr ,row) (do-row (cdr ,row)) NIL ))))
+					;     (do-row ,rows))))
 
 ;;;re-specific templates
 
@@ -249,7 +255,7 @@
 			 "My account")
 		     (:a :id "header-logout-link" :href "./logout"
 			 "Logout")))
-	    (cl-who:str (login-page))))))
+	      (cl-who:str (login-page))))))
 
 
 
@@ -297,7 +303,7 @@
 
 (defun register-page (&key reg-token acc-type)
   (let ((checked-type (if (member acc-type (valid-acc-types)) 
-		  acc-type :simple)))
+			  acc-type :simple)))
     (cl-who:with-html-output-to-string 
 	(*standard-output* nil :prologue nil :indent t)
       (:div :id "register-form-div"
@@ -310,22 +316,22 @@
 		     (label-input "usr" :label "Username:")
 		     (label-input "pwd" :label "Password:" :type "password")))
 		   (:input :type "submit" :value "Register"))))))
-  
+
 
 (defun login-page (&key (redir "/"))
   (cl-who:with-html-output-to-string 
-   (*standard-output* nil :prologue nil :indent t)
-   (:div :id "login-form-div"
-	 (:form :method "post" :action "./login-handler"
-		(:input :type "hidden" :name "redir" :value redir)
-		(cl-who:str
-		 (+s
-		  (label-input "usr" :label (re-tr :username))
-		  (label-input "pwd" :label (re-tr :password)
-			       :type "password")))
-		(:input :type "submit" :value (re-tr :btn-log-in))
-		(:a :href "./register"
-		    (re-tr :register-link))))))
+      (*standard-output* nil :prologue nil :indent t)
+    (:div :id "login-form-div"
+	  (:form :method "post" :action "./login-handler"
+		 (:input :type "hidden" :name "redir" :value redir)
+		 (cl-who:str
+		  (+s
+		   (label-input "usr" :label (re-tr :username))
+		   (label-input "pwd" :label (re-tr :password)
+				:type "password")))
+		 (:input :type "submit" :value (re-tr :btn-log-in))
+		 (:a :href "./register"
+		     (re-tr :register-link))))))
 
 ;;; project-specific code
 
@@ -395,9 +401,12 @@
     (:div 
      :id "top-menu"
      (:a :href "javascript:toggleSearchBar();" "Search")
-     (:a :href "./register" "Register")
-     (:a :href "./register?type=broker" "Register as Broker")
-     (:a :href "./contact" :id "top-contact-link" "Contact"))
+     (:a :href "./register" :id "top-reg-link" :class "fancybox.iframe" 
+	 "Register")
+     (:a :href "./register?type=broker" :id "top-reg-broker-link"
+	 :class "fancybox.iframe" "Register as Broker")
+     (:a :href "./contact" :id "top-contact-link" :class "fancybox.iframe" 
+	 "Contact"))
     (:div :id "fp-pics")
     (:img :id "fp-preloader" :src "css/img/preloader.gif")
     (:div :id "view-estate"
@@ -430,15 +439,15 @@
        )))
     (cl-who:str (script-tag (fp-search-js)))))
 
-	
-      ;;TODO: populate a grid (generated with uneven-grid) with fp-pics
-	    #+nil(loop for img in normal-size-pics
-	       do (cl-who:htm 
-		   (:div 
-		    :class "grid-10"
-		    (cl-who:str 
-		     (+s "<img src='" (linkable-pic-path img) 
-			 "' /><br>")))))
+
+;;TODO: populate a grid (generated with uneven-grid) with fp-pics
+#+nil(loop for img in normal-size-pics
+	do (cl-who:htm 
+	    (:div 
+	     :class "grid-10"
+	     (cl-who:str 
+	      (+s "<img src='" (linkable-pic-path img) 
+		  "' /><br>")))))
 
 
 (defun estate-edit-form (e)
@@ -517,7 +526,7 @@
 			  (set-position
 			   (new (google.maps.-lat-lng lat
 						      lng))))
-		 t)))
+		   t)))
 	      (defun add-pic-box (rem-pic-uuid)
 		(chain 
 		 ($ "#estate-pics")
@@ -529,7 +538,7 @@
 	      (chain ($ "#add-estate-pic")
 		     (click (lambda () (add-pic-box "") false)))
 	      (-map-marker-A-C-Combo "#input_address" "#loc-lat" "#loc-lng"
-				estate-map loc-marker)
+				     estate-map loc-marker)
 	      );end main ps:ps
 	    (smake
 	     (loop for key being the hash-keys 
@@ -553,7 +562,7 @@
 		       "/css/img/no-pic.jpg"))
 	(cl-who:str 
 	 (label-input "img" :type "file" :label "Choose Image:"))
-	;(:input :type "submit" :value "Update image")
+					;(:input :type "submit" :value "Update image")
 	(:script
 	 :type "text/javascript"
 	 (cl-who:str 
@@ -568,8 +577,12 @@
 	    ))))))))
 
 (defun contact-page ()
-    (cl-who:with-html-output-to-string 
-	(*standard-output* nil :prologue nil :indent t)
-  (:h1 "Contact us")
-  (:p "You can contact us by calling +995 11 22 33")))
+  (cl-who:with-html-output-to-string 
+      (*standard-output* nil :prologue nil :indent t)
+    (cl-who:str (style-tag (style-contact-page)))
+    (:div 
+     :id "contact-div"
+     (:h1 "Contact us")
+     (:div :class "text" 
+	   "You can contact us by calling +995 11 22 33"))))
 

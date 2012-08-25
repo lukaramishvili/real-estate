@@ -392,5 +392,8 @@
 			   (lambda ()
 			     (load-results))
 			   2200)))))
+     ($$ "#top-reg-link" (fancybox))
+     ($$ "#top-reg-broker-link" (fancybox))
+     ($$ "#top-contact-link" (fancybox))
      ($$ document (ready (lambda ()
 			   (load-results)))))))
