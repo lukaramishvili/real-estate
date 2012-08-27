@@ -322,7 +322,7 @@
 		 ($$ "#fp-pics-table-tr > td" (remove)))
 	     ;;add received estates to document
 	     (var tbl-def 
-		  (+ "<td>" 
+		  (+ "<td align='left' valign='top'>" 
 		     "<table border='0' cellspacing='0' cellpadding='0'><tr>"))
 	     (var tbl tbl-def)
 	     (let ((img-per-row 9) (img-per-col 4)
