@@ -35,7 +35,6 @@
 
   #fp-pics { /*height:100%;*/ }
   /*#fp-pics a img {  }*/
-  #fp-pics .table-cont { /*width:1500px;*/ float:left; }
   .fp-estate-link img { width:150px; height:150px; margin:0px 1px 0px 1px; }
   td.td-4x a img { width:300px; height:300px; }
   

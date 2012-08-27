@@ -407,7 +407,10 @@
 	 :class "fancybox.iframe" "Register as Broker")
      (:a :href "./contact" :id "top-contact-link" :class "fancybox.iframe" 
 	 "Contact"))
-    (:div :id "fp-pics")
+    (:div :id "fp-pics"
+	  (:table :id "fp-pics-table" 
+		  :border 0 :cellpadding 0 :cellspacing 0
+		  (:tr :id "fp-pics-table-tr")))
     (:img :id "fp-preloader" :src "css/img/preloader.gif")
     (:div :id "view-estate"
 	  (:a :id "e-close-btn" 

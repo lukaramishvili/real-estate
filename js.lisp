@@ -45,9 +45,9 @@
          loadResults({ count: 99, offset: imgsLoadedForNow(), 
            callback: function(){
              fAllowFurtherScrolling = true;
+             lastPage += 3;
            }, clearPrevs: false });
        }
-       lastPage = Math.max(currPage, lastPage);
      }
    });
 
@@ -319,10 +319,10 @@
 		     (chain es (push (eval (+ "(" (aref data raw-e) ")")))))
 	     ;;clear existing estates
 	     (if clear-prevs 
-		 ($$ "#fp-pics > *" (remove)))
+		 ($$ "#fp-pics-table-tr > td" (remove)))
 	     ;;add received estates to document
 	     (var tbl-def 
-		  (+ "<div class='table-cont'>" 
+		  (+ "<td>" 
 		     "<table border='0' cellspacing='0' cellpadding='0'><tr>"))
 	     (var tbl tbl-def)
 	     (let ((img-per-row 9) (img-per-col 4)
@@ -370,8 +370,8 @@
 		      (+= tbl (+ "</table></div>" tbl-def)))
 		    (+= tbl "<tr>"))
 		  )))
-	     (+= tbl "</tr></table></div>")
-	     ($$ "#fp-pics" (append tbl))
+	     (+= tbl "</tr></table></td>")
+	     ($$ "#fp-pics-table-tr" (append tbl))
 	     (console.log data)
 	     (if (not (= "undefined" (typeof callback)))
 		 (chain callback (call))))
