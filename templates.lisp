@@ -302,8 +302,8 @@
 
 
 (defun register-page (&key reg-token acc-type)
-  (let ((checked-type (if (member acc-type (valid-acc-types)) 
-			  acc-type :simple)))
+  (let ((checked-type (if (valid-acc-type-p acc-type) 
+			  acc-type "simple")))
     (cl-who:with-html-output-to-string 
 	(*standard-output* nil :prologue nil :indent t)
       (:div :id "register-form-div"

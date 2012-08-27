@@ -151,8 +151,8 @@
    (if (and usr pwd reg-token
 	    (plusp (length usr)) (plusp (length pwd))
 	    (string= (session-value 'reg-token) reg-token))
-       (let* ((checked-type (if (member acc-type (valid-acc-types))
-			     checked-type "simple"))
+       (let* ((checked-type (if (valid-acc-type-p acc-type)
+				acc-type "simple"))
 	      (usr-to-save
 	      (make-instance 'user
 			     :login-name usr

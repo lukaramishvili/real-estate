@@ -31,6 +31,11 @@
 (defun valid-acc-types ()
   (list "simple" "broker"))
 
+(defun valid-acc-type-p (acc-type)
+  (if (member acc-type (valid-acc-types) 
+	      :test #'string=)
+      t))
+
 (defclass user ()
   ((ix-user :col-type serial :initarg :ix-user :reader ix-user)
    (username :col-type string :initarg :username :reader username :initform "")
