@@ -119,7 +119,12 @@
        ($$ "#view-estate" (show)))
      
      (defun hide-estate-div ()
-       ($$ "#view-estate" (hide)))       
+       ($$ "#view-estate" (hide))
+       ;;remove #estate-\d+ from the url after closing
+       (setf document.location.href 
+	     (chain document.location.href
+		    (replace document.location.hash 
+			     "#"))))       
      
      (defun view-e (id)
        ($$ "#fp-preloader" (show))
@@ -150,7 +155,8 @@
      ($$ ".fp-estate-link"
 	 (live "click" (lambda () 
 			 (view-e ($$ this (attr "ixestate")))
-			 false)))
+			 ;;return true so #estate-\d+ becomes current url
+			 t)))
      );end ps:ps
      "
     function createMapForId (id, options){
@@ -350,7 +356,7 @@
 		  (let ((e (aref es ie)))
 		    (var e-gen (+ "<td align='left' valign='top' " 
 				  td-4x-spec ">" 
-				  "<a href='#view-estate' " 
+				  "<a href='#estate-" (@ e ix-estate) "' " 
 				  " class='fp-estate-link'" 
 				  " ixestate=" (@ e ix-estate) ">"
 				  "<img src='" (@ (@ e main-pic) path)  
