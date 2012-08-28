@@ -300,7 +300,10 @@
 					      big-imgs-per-page))))
 	      (offset (or (@ args offset) 0))
 	      (callback (@ args callback))
-	      (clear-prevs (or (@ args clear-prevs) true)))
+	      (clear-prevs (if (not (= "undefined" 
+				       (typeof (@ args clear-prevs))))
+			       (@ args clear-prevs)
+			       true)))
 	 ($$ "#fp-preloader" (show))
 	 ($.ajax
 	  (create 
