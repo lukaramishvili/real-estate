@@ -35,18 +35,18 @@
      if(fAllowFurtherScrolling){
        $('html')[0].scrollLeft -= (delta * 100);
        event.preventDefault();
-     }
-     //
-     var carScroll = $('html')[0].scrollLeft;
-     if((1 + (carScroll - carScroll%wCarImg)/wCarImg) != lastPage){
-       currPage = 1 + ((carScroll - carScroll%wCarImg)/wCarImg);
-       if(currPage >= lastPage){
-         fAllowFurtherScrolling = false;
-         loadResults({ count: 99, offset: imgsLoadedForNow(), 
-           callback: function(){
-             fAllowFurtherScrolling = true;
-             lastPage += 3;
-           }, clearPrevs: false });
+       //
+       var carScroll = $('html')[0].scrollLeft;
+       if((1 + (carScroll - carScroll%wCarImg)/wCarImg) != lastPage){
+         currPage = 1 + ((carScroll - carScroll%wCarImg)/wCarImg);
+         if(currPage >= lastPage){
+           fAllowFurtherScrolling = false;
+           loadResults({ count: 99, offset: imgsLoadedForNow(), 
+             callback: function(){
+               fAllowFurtherScrolling = true;
+               lastPage += 3;
+             }, clearPrevs: false });
+         }
        }
      }
    });
