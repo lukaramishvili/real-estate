@@ -405,4 +405,4 @@
 			   (load-results))))
      (let ((arg-estate-id (estate-id-from-argument document.location.href)))
        (if (> arg-estate-id 0)
-	   (view-e arg-estate-id)))))))
+	   (view-e arg-estate-id))))))
