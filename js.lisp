@@ -63,7 +63,7 @@
    }
    function linkForEstate (ix){
      //TODO: generate using document.location
-     return 'http://localhost:4343/#estate-' + ix;
+     return 'http://' + document.location.host + '/#estate-' + ix;
    }
    "
    (ps:ps
@@ -372,7 +372,6 @@
 		  )))
 	     (+= tbl "</tr></table></td>")
 	     ($$ "#fp-pics-table-tr" (append tbl))
-	     (console.log data)
 	     (if (not (= "undefined" (typeof callback)))
 		 (chain callback (call))))
 	   ))))
@@ -392,8 +391,15 @@
 			   (lambda ()
 			     (load-results))
 			   2200)))))
+     ($$ "body" (keydown
+		 (lambda (evt)
+		   (if (== 27 evt.key-code) (hide-estate-div))
+		   t)))
      ($$ "#top-reg-link" (fancybox))
      ($$ "#top-reg-broker-link" (fancybox))
      ($$ "#top-contact-link" (fancybox))
      ($$ document (ready (lambda ()
-			   (load-results)))))))
+			   (load-results))))
+     (let ((arg-estate-id (estate-id-from-argument document.location.href)))
+       (if (> arg-estate-id 0)
+	   (view-e arg-estate-id)))))))
