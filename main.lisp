@@ -195,9 +195,25 @@
   (if (session-value 'logged-in-p)
       (let ((ed-estate (or (with-re-db (get-dao 'estate ix-estate))
 			   (make-instance 'estate))))
-	;;prepare space for temporary variables
-	(if (not (session-value 'rem-pics))
-	    (setf (session-value 'rem-pics) (make-hash-table :test 'equal)))
+	;;if editing an estate for the first time or switching to another,
+	;;then prepare space for temporary variables
+	(when (or (/= ix-estate 
+		      (or (session-value 'ix-editing-estate) 0))
+		  (not (session-value 'rem-pics)))
+	  (setf (session-value 'rem-pics) (make-hash-table :test 'equal))
+	  ;;when editing an existing estate, and 'rem-pics isn't populated
+	  ;;yet, then fill temp with existing pics
+	  (when (< 0 ix-estate)
+	    (loop for p in (estate-pics ix-estate)
+	       do 
+		 (let ((rand-uuid (+s (uuid:make-v4-uuid))))
+		   (setf (gethash rand-uuid (session-value 'rem-pics)) p)
+		   ;;copy each pic to temp dir for editing
+		   (cl-fad:copy-file (path p) 
+				     (+s *project-tmp-dir* rand-uuid ".jpg")
+				     :overwrite t)))))
+	;;save in session, which estate is being edited (0 means not saved yet)
+	(setf (session-value 'ix-editing-estate) ix-estate)
 	(re-main :title "Edit real estate"
 		 :body (estate-edit-form ed-estate)))
       (login-page :redir "/edit-estate")))

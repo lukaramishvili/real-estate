@@ -109,7 +109,7 @@
     (:style :type "text/css"
 	     (cl-who:str code))))
 
-(defun label-input (name &key val label (type "text"))
+(defun label-input (name &key val label (type "text") (size-attr ""))
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
     (:label :for (+s "input_" name)
@@ -117,7 +117,7 @@
 	    (cl-who:str (or label name)))
     (:input :type type :id (+s "input_" name)
 	    :value (or (smake val) "")
-	    :name name)))
+	    :name name :size size-attr)))
 
 (defmacro label-checkbox (name &key val label checked)
   `(cl-who:with-html-output-to-string 
@@ -475,48 +475,61 @@
 	(:input :type "hidden" :name "ix-estate" :val ix-estate)
 	(:input :type "hidden" :name "ix-main-pic" 
 		:val (ix-main-pic e))
-	(cl-who:str
-	 (+s (label-input "telnum" :val (telnum e))
-	     (label-select "apt-type" 
-			   :options (apt-type-options)
-			   :val (apt-type e))
-	     (label-select "status" :options (status-options)
-			   :val (status e))
-	     (label-input "pst-code" :val (pst-code e))
-	     (label-input "munic" :val (munic e))
-	     (label-select "ix-country" :options (all-countries)
-			   :val (ix-country e))
-	     (label-select "constr" :options (constr-options)
-			   :val (constr e))
-	     (label-input "total" :val (total e) :label "Total m2")
-	     (label-input "land" :val (land e) :label "Land area m2")
-	     (label-input "desc" :val (desc e) :label "Description")
-	     (label-input "zmh" :val (zmh e) :label "ZMH Reference")
-	     (label-input "price" :val (price e))
-	     (label-datepicker "since" :val (since e) :label "Date added")
-	     (label-input "bedrooms" :val (bedrooms e) :label "Bedroom count")
-	     (label-input "bathrooms" :val (bathrooms e) :label "Bathroom count")
-	     (label-checkbox "terrace-p" :val 1 :checked (< 0 (terrace-p e)))
-	     (label-checkbox "garden-p" :val 1 :checked (< 0 (garden-p e)))
-	     (label-input "parking-lots" :val (parking-lots e))
-	     (label-input "building-permit-p" :val (building-permit-p e))
-	     (label-input "destination" :val (destination e))
-	     (label-select "summons" :options (summons-options) 
-			   :val (summons e))
-	     (label-select "preemption" :options (preemption-options)
-			   :val (preemption e))
-	     (label-select "subdiv-permit" :options (subdiv-permit-options)
-			   :val (subdiv-permit e))
-	     (label-input "epc" :val (epc e) :label "EPC")
-	     (label-input "kad-ink" :val (kad-ink e) :label "K.I.")
-	     (label-checkbox "visible" :val 1 :checked (< 0 (visible e)))
-	     (label-input "address" :val (address e))))
-	(:h4 "write address in the box or click on the map to set location")
-	(:div :id "estate-pics")
-	(:button :id "add-estate-pic" :type "button" "Add image")
-	(:input :type "hidden" :id "loc-lat" :name "loc-lat" :value (loc-lat e))
-	(:input :type "hidden" :id "loc-lng" :name "loc-lng" :value (loc-lng e))
-	(:div :id "edit-estate-map")
+	(:h1 "Edit real estate")
+	(:div 
+	 :class "edit-estate-column"
+	 (cl-who:str
+	  (+s 
+	   (label-input "telnum" :val (telnum e))
+	   (label-select "apt-type" 
+			 :options (apt-type-options)
+			 :val (apt-type e))
+	   (label-select "status" :options (status-options)
+			 :val (status e))
+	   (label-input "pst-code" :val (pst-code e))
+	   (label-input "munic" :val (munic e))
+	   (label-select "ix-country" :options (all-countries)
+			 :val (ix-country e))
+	   (label-select "constr" :options (constr-options)
+			 :val (constr e))
+	   (label-input "total" :val (total e) :label "Total m2")
+	   (label-input "land" :val (land e) :label "Land area m2")
+	   (label-input "desc" :val (desc e) :label "Description")
+	   (label-input "zmh" :val (zmh e) :label "ZMH Reference")
+	   (label-input "price" :val (price e))
+	   (label-datepicker "since" :val (since e) :label "Date added"))))
+	(:div 
+	 :class "edit-estate-column"
+	 (cl-who:str
+	  (+s 
+	   (label-input "bedrooms" :val (bedrooms e) :label "Bedroom count")
+	   (label-input "bathrooms" :val (bathrooms e) :label "Bathroom count")
+	   (label-checkbox "terrace-p" :val 1 :checked (< 0 (terrace-p e)))
+	   (label-checkbox "garden-p" :val 1 :checked (< 0 (garden-p e)))
+	   (label-input "parking-lots" :val (parking-lots e))
+	   (label-input "building-permit-p" :val (building-permit-p e))
+	   (label-input "destination" :val (destination e))
+	   (label-select "summons" :options (summons-options) 
+			 :val (summons e))
+	   (label-select "preemption" :options (preemption-options)
+			 :val (preemption e))
+	   (label-select "subdiv-permit" :options (subdiv-permit-options)
+			 :val (subdiv-permit e))
+	   (label-input "epc" :val (epc e) :label "EPC")
+	   (label-input "kad-ink" :val (kad-ink e) :label "K.I.")
+	   (label-checkbox "visible" :val 1 :checked (< 0 (visible e))))))
+	(:div :class "edit-estate-column"
+	      (:div :id "estate-pics")
+	      (:button :id "add-estate-pic" :type "button" "Add image"))
+	(:div 
+	 :class "edit-estate-column"
+	 (cl-who:str (label-input "address" :val (address e)))
+	 (:h4 "write address in the box or click on the map " 
+	      "to set location")
+	 (:input :type "hidden" :id "loc-lat" :name "loc-lat" :value (loc-lat e))
+	 (:input :type "hidden" :id "loc-lng" :name "loc-lng" :value (loc-lng e))
+	 (:div :id "edit-estate-map"))
+	(:br :class "clearfloat")
 	(:input :type "submit" :value "Save")))
       (:script
        :type "text/javascript"
@@ -574,7 +587,8 @@
 	(:img :src (if saved-pic (linkable-tmp-path (path saved-pic)) 
 		       "/css/img/no-pic.jpg"))
 	(cl-who:str 
-	 (label-input "img" :type "file" :label "Choose Image:"))
+	 (label-input "img" :type "file" :label "Choose Image:" 
+		      :size-attr 10))
 	;;(:input :type "submit" :value "Update image")
 	(:script
 	 :type "text/javascript"

@@ -71,20 +71,25 @@
   "
   #edit-estate-form-div { background-color:white; }
   #edit-estate-form-div { padding:20px; }
+  #edit-estate-form-div .edit-estate-column { float:left; width:300px; }
+
   #edit-estate-form-div iframe { border:0; height:auto; width:auto; 
     width:400px; height:150px;
   }
   #edit-estate-map { width:300px; height:300px; }
   
+  #edit-estate-form-div h1 { clear:both; margin-bottom:20px; }
   #edit-estate-form-div h4 { clear:both; }
   #edit-estate-form-div input,#edit-estate-form-div label
    ,#edit-estate-form-div select { float:left; display:block;
       margin-bottom:4px; }
-  #edit-estate-form-div label { width:150px; }
+  #edit-estate-form-div label { width:120px; }
   #edit-estate-form-div label.label-left { clear: left; }
   #edit-estate-form-div label.label-right { clear: right; }
+  #edit-estate-form-div input[type='text'] 
+      { width:135px; }
   #edit-estate-form-div input[type='checkbox'] 
-      { clear:left; margin-right:135px; }
+      { clear:left; margin-right:105px; }
   #edit-estate-form-div input[type='submit'] 
       { clear:both; }
   
