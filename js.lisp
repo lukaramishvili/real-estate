@@ -412,6 +412,8 @@
 		       (setf (@ (aref ($ "html") 0) scroll-left) 0)
 		       (setf curr-page 1))
 		   t)))
+     ($$ "#top-login-link" (fancybox))
+     ($$ "#top-logout-link" (fancybox))
      ($$ "#top-reg-link" (fancybox))
      ($$ "#top-reg-broker-link" (fancybox))
      ($$ "#top-contact-link" (fancybox))

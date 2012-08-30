@@ -97,13 +97,13 @@
   (re-main-js))
 
 (htoot-handler
- (account-page-handler "/account" ())
- (re-main 
-  :title (re-tr :account-settings)
-  :body   (if (session-value 'logged-in-p) 
-	      (account-page (ix-user (session-value 'user-authed)))
-	    (+s (re-tr :not-logged-in-please-log-in)
-		(login-page :redir "/account")))))
+    (account-page-handler "/account" ())
+  (re-main 
+   :title (re-tr :account-settings)
+   :body   (if (session-value 'logged-in-p) 
+	       (account-page (ix-user (session-value 'user-authed)))
+	       (+s (re-tr :not-logged-in-please-log-in)
+		   (login-page :redir "/account")))))
 
 (htoot-handler
  (log-in-handler

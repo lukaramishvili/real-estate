@@ -275,30 +275,24 @@
 
 (defun account-page (ix-user)
   (let* ((acc-user (single-user ix-user))
-	 (acc-company (single-company (ix-company acc-user)))
-	 (user-vacancies (filter-vacancies 
-			  :ix-user (smake ix-user))))
+	 (user-estates (estates-of-user ix-user)))
     (cl-who:with-html-output-to-string
-	(*standard-output* nil :prologue nil :indent t)
-      (if acc-company
-	  (cl-who:htm
-	   (:p (:a :href (smake "./company?ix-company="
-				(ix-company acc-company))))))
+	(*standard-output* nil :prologue nil :indent t)    
+      (cl-who:str (style-tag (style-account-page)))
+      (:h1 (cl-who:str (+s "User: " (username acc-user))))
       (if 
-       (plusp (length user-vacancies))
+       (plusp (length user-estates))
        (cl-who:htm
 	(:div
-	 :id "user-vacancies"
-	 (loop for vac in user-vacancies
+	 :id "user-estates"
+	 (:h2 "Real estates by you")
+	 (loop for e in user-estates
 	    do (cl-who:htm
-		(:p (:a :href (smake "./vacancy?ix-vacancy="
-				     (ix-vacancy vac))
-			(cl-who:str (company-name-geo vac)
-				    " - " 
-				    (name-geo (emp-pos vac))))
-		    (:a :href (smake "./edit-vacancy?ix-vacancy="
-				     (ix-vacancy vac))
-			"Edit"))))))))))
+		(:p (:a :href (smake "./#estate-" (ix-estate e))
+			(cl-who:str (desc e)))
+		    (:a :href (smake "./edit-estate?ix-estate="
+				     (ix-estate e))
+			"- Edit"))))))))))
 
 
 (defun register-page (&key reg-token acc-type)
@@ -321,6 +315,7 @@
 (defun login-page (&key (redir "/"))
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
+    (cl-who:str (style-tag (style-login-page)))
     (:div :id "login-form-div"
 	  (:form :method "post" :action "./login-handler"
 		 (:input :type "hidden" :name "redir" :value redir)
@@ -331,7 +326,7 @@
 				:type "password")))
 		 (:input :type "submit" :value (re-tr :btn-log-in))
 		 (:a :href "./register"
-		     (re-tr :register-link))))))
+		     (cl-who:str (re-tr :register-link)))))))
 
 ;;; project-specific code
 
@@ -401,10 +396,21 @@
     (:div 
      :id "top-menu"
      (:a :href "javascript:toggleSearchBar();" "Search")
-     (:a :href "./register" :id "top-reg-link" :class "fancybox.iframe" 
-	 "Register")
-     (:a :href "./register?type=broker" :id "top-reg-broker-link"
-	 :class "fancybox.iframe" "Register as Broker")
+     (if 
+      (session-value 'logged-in-p)
+      (cl-who:htm
+       (:a :href "./account" :id "top-account-link" :class "fancybox.iframe" 
+	   (cl-who:str (+s "Logged in as " 
+			   (username (session-value 'user-authed)))))
+       (:a :href "./logout" :id "top-logout-link" :class "fancybox.iframe" 
+	   "Log out"))
+      (cl-who:htm
+       (:a :href "./login" :id "top-login-link" :class "fancybox.iframe" 
+	   "Login")
+       (:a :href "./register" :id "top-reg-link" :class "fancybox.iframe" 
+	   "Register")
+       (:a :href "./register?type=broker" :id "top-reg-broker-link"
+	   :class "fancybox.iframe" "Register as Broker")))
      (:a :href "./contact" :id "top-contact-link" :class "fancybox.iframe" 
 	 "Contact"))
     (:div :id "fp-pics"

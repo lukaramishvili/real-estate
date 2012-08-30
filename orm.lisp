@@ -47,6 +47,10 @@
   (:metaclass dao-class)
   (:keys ix-user))
 
+(defun single-user (ix-user)
+  (with-re-db
+    (get-dao 'user ix-user)))
+
 (defun user-if-valid (username pass)
   (with-re-db
     (let ((matched-users
@@ -264,6 +268,7 @@
 
 (defun filter-estates (filters-alist &key (count 10000) (offset 0))
   (let* ((fa filters-alist)
+	 (ix-user (cdr (assoc :ix-user fa)))
 	 (apt-type (cdr (assoc :apt-type fa)))
 	 (status (cdr (assoc :status fa)))
 	 (ix-country (cdr (assoc :ix-country fa)))
@@ -289,6 +294,7 @@
 	   :* :from :estate :where
 	   (:and 
 	    t
+	    ,(if (spec-f-p ix-user) `(:= :ix-user ,ix-user) t)
 	    ,(if (spec-f-p apt-type) `(:= :apt-type ,apt-type) t)
 	    ,(if (spec-f-p status) `(:= :status ,status) t)
 	    ,(if (spec-f-p ix-country) `(:= :ix-country ,ix-country) t)
@@ -308,3 +314,7 @@
 		 `(:= :subdiv-permit ,subdiv-permit) t))
 	   )
 	  ,count ,offset))))))
+
+(defun estates-of-user (ix-user)
+  (filter-estates `((:ix-user . ,(+s ix-user)))))
+
