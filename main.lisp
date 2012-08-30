@@ -206,12 +206,14 @@
 	  (when (< 0 ix-estate)
 	    (loop for p in (estate-pics ix-estate)
 	       do 
-		 (let ((rand-uuid (+s (uuid:make-v4-uuid))))
-		   (setf (gethash rand-uuid (session-value 'rem-pics)) p)
+		 (let* ((rand-uuid (+s (uuid:make-v4-uuid)))
+			(temp-loc (+s *project-tmp-dir* rand-uuid ".jpg")))
 		   ;;copy each pic to temp dir for editing
-		   (cl-fad:copy-file (path p) 
-				     (+s *project-tmp-dir* rand-uuid ".jpg")
-				     :overwrite t)))))
+		   (cl-fad:copy-file (path p) temp-loc :overwrite t)
+		   ;;pic-s in 'rem-pics are expected to have path in temp dir
+		   (setf (path p) temp-loc)
+		   (setf (gethash rand-uuid (session-value 'rem-pics)) p)
+		   ))))
 	;;save in session, which estate is being edited (0 means not saved yet)
 	(setf (session-value 'ix-editing-estate) ix-estate)
 	(re-main :title "Edit real estate"
