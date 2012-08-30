@@ -565,7 +565,7 @@
 		       "/css/img/no-pic.jpg"))
 	(cl-who:str 
 	 (label-input "img" :type "file" :label "Choose Image:"))
-					;(:input :type "submit" :value "Update image")
+	;;(:input :type "submit" :value "Update image")
 	(:script
 	 :type "text/javascript"
 	 (cl-who:str 

@@ -121,10 +121,11 @@
      (defun hide-estate-div ()
        ($$ "#view-estate" (hide))
        ;;remove #estate-\d+ from the url after closing
-       (setf document.location.href 
-	     (chain document.location.href
-		    (replace document.location.hash 
-			     "#"))))       
+       (if (< 0 (@ document.location.hash length))
+	   (setf document.location.href 
+		 (chain document.location.href
+			(replace document.location.hash 
+				 "#")))))
      
      (defun view-e (id)
        ($$ "#fp-preloader" (show))
@@ -146,6 +147,8 @@
 				      estate-loc))
 		     (chain loc-marker (set-map estate-map))
 		     (chain estate-map (set-center estate-loc)))
+		   ;;hide search bar just before opening estate details
+		   (if f-search-open (toggle-search-bar))
 		   (show-estate-div))
 		 (alert "Loading estate failed, please try again."))
 	     e))
@@ -402,13 +405,23 @@
 			   2200)))))
      ($$ "body" (keydown
 		 (lambda (evt)
+		   ;;hide opened estate div on ESC
 		   (if (== 27 evt.key-code) (hide-estate-div))
+		   ;;scroll to the start on Home key
+		   (when (== 36 evt.key-code) 
+		       (setf (@ (aref ($ "html") 0) scroll-left) 0)
+		       (setf curr-page 1))
 		   t)))
      ($$ "#top-reg-link" (fancybox))
      ($$ "#top-reg-broker-link" (fancybox))
      ($$ "#top-contact-link" (fancybox))
+     ($$ "#view-estate" 
+	 (click (lambda (event)
+		  (when (== event.target event.current-target)
+		    (hide-estate-div)))))
      ($$ document (ready (lambda ()
 			   (load-results))))
+     ;;if the querystring was like /#estate-\d+, open estate with ix \d+
      (let ((arg-estate-id (estate-id-from-argument document.location.href)))
        (if (> arg-estate-id 0)
 	   (view-e arg-estate-id))))))

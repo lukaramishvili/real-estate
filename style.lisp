@@ -43,7 +43,7 @@
   .grid-10 { width:20%; float:left; height:100%; }
   .grid-10 a { width:100%; height:18.6%; display:block; margin:1px; }
   #view-estate { display:none; width:100%; height:100%; color:white;
-    position:absolute; left:0px; top:0px;
+    position:fixed; left:0px; top:0px;
     background:transparent url(css/img/gray-bg.png) left top repeat; }
   #e-close-btn { display:block; position:absolute; right:20px; top:20px;
     background:transparent url(css/fancybox/fancybox_sprite.png) 

@@ -286,8 +286,9 @@
 	  error-message))
       "Not logged in!"))
 
-(htoot-handler (estate-form-pic-box-handler "/estate-form-pic-box" 
-					    ((rem-pic-uuid :init-form "")))
+(htoot-handler (estate-form-pic-box-handler 
+		"/estate-form-pic-box" 
+		((rem-pic-uuid :init-form "")))
   (estate-form-pic-box rem-pic-uuid))
 
 (htoot-handler

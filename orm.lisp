@@ -192,17 +192,23 @@
 	 :test #'equal))))
 
 (defun estate-nonmain-pics (estate)
-    (let ((e (cond ((integerp estate) 
-		    (with-re-db 
-		      (car (select-dao 'estate (:= :ix-estate estate)))))
-		   ((equalp (find-class 'estate) (class-of estate)) 
-		    estate))))
-      (if e
-	  (with-re-db 
-	    (select-dao 
+  (estate-pics estate :include-main-pic nil))
+
+(defun estate-pics (estate &key (include-main-pic t))
+  (let ((e (cond ((integerp estate) 
+		  (with-re-db 
+		    (car (select-dao 'estate (:= :ix-estate estate)))))
+		 ((equalp (find-class 'estate) (class-of estate)) 
+		  estate))))
+    (if e
+	(with-re-db 
+	  (eval 
+	   `(select-dao 
 	     'pic 
-	     (:and (:= :ix-estate (ix-estate e)) 
-		   (:!= :ix-pic (ix-main-pic e))))))))
+	     (:and (:= :ix-estate ,(ix-estate e)) 
+		   ,(if include-main-pic 
+			`(:!= :ix-pic ,(ix-main-pic e)) 
+			t))))))))
 
 (defun get-country (ix-country)
   (loop for i in (all-countries) 
