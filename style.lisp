@@ -32,6 +32,7 @@
   #search-bar label.label-left { clear: left; }
   #search-bar label.label-right { clear: right; }
   #search-bar input[type='checkbox'] { clear:left; }
+  #search-bar #label_only-my-estates { width:200px; }
 
   #fp-pics { /*height:100%;*/ }
   /*#fp-pics a img {  }*/

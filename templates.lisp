@@ -402,8 +402,7 @@
        (:a :href "./account" :id "top-account-link" :class "fancybox.iframe" 
 	   (cl-who:str (+s "Logged in as " 
 			   (username (session-value 'user-authed)))))
-       (:a :href "./logout" :id "top-logout-link" :class "fancybox.iframe" 
-	   "Log out"))
+       (:a :href "./logout" :id "top-logout-link" "Log out"))
       (cl-who:htm
        (:a :href "./login" :id "top-login-link" :class "fancybox.iframe" 
 	   "Login")
@@ -428,6 +427,11 @@
 	 "&nbsp;")
      (cl-who:str 
       (+s
+       (if (session-value 'logged-in-p)
+	   (+s
+	    (label-checkbox "only-my-estates" 
+			    :label "Only properties added by me"))
+	   "")
        (label-select "apt-type" :options (apt-type-options :not-sel t))
        (label-select "status" :options (status-options :not-sel t))
        (label-select "ix-country" :options (all-countries :not-sel t))

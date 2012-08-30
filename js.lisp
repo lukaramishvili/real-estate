@@ -288,6 +288,9 @@
 		:preemption ($$ "#input_preemption" (val))
 		:subdiv-permit ($$ "#input_subdiv-permit" (val))
 		))
+       (if (and (< 0 ($$ "#input_only-my-estates" length))
+		(@ (@ ($$ "#input_only-my-estates") 0) :checked))
+	   (setf (@ ff :ix-user) "1"))
        (if (inp-pos-val "#input_total-min")
 	   (setf (@ ff :total-min) ($$ "#input_total-min" (val))))
        (if (inp-pos-val "#input_total-max")
@@ -402,7 +405,8 @@
 			  (set-timeout 
 			   (lambda ()
 			     (load-results))
-			   2200)))))
+			   2200))
+		    t)))
      ($$ "body" (keydown
 		 (lambda (evt)
 		   ;;hide opened estate div on ESC
@@ -413,7 +417,6 @@
 		       (setf curr-page 1))
 		   t)))
      ($$ "#top-login-link" (fancybox))
-     ($$ "#top-logout-link" (fancybox))
      ($$ "#top-reg-link" (fancybox))
      ($$ "#top-reg-broker-link" (fancybox))
      ($$ "#top-contact-link" (fancybox))
