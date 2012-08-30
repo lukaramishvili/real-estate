@@ -415,6 +415,7 @@
      ($$ "#top-reg-link" (fancybox))
      ($$ "#top-reg-broker-link" (fancybox))
      ($$ "#top-contact-link" (fancybox))
+     ;;upon clicking on empty area in opened estate, hide it
      ($$ "#view-estate" 
 	 (click (lambda (event)
 		  (when (== event.target event.current-target)
