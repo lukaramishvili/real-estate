@@ -222,25 +222,24 @@
 
 ;;;returns a list of success (bool), ix-estate, error message
 (defun save-estate-and-pics (ix-estate save-e e-pics)
-  (progn
-    (if (> ix-estate 0) (setf (ix-estate save-e) ix-estate))
-    (with-re-db 
-      (if 
-       (save-dao save-e)
-       (progn
-	 (loop for e-p in e-pics
-	    do (setf (ix-estate e-p) (ix-estate save-e))
-	      (save-dao e-p);save to get insert-id
-	      (ensure-directories-exist 
-	       (smake *upload-dir* "pics/" (ix-pic e-p) "/"))
-	      (setf (path e-p) 
-		    (+s (rename-file 
-			 (path e-p)
-			 (smake *upload-dir* "pics/" (ix-pic e-p) "/" 
-				(file-namestring (path e-p))))))
-	      (save-dao e-p));now save to update path
-	 (list t (ix-estate save-e) "Real estate saved!"))
-       (list nil ix-estate "Error while saving estate!")))))
+  (if (> ix-estate 0) (setf (ix-estate save-e) ix-estate))
+  (with-re-db 
+    (if 
+     (save-dao save-e)
+     (progn
+       (loop for e-p in e-pics
+	  do (setf (ix-estate e-p) (ix-estate save-e))
+	    (save-dao e-p);save to get insert-id
+	    (ensure-directories-exist 
+	     (smake *upload-dir* "pics/" (ix-pic e-p) "/"))
+	    (setf (path e-p) 
+		  (+s (rename-file 
+		       (path e-p)
+		       (smake *upload-dir* "pics/" (ix-pic e-p) "/" 
+			      (file-namestring (path e-p))))))
+	    (save-dao e-p));now save to update path
+       (list t (ix-estate save-e) "Real estate saved!"))
+     (list nil ix-estate "Error while saving estate!"))))
 
 (htoot-handler
     (estate-save-handler

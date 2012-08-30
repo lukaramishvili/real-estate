@@ -472,9 +472,9 @@
        :id "edit-estate-form-div"
        (:form 
 	:method :post :action "./save-estate"
-	(:input :type "hidden" :name "ix-estate" :val ix-estate)
+	(:input :type "hidden" :name "ix-estate" :value ix-estate)
 	(:input :type "hidden" :name "ix-main-pic" 
-		:val (ix-main-pic e))
+		:value (ix-main-pic e))
 	(:h1 "Edit real estate")
 	(:div 
 	 :class "edit-estate-column"
