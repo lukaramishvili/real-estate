@@ -101,6 +101,21 @@
   .text { color:white; color:12px; }
   ")
 
+(defun style-login-page()
+  "
+  h1 { color:white; font-size:16px; }
+  label { color:white; font-size:12px; }
+  a { color:white; font-size:12px; }
+  ")
+
+(defun style-account-page()
+  "
+  h1 { color:white; font-size:16px; margin-bottom:20px; }
+  h2 { color:white; font-size:14px; margin-bottom:10px; }
+  p { color:white; font-size:12px; margin-bottom:15px; }
+  a { color:white; font-size:12px; }
+  ")
+
 (defun re-gen-css ()
   (+s
    (css-lite:css
