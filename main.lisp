@@ -225,7 +225,9 @@
   (if (> ix-estate 0) (setf (ix-estate save-e) ix-estate))
   (with-re-db 
     (if 
-     (save-dao save-e)
+     (if (> ix-estate 0) 
+	 (update-dao save-e)
+	 (insert-dao save-e))
      (progn
        (loop for e-p in e-pics
 	  do (setf (ix-estate e-p) (ix-estate save-e))
