@@ -38,8 +38,11 @@
 
 (defclass user ()
   ((ix-user :col-type serial :initarg :ix-user :reader ix-user)
-   (username :col-type string :initarg :username :reader username :initform "")
    (email :col-type string :initarg :email :reader email :initform "")
+   (fname :col-type string :initarg :fname :reader fname :initform "")
+   (lname :col-type string :initarg :lname :reader lname :initform "")
+   (url :col-type string :initarg :url :reader url :initform "")
+   (username :col-type string :initarg :username :reader username :initform "")
    (passwd :col-type string :initarg :passwd :initform "")
    (acc-type :col-type string :initarg :acc-type :reader acc-type :initform "")
    (role :col-type integer :initarg :role :reader role :initform 0)
@@ -169,6 +172,39 @@
    (path :col-type string :initarg :path :accessor path :initform ""))
   (:metaclass dao-class)
   (:keys ix-pic))
+
+(defclass fav ()
+  ((ix-fav :col-type serial :initarg :ix-fav :accessor ix-fav)
+   (ix-user :col-type integer :initarg :ix-user 
+	      :accessor ix-user :initform 0)
+   (ix-estate :col-type integer :initarg :ix-estate 
+	      :accessor ix-estate :initform 0))
+  (:metaclass dao-class)
+  (:keys ix-fav))
+
+(defun user-has-fav (ix-user ix-estate)
+  (< 0
+     (with-re-db 
+       (query (:select (:count :*) :from :fav :where 
+		       (:and (:= :ix-user ix-user) 
+			     (:= :ix-estate ix-estate))) 
+	      :single))))
+
+(defun add-fav (ix-user ix-estate)
+  (with-re-db 
+    (save-dao (make-instance 'fav :ix-user ix-user 
+			     :ix-estate ix-estate))))
+
+(defun ensure-fav (ix-user ix-estate)
+  (or (user-has-fav ix-user ix-estate)
+      (add-fav ix-user ix-estate)))
+
+(defun remove-fav (ix-user ix-estate)
+  (with-re-db 
+    (query (:delete-from :fav :where (:and (:= :ix-user ix-user) 
+					   (:= :ix-estate ix-estate))) 
+	   :single))
+  t)
 
 (defun pics-for-firstpage ()
   (with-re-db

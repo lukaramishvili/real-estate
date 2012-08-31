@@ -73,3 +73,12 @@
 		  (ix-pic (random-from pics)))
 	    (save-dao e-after-save)
 	    save-results))))))
+
+(defun update-dao-table-preserve-data (table-class)
+  (with-re-db
+    (let ((existing-rows (select-dao table-class)))
+      (query (:drop-table table-class))
+      (execute (dao-table-definition table-class))
+      (loop for r in existing-rows
+	   do (save-dao r)))))
+
