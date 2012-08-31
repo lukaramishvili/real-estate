@@ -329,7 +329,7 @@
 		 (pic-to-rem
 		  (make-instance 
 		   'pic :path path-tmp :order order :ix-estate ix-estate)))
-	    (if (> 0 ix-pic) (setf (ix-pic pic-to-rem) ix-pic))
+	    (if (< 0 ix-pic) (setf (ix-pic pic-to-rem) ix-pic))
 	    (cl-fad:copy-file path path-tmp :overwrite t)
 	    (setf (gethash uniq-rem-pic-uuid (session-value 'rem-pics)) 
 		  pic-to-rem)

@@ -584,6 +584,11 @@
        (:div
 	:class "div-in-pic-box-iframe"
 	(:input :type "hidden" :name "rem-pic-uuid" :value rem-pic-uuid)
+	(if (and (slot-boundp saved-pic 'ix-pic)
+		 (< 0 (ix-pic saved-pic)))
+	    (cl-who:htm (:input :type "hidden" :name "ix-pic" 
+				:value (ix-pic saved-pic))) 
+	    (cl-who:str ""))
 	(:img :src (if saved-pic (linkable-tmp-path (path saved-pic)) 
 		       "/css/img/no-pic.jpg"))
 	(cl-who:str 
