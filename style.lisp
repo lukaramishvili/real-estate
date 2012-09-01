@@ -114,6 +114,20 @@
   a { color:white; font-size:12px; }
   ")
 
+(defun style-register-page ()
+  "
+  html, body { height:350px; }
+  #reg-div { padding:20px; }
+  #reg-div h1 { color:white; margin-bottom:16px; }
+  #reg-div input,#reg-div label,#reg-div select 
+      { float:left; display:block; margin-bottom:10px; }
+  #reg-div label { width:130px; color:white; line-height:24px; }
+  #reg-div label.label-left { clear: left; }
+  #reg-div label.label-right { clear: right; }
+  #reg-div input[type='checkbox'] { clear:left; }
+  #reg-div input[type='submit'] { clear:both; margin:2px 4px; }
+  ")
+
 (defun style-account-page()
   "
   h1 { color:white; font-size:16px; margin-bottom:20px; }

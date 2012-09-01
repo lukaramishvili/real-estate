@@ -300,16 +300,28 @@
 			  acc-type "simple")))
     (cl-who:with-html-output-to-string 
 	(*standard-output* nil :prologue nil :indent t)
-      (:div :id "register-form-div"
-	    (:form :method "post" :action "./register-handler"
-		   (:h1 "Register")
-		   (:input :type "hidden" :name "reg-token" :value reg-token)
-		   (:input :type "hidden" :name "acc-type" :value checked-type)
-		   (cl-who:str
-		    (+s
-		     (label-input "usr" :label "Username:")
-		     (label-input "pwd" :label "Password:" :type "password")))
-		   (:input :type "submit" :value "Register"))))))
+      (cl-who:str (style-tag (style-register-page)))
+      (:div 
+       :id "reg-div"
+       (:form 
+	:method "post" :action "./register-handler"
+	(:h1 "Register")
+	(:input :type "hidden" :name "reg-token" :value reg-token)
+	(:input :type "hidden" :name "acc-type" :value checked-type)
+	(cl-who:str
+	 (+s
+	  (label-input "usr" :label "Username:")
+	  (label-input "email" :label "Email address:")
+	  (label-input "pwd" :label "Password:" :type "password")
+	  (label-input "fname" :label "First name:")
+	  (label-input "lname" :label "Last name:")
+	  (if (string-equal checked-type "broker")
+	      (+s 
+	       (label-input "url" :label "Website:")
+	       (label-input "logo" :type "file"
+			    :label "Upload your logo:"))
+	      "")))
+	(:input :type "submit" :value "Register"))))))
 
 
 (defun login-page (&key (redir "/"))

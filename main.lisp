@@ -145,7 +145,11 @@
   ((usr :request-type :POST :parameter-type 'string :init-form nil)
    (pwd :request-type :POST :parameter-type 'string :init-form nil)
    (reg-token :request-type :POST :parameter-type 'string :init-form nil)
-   (acc-type :request-type :POST :parameter-type 'string :init-form "simple")))
+   (acc-type :request-type :POST :parameter-type 'string :init-form "simple")
+   (email :request-type :POST :parameter-type 'string :init-form "")
+   (fname :request-type :POST :parameter-type 'string :init-form "")
+   (lname :request-type :POST :parameter-type 'string :init-form "")
+   (url :request-type :POST :parameter-type 'string :init-form "")))
  (if (session-value 'logged-in-p)
      (re-tr :already-logged-in)
    (if (and usr pwd reg-token
@@ -155,10 +159,11 @@
 				acc-type "simple"))
 	      (usr-to-save
 	      (make-instance 'user
-			     :login-name usr
-			     :passwd (hash-password pwd)
-			     :acc-type checked-type)))
+			     :login-name usr :passwd (hash-password pwd)
+			     :acc-type checked-type :email email 
+			     :fname fname :lname lname :url url)))
 	 (if (plusp (save-user usr-to-save))
+	     ;;TODO: save logo
 	     (re-tr :registration-successful)
 	     (re-tr :couldnt-register-correct-errors)))
        (re-tr :couldnt-save-user))))
