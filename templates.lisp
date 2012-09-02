@@ -1,5 +1,5 @@
 (ql:quickload 'cl-who)
-					;(ql:quickload 'closer-mop)
+;;(ql:quickload 'closer-mop)
 
 ;;(defpackage :re-templates
 ;;  (:use :common-lisp :cl-user :closer-mop :cl-who))
@@ -295,14 +295,14 @@
 			"- Edit"))))))))))
 
 
-(defun register-page (&key reg-token acc-type)
+(defun register-page (&key reg-token acc-type div-id)
   (let ((checked-type (if (valid-acc-type-p acc-type) 
 			  acc-type "simple")))
     (cl-who:with-html-output-to-string 
 	(*standard-output* nil :prologue nil :indent t)
       (cl-who:str (style-tag (style-register-page)))
       (:div 
-       :id "reg-div"
+       :id (or div-id "reg-div") :class "reg-div"
        (:form 
 	:method "post" :action "./register-handler"
 	(:h1 "Register")
@@ -416,12 +416,12 @@
 			   (username (session-value 'user-authed)))))
        (:a :href "./logout" :id "top-logout-link" "Log out"))
       (cl-who:htm
-       (:a :href "./login" :id "top-login-link" :class "fancybox.iframe" 
-	   "Login")
-       (:a :href "./register" :id "top-reg-link" :class "fancybox.iframe" 
+       (:a :href "#login-form-div" :id "top-login-link" 
+	   :class "fancybox.inline" "Login")
+       (:a :href "#reg-div" :id "top-reg-link" :class "fancybox.inline" 
 	   "Register")
-       (:a :href "./register?type=broker" :id "top-reg-broker-link"
-	   :class "fancybox.iframe" "Register as Broker")))
+       (:a :href "#reg-broker-div" :id "top-reg-broker-link"
+	   :class "fancybox.inline" "Register as Broker")))
      (:a :href "./contact" :id "top-contact-link" :class "fancybox.iframe" 
 	 "Contact"))
     (:div :id "fp-pics"
@@ -462,7 +462,12 @@
        (label-select "subdiv-permit" 
 		     :options (subdiv-permit-options :not-sel t))
        )))
-    (cl-who:str (script-tag (fp-search-js)))))
+    (cl-who:str (script-tag (fp-search-js)))
+    (:div :id "ajax-pages"
+	  (cl-who:str 
+	   (+s (register-page :acc-type "broker" :div-id "reg-broker-div")
+	       (register-page)
+	       (login-page))))))
 
 
 ;;TODO: populate a grid (generated with uneven-grid) with fp-pics

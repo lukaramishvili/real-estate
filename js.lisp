@@ -33,7 +33,7 @@
 
    $('html').mousewheel(function(event, delta) {
      if(fAllowFurtherScrolling){
-       $('html')[0].scrollLeft -= (delta * 100);
+       $('html')[0].scrollLeft -= (delta * 20);
        event.preventDefault();
        //
        var carScroll = $('html')[0].scrollLeft;

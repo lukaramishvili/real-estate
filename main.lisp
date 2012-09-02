@@ -159,7 +159,7 @@
 				acc-type "simple"))
 	      (usr-to-save
 	      (make-instance 'user
-			     :login-name usr :passwd (hash-password pwd)
+			     :username usr :passwd (hash-password pwd)
 			     :acc-type checked-type :email email 
 			     :fname fname :lname lname :url url)))
 	 (if (plusp (save-user usr-to-save))

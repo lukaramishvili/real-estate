@@ -60,11 +60,12 @@
       margin-right:20px; }
   #view-estate #single-estate-map { width:250px; height:250px; }
   
-  
-  
   html .fb_share_link { padding:2px 0 0 20px; height:16px; 
     background:url(http://static.ak.facebook.com/images/share/facebook_share_icon.gif?6:26981) no-repeat top left; }
-
+  
+  #ajax-pages #reg-div, #ajax-pages #login-form-div,
+   #ajax-pages #reg-broker-div { display:none; } 
+  
   "))
 
 (defun style-edit-estate-form ()
@@ -109,23 +110,31 @@
 
 (defun style-login-page()
   "
-  h1 { color:white; font-size:16px; }
-  label { color:white; font-size:12px; }
-  a { color:white; font-size:12px; }
+  #login-form-div { padding:20px; }
+  #login-form-div h1 { color:white; margin-bottom:16px; }
+  #login-form-div input,#login-form-div label,#login-form-div select 
+      { float:left; display:block; margin-bottom:10px; }
+  #login-form-div label { width:130px; color:white; line-height:24px; }
+  #login-form-div label.label-left { clear: left; }
+  #login-form-div label.label-right { clear: right; }
+  #login-form-div input[type='checkbox'] { clear:left; }
+  #login-form-div input[type='submit'] { clear:both; margin:2px 4px; }
+  #login-form-div a { color:white; font-size:12px; clear:both;
+      display:block; padding-top:10px; }
   ")
 
 (defun style-register-page ()
   "
   html, body { height:350px; }
-  #reg-div { padding:20px; }
-  #reg-div h1 { color:white; margin-bottom:16px; }
-  #reg-div input,#reg-div label,#reg-div select 
+  .reg-div { padding:20px; }
+  .reg-div h1 { color:white; margin-bottom:16px; }
+  .reg-div input,.reg-div label,.reg-div select 
       { float:left; display:block; margin-bottom:10px; }
-  #reg-div label { width:130px; color:white; line-height:24px; }
-  #reg-div label.label-left { clear: left; }
-  #reg-div label.label-right { clear: right; }
-  #reg-div input[type='checkbox'] { clear:left; }
-  #reg-div input[type='submit'] { clear:both; margin:2px 4px; }
+  .reg-div label { width:130px; color:white; line-height:24px; }
+  .reg-div label.label-left { clear: left; }
+  .reg-div label.label-right { clear: right; }
+  .reg-div input[type='checkbox'] { clear:left; }
+  .reg-div input[type='submit'] { clear:both; margin:2px 4px; }
   ")
 
 (defun style-account-page()
