@@ -74,11 +74,26 @@
 	    (save-dao e-after-save)
 	    save-results))))))
 
-(defun update-dao-table-preserve-data (table-class)
+(defun update-dao-table-preserve-data (table-class &key (preserve-ids t))
   (with-re-db
     (let ((existing-rows (select-dao table-class)))
       (query (:drop-table table-class))
       (execute (dao-table-definition table-class))
+      (if preserve-ids
+	  (query 
+	   (+s "SELECT setval('" (+s table-class)
+	       "_ix_" (+s table-class) "_seq'::regclass, " 
+	       (reduce 
+		#'max (loop for r in existing-rows
+			 collecting 
+			   (slot-value
+			    r (intern (string-upcase (+s "ix-" table-class))))))
+	       ", true)")))
       (loop for r in existing-rows
-	   do (save-dao r)))))
+	 do
+	   (if (not preserve-ids)
+	       (slot-makunbound 
+		r 
+		(intern (string-upcase (+s "ix-" table-class)))))
+	   (save-dao r)))))
 
