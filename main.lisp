@@ -341,21 +341,28 @@
 	    (estate-form-pic-box uniq-rem-pic-uuid))))))
 
 (defun estate-for-json (e &key short)
-  (json:encode-json-plist-to-string
-   (if short
-       (list :ix-estate (ix-estate e)
-	     :main-pic (pic-to-hashtable (ix-main-pic e)
-					 :make-path-linkable t))
-       (list :ix-estate (ix-estate e)
-	     :main-pic (pic-to-hashtable (ix-main-pic e)
-					 :make-path-linkable t)
-	     :other-pics (mapcar (lambda (p)
-				   (pic-to-hashtable 
-				    p :make-path-linkable t))
-				 (estate-nonmain-pics e))
-	     :fields (estate-to-hash-table e)
-	     :loc-lat (loc-lat e)
-	     :loc-lng (loc-lng e)))))
+  (let ((is-fav (and (session-value 'logged-in-p)
+		     (session-value 'user-authed)
+		     (user-has-fav (ix-user (session-value 'user-authed))
+				   (ix-estate e))
+		     t)))
+    (json:encode-json-plist-to-string
+     (if short
+	 (list :ix-estate (ix-estate e)
+	       :main-pic (pic-to-hashtable (ix-main-pic e)
+					   :make-path-linkable t)
+	       :is-fav is-fav)
+	 (list :ix-estate (ix-estate e)
+	       :main-pic (pic-to-hashtable (ix-main-pic e)
+					   :make-path-linkable t)
+	       :other-pics (mapcar (lambda (p)
+				     (pic-to-hashtable 
+				      p :make-path-linkable t))
+				   (estate-nonmain-pics e))
+	       :fields (estate-to-hash-table e)
+	       :loc-lat (loc-lat e)
+	       :loc-lng (loc-lng e)
+	       :is-fav is-fav)))))
 
 (htoot-handler 
     (get-estate-handler "/get-estate" 
@@ -383,3 +390,25 @@
 
 (htoot-handler (contact-page-handler "/contact" ())
   (contact-page))
+
+(htoot-handler 
+    (set-fav-handler 
+     "/set-fav-handler" 
+     ((ixestate :parameter-type 'integer :init-form 0)
+      (shouldexist :parameter-type 'integer :init-form 0)))
+  (let ((action (if (< 0 shouldexist) "add-fav" "remove-fav")))
+    (if (and (< 0 ixestate)
+	     (session-value 'logged-in-p)
+	     (session-value 'user-authed))
+	(progn (if (< 0 shouldexist)
+		   (add-fav (ix-user (session-value 'user-authed))
+			    ixestate)
+		   (remove-fav (ix-user (session-value 'user-authed))
+			       ixestate))
+	       (json:encode-json-plist-to-string 
+		(list :result "success" 
+		      :action action)))
+	(json:encode-json-plist-to-string 
+	 (list :result "failure" 
+	       :action action)))))
+

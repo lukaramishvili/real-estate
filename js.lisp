@@ -83,7 +83,8 @@
      (defun gen-estate-div (e)
        (let ((fields (@ e fields))
 	     (main-pic (@ e main-pic))
-	     (other-pics (@ e other-pics)))
+	     (other-pics (@ e other-pics))
+	     (is-fav (@ e is-fav)))
 	 (var div "<div>")
 	 (+= div "<div id='estate-images'>")
 	 (+= div "<a href='" (@ main-pic path) 
@@ -97,7 +98,9 @@
 	    (+= div "<a href='" next-img "' rel='estate-gallery'>"
 		"<img src='" next-img "' /></a>")))
 	 (+= div "</div>");</#other-imgs>
-	 (+= div "<a id='estate-toggle-fav'>Favorite</a>" "<br><br>")
+	 (+= div "<a id='estate-toggle-fav' href='javascript:;' class='fav-" 
+	     (if is-fav "yes" "no") "' ixestate='" (@ e ix-estate) "'>" 
+	     (if is-fav "Favorited" "Add to favorites") "</a>" "<br><br>")
 	 (+= div (fb-like-btn (link-for-estate (@ e ix-estate))) "<br><br>")
 	 (+= div (fb-share-btn (link-for-estate (@ e ix-estate))) "<br><br>")
 	 (+= div "</div>");</#estate-images>
@@ -364,7 +367,7 @@
 				  td-4x-spec ">" 
 				  "<a href='#estate-" (@ e ix-estate) "' " 
 				  " class='fp-estate-link'" 
-				  " ixestate=" (@ e ix-estate) ">"
+				  " ixestate='" (@ e ix-estate) "'>"
 				  "<img src='" (@ (@ e main-pic) path)  
 				  "' /></a></td>"))
 		    (+= tbl e-gen))
@@ -425,9 +428,38 @@
 	 (click (lambda (event)
 		  (when (== event.target event.current-target)
 		    (hide-estate-div)))))
+     ($$ "#estate-toggle-fav"
+	 (live "click" 
+	       (lambda ()
+		 ($.ajax 
+		  (create 
+		   url "./set-fav-handler"
+		   type "post"
+		   data (create 
+			 ixestate ($$ this (attr "ixestate"))
+			 shouldexist (if ($$ this (has-class "fav-yes"))
+					  0 1))
+		   data-type "json"
+		   success 
+		   (lambda (data)
+		     (if (== (@ data result) "success")
+			 (progn (alert (+ "Property "
+					  (if (= (@ data action) "add-fav")
+					      "favorited" 
+					      "removed from favorites") "!"))
+				(document.location.reload))
+			 (alert (+ "Could not " 
+				   (if (= (@ data action) "add-fav")
+				       "add" "remove") 
+				   " property to favorites!"))))
+		   error (lambda () (alert (+ "Error occured while "
+					      (if (= (@ data action) "add-fav")
+						  "adding" "removing")
+					      " property to favorites!"))))))))
      ($$ document (ready (lambda ()
 			   (load-results))))
      ;;if the querystring was like /#estate-\d+, open estate with ix \d+
      (let ((arg-estate-id (estate-id-from-argument document.location.href)))
        (if (> arg-estate-id 0)
 	   (view-e arg-estate-id))))))
+
