@@ -246,7 +246,7 @@
 	   `(select-dao 
 	     'pic 
 	     (:and (:= :ix-estate ,(ix-estate e)) 
-		   ,(if include-main-pic 
+		   ,(if (not include-main-pic) 
 			`(:!= :ix-pic ,(ix-main-pic e)) 
 			t))))))))
 

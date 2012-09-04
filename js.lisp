@@ -84,6 +84,7 @@
        (let ((fields (@ e fields))
 	     (main-pic (@ e main-pic))
 	     (other-pics (@ e other-pics))
+	     (can-fav (@ e can-fav))
 	     (is-fav (@ e is-fav)))
 	 (var div "<div>")
 	 (+= div "<div id='estate-images'>")
@@ -98,9 +99,10 @@
 	    (+= div "<a href='" next-img "' rel='estate-gallery'>"
 		"<img src='" next-img "' /></a>")))
 	 (+= div "</div>");</#other-imgs>
-	 (+= div "<a id='estate-toggle-fav' href='javascript:;' class='fav-" 
-	     (if is-fav "yes" "no") "' ixestate='" (@ e ix-estate) "'>" 
-	     (if is-fav "Favorited" "Add to favorites") "</a>" "<br><br>")
+	 (when can-fav
+	   (+= div "<a id='estate-toggle-fav' href='javascript:;' class='fav-" 
+	       (if is-fav "yes" "no") "' ixestate='" (@ e ix-estate) "'>" 
+	       (if is-fav "Favorited" "Add to favorites") "</a>" "<br><br>"))
 	 (+= div (fb-like-btn (link-for-estate (@ e ix-estate))) "<br><br>")
 	 (+= div (fb-share-btn (link-for-estate (@ e ix-estate))) "<br><br>")
 	 (+= div "</div>");</#estate-images>

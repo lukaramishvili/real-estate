@@ -490,8 +490,11 @@
        (:form 
 	:method :post :action "./save-estate"
 	(:input :type "hidden" :name "ix-estate" :value ix-estate)
+	;;not useful, because 
 	(:input :type "hidden" :name "ix-main-pic" 
 		:value (ix-main-pic e))
+	(:input :type "hidden" :name "main-pic-uuid" 
+		:id "input_main-pic-uuid" :value "")
 	(:h1 "Edit real estate")
 	(:div 
 	 :class "edit-estate-column"
@@ -570,14 +573,34 @@
 			   (new (google.maps.-lat-lng lat
 						      lng))))
 		   t)))
+	      (defun set-main-pic (pic-uuid)
+		($$ "#input_main-pic-uuid" (val pic-uuid))
+		false)
+	      (defun next-avail-iframe-id ()
+		(let ((max-id 0))
+		  ($$ 
+		   "iframe[id|='pic_iframe']"
+		   (each 
+		    (lambda (i el)
+		      (setf max-id 
+			    (-math.max 
+			     max-id 
+			     (aref (chain ($$ el (attr "id")) (to-string) (split "-")) 1))))))
+		  (+ max-id 1)))
 	      (defun add-pic-box (rem-pic-uuid)
-		(chain 
-		 ($ "#estate-pics")
-		 (append 
-		  (ps:who-ps-html
-		   (:div :class "estate-pic"
-			 (:iframe :src (+ "/estate-form-pic-box?rem-pic-uuid="
-					  rem-pic-uuid)))))))
+		(let ((next-id (next-avail-iframe-id)))
+		  (chain 
+		   ($ "#estate-pics")
+		   (append 
+		    (ps:who-ps-html
+		     (:div :class "estate-pic" :id (+ "pic_div-" next-id)
+			   (:iframe :src (+ "/estate-form-pic-box?rem-pic-uuid="
+					    rem-pic-uuid)
+				    :id (+ "pic_iframe-" next-id))
+			   (:a :href (+ "javascript:setMainPic('" 
+					rem-pic-uuid "');void(0);")
+			       :id (+ "set_main_pic_btn-" next-id)
+			       "Set as main pic")))))))
 	      (chain ($ "#add-estate-pic")
 		     (click (lambda () (add-pic-box "") false)))
 	      (-map-marker-A-C-Combo "#input_address" "#loc-lat" "#loc-lng"
@@ -586,7 +609,15 @@
 	    (smake
 	     (loop for key being the hash-keys 
 		of (session-value 'rem-pics)
-		collecting (smake "addPicBox('" key "');")))
+		collecting 
+		  (let ((p (gethash key (session-value 'rem-pics))))
+		    (smake "addPicBox('" key "');" 
+			   (if (and
+				(slot-boundp p 'ix-pic)
+				(= (ix-main-pic e) 
+				   (ix-pic p)))
+			       (smake "setMainPic('" key "');")
+			       "")))))
 	    ))))))
 
 (defun estate-form-pic-box (&optional (rem-pic-uuid ""))
@@ -601,8 +632,9 @@
        (:div
 	:class "div-in-pic-box-iframe"
 	(:input :type "hidden" :name "rem-pic-uuid" :value rem-pic-uuid)
-	(if (and (slot-boundp saved-pic 'ix-pic)
-		 (< 0 (ix-pic saved-pic)))
+	(if (and saved-pic
+		 (slot-boundp saved-pic 'ix-pic)
+		 (plusp (ix-pic saved-pic)))
 	    (cl-who:htm (:input :type "hidden" :name "ix-pic" 
 				:value (ix-pic saved-pic))) 
 	    (cl-who:str ""))
@@ -623,6 +655,10 @@
 		  () (chain ($ ".form-in-pic-box-iframe")
 			    (submit)
 			    ))))
+	    (when (< 0 (chain (ps:lisp rem-pic-uuid) length))
+	      ;;$(window.parent.document).find("iframe").each(function(i, el){if((el.contentWindow || el.contentDocument) == window){/*here, el is the iframe#pic_iframe-3, so show a#set_main_pic_btn-3*/};});
+	      (alert "show set-main-pic button")
+	      )
 	    ))))))))
 
 (defun contact-page ()

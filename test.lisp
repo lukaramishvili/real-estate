@@ -59,10 +59,13 @@
 		 :order 0 :ix-estate 0))
 
 (defun add-random-estate-with-pics (pic-count)
-  (let ((e (make-random-estate))
-	(pics (loop for i from 1 to pic-count
-		   collecting (make-random-temp-pic))))
-    (let ((save-results (save-estate-and-pics 0 e pics)))
+  (let* ((e (make-random-estate))
+	 (hs-pics (make-hash-table :test 'equal))
+	 (pics (loop for i from 1 to pic-count
+		  collecting (make-random-temp-pic))))
+    (loop for p in pics do (setf (gethash (+s (uuid:make-v4-uuid)) hs-pics) 
+				 p))
+    (let ((save-results (save-estate-and-pics 0 e hs-pics)))
       (destructuring-bind
 	    (success-p ix-saved-e error-message)
 	  save-results

@@ -226,7 +226,7 @@
       (login-page :redir "/edit-estate")))
 
 ;;;returns a list of success (bool), ix-estate, error message
-(defun save-estate-and-pics (ix-estate save-e e-pics)
+(defun save-estate-and-pics (ix-estate save-e e-pics &key main-pic-uuid)
   (if (> ix-estate 0) (setf (ix-estate save-e) ix-estate))
   (with-re-db 
     (if 
@@ -234,7 +234,7 @@
 	 (update-dao save-e)
 	 (insert-dao save-e))
      (progn
-       (loop for e-p in e-pics
+       (loop for e-p-k being the hash-keys of e-pics using (hash-value e-p)
 	  do (setf (ix-estate e-p) (ix-estate save-e))
 	    (save-dao e-p);save to get insert-id
 	    (ensure-directories-exist 
@@ -244,7 +244,13 @@
 		       (path e-p)
 		       (smake *upload-dir* "pics/" (ix-pic e-p) "/" 
 			      (file-namestring (path e-p))))))
-	    (save-dao e-p));now save to update path
+	    (save-dao e-p);now save to update path
+	    (when (and main-pic-uuid (plusp (length main-pic-uuid)) 
+		       (string= e-p-k main-pic-uuid)) 
+		(setf (ix-main-pic save-e) (ix-pic e-p))
+		;;here save-e is definitely in db
+		(update-dao save-e))
+	    )
        (list t (ix-estate save-e) "Real estate saved!"))
      (list nil ix-estate "Error while saving estate!"))))
 
@@ -255,6 +261,7 @@
       (address :request-type :POST :parameter-type 'string :init-form "")
       (telnum :request-type :POST :parameter-type 'string :init-form "")
       (ix-main-pic :request-type :POST :parameter-type 'integer :init-form 0)
+      (main-pic-uuid :request-type :POST :parameter-type 'string :init-form "")
       (loc-lat :request-type :POST :parameter-type 'string :init-form "0")
       (loc-lng :request-type :POST :parameter-type 'string :init-form "0")
       (visible :request-type :POST :parameter-type 'integer :init-form 0)
@@ -304,7 +311,8 @@
 		 collecting v)))
 	(destructuring-bind
 	      (success-p ix-saved-e error-message)
-	    (save-estate-and-pics ix-estate save-e e-pics)
+	    (save-estate-and-pics ix-estate save-e (session-value 'rem-pics);e-pics 
+				  :main-pic-uuid main-pic-uuid)
 	  ;;if saved successfully, remove images in session
 	  (if success-p (setf (session-value 'rem-pics) nil))
 	  error-message))
@@ -351,6 +359,7 @@
 	 (list :ix-estate (ix-estate e)
 	       :main-pic (pic-to-hashtable (ix-main-pic e)
 					   :make-path-linkable t)
+	       :can-fav (if (session-value 'logged-in-p) t)
 	       :is-fav is-fav)
 	 (list :ix-estate (ix-estate e)
 	       :main-pic (pic-to-hashtable (ix-main-pic e)
@@ -362,6 +371,7 @@
 	       :fields (estate-to-hash-table e)
 	       :loc-lat (loc-lat e)
 	       :loc-lng (loc-lng e)
+	       :can-fav (if (session-value 'logged-in-p) t)
 	       :is-fav is-fav)))))
 
 (htoot-handler 
