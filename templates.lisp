@@ -324,8 +324,10 @@
 			    :label "Upload your logo:"))
 	      "")))
 	(:input :type "submit" :value "Register"))
-       (:p (+s "By registering, you will have access to numerous<br>"
-	       "features, such as favoriting real estate properties."))))))
+       (:br :class "clearfloat")
+       (:div (cl-who:str
+	    (+s "By registering, you will have access to numerous<br>"
+		"features, such as favoriting real estate properties.")))))))
 
 
 (defun login-page (&key (redir "/"))

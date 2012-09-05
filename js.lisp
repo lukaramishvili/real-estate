@@ -109,11 +109,14 @@
 	 (+= div "</div>");</#estate-images>
 	 (+= div "<div id='estate-fields'>")
 	 (for-in (k fields)
-		 (+= div k ": " (aref fields k) "<br>"))
+		 (if (not (= k "desc"))
+		     (+= div k ": " (aref fields k) "<br>")))
 	 (+= div "</div>");</#estate-fields>
 	 (+= div "<div id='estate-map-div'>")
 	 (+= div "<div id='single-estate-map'>")
 	 (+= div "</div>");</#estate-map>
+	 (+= div "<div id='estate-desc-div'>" 
+	     (aref fields "desc") "</div>")
 	 (+= div "</div>");</#estate-map-div>
 	 (+= div "</div>")
 	 div))
