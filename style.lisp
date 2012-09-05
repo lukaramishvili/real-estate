@@ -10,6 +10,8 @@
   (+s
    "
   body { background-color:black; }
+
+  #main { padding-left:250px; /*search is now always visible*/ }
   
   #top-menu { height:32px; background-color:#111; padding:9px 0px 0px 32px; }
   #top-menu a { color:white; background-color:#444; border-radius:3px;
@@ -18,9 +20,9 @@
   
   #search-bar { position:fixed; left:-250px; top:0px; width:250px; height:100%;
     background:transparent url(css/img/gray-bg.png) left top repeat; 
-    padding:12px 10px 0px 12px; }
+    padding:12px 10px 0px 12px; left:0px; /*search is now always visible*/ }
   #btn-toggle-search { position:absolute; right:-25px; top:45%; color:white;
-    display:block; width:45px; height:45px;
+    display:block; width:45px; height:45px; display:none; /*search is now always visible*/
     background:transparent url(css/img/search-btn.png) left top no-repeat; }
   
   .fancybox-skin { background:transparent url(css/img/gray-bg.png) 

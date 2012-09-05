@@ -271,6 +271,7 @@
    "
   var fSearchOpen = false;
   function toggleSearchBar(){
+    return;//search is now always visible
     hideEstateDiv();
     $('#search-bar').animate({ 'left' : fSearchOpen ? -272 : 0 }, 'slow');
     /*$('#top-menu').animate({ 'padding-left' : fSearchOpen ? 12 : 282 }, 

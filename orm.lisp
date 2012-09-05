@@ -91,7 +91,8 @@
 (defun all-countries (&key not-sel)
   (concatenate 'list 
 	       (if not-sel (list "*"))
-  (list (list 1 "Belgium") (list 2 "Niederlands"))))
+  (list (list 1 "Belgium") (list 2 "Niederlands")
+	(list 3 "France") (list 4 "Spain"))))
 
 (defun constr-options (&key not-sel)
   (concatenate 'list 
