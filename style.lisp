@@ -77,6 +77,8 @@
   #edit-estate-form-div iframe { border:0; height:auto; width:auto; 
     width:400px; height:150px;
   }
+  a[id|='set_main_pic_btn'] { display:none; }
+  
   #edit-estate-map { width:300px; height:300px; }
   
   #edit-estate-form-div h1 { clear:both; margin-bottom:20px; }

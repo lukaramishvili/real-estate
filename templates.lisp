@@ -585,7 +585,8 @@
 		      (setf max-id 
 			    (-math.max 
 			     max-id 
-			     (aref (chain ($$ el (attr "id")) (to-string) (split "-")) 1))))))
+			     (aref (chain ($$ el (attr "id")) 
+					  (to-string) (split "-")) 1))))))
 		  (+ max-id 1)))
 	      (defun add-pic-box (rem-pic-uuid)
 		(let ((next-id (next-avail-iframe-id)))
@@ -597,12 +598,15 @@
 			   (:iframe :src (+ "/estate-form-pic-box?rem-pic-uuid="
 					    rem-pic-uuid)
 				    :id (+ "pic_iframe-" next-id))
-			   (:a :href (+ "javascript:setMainPic('" 
-					rem-pic-uuid "');void(0);")
+			   (:a :href (+ "javascript:void(0);")
 			       :id (+ "set_main_pic_btn-" next-id)
 			       "Set as main pic")))))))
-	      (chain ($ "#add-estate-pic")
-		     (click (lambda () (add-pic-box "") false)))
+	      ($$ "#add-estate-pic" 
+		  (click (lambda () (add-pic-box "") false)))
+	      ($$ "a[id|='set_main_pic_btn']"
+		  (live "click" 
+			(lambda ()
+			  (set-main-pic ($$ this (attr "rem-pic-uuid"))))))
 	      (-map-marker-A-C-Combo "#input_address" "#loc-lat" "#loc-lng"
 				     estate-map loc-marker)
 	      );end main ps:ps
@@ -657,8 +661,20 @@
 			    ))))
 	    (when (< 0 (chain (ps:lisp rem-pic-uuid) length))
 	      ;;$(window.parent.document).find("iframe").each(function(i, el){if((el.contentWindow || el.contentDocument) == window){/*here, el is the iframe#pic_iframe-3, so show a#set_main_pic_btn-3*/};});
-	      (alert "show set-main-pic button")
-	      )
+	      ($$ window.parent.document
+		  (find "iframe")
+		  (each 
+		   (lambda (i el)
+		     (when (== (or (@ el content-window)
+				   (@ el content-document))
+			       window)
+		       (let ((pic-id 
+			      (aref (chain ($$ el (attr "id")) 
+					   (to-string) (split "-")) 1)))
+			 ($$ el (parents "body")
+			     (find (+ "#set_main_pic_btn-" pic-id)) 
+			     (attr "rem-pic-uuid" (lisp rem-pic-uuid))
+			     (show))))))))
 	    ))))))))
 
 (defun contact-page ()
