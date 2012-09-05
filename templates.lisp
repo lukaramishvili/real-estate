@@ -305,23 +305,27 @@
        :id (or div-id "reg-div") :class "reg-div"
        (:form 
 	:method "post" :action "./register-handler"
+	:autocomplete "off"
 	(:h1 "Register")
 	(:input :type "hidden" :name "reg-token" :value reg-token)
 	(:input :type "hidden" :name "acc-type" :value checked-type)
 	(cl-who:str
 	 (+s
-	  (label-input "usr" :label "Username:")
-	  (label-input "email" :label "Email address:")
-	  (label-input "pwd" :label "Password:" :type "password")
-	  (label-input "fname" :label "First name:")
-	  (label-input "lname" :label "Last name:")
+	  (label-input "usr" :label "Username:" :val "")
+	  (label-input "email" :label "Email address:" :val "")
+	  (label-input "pwd" :label "Password:" :type "password" :val "")
+	  (label-input "fname" :label "First name:" :val "")
+	  (label-input "lname" :label "Last name:" :val "")
 	  (if (string-equal checked-type "broker")
 	      (+s 
 	       (label-input "url" :label "Website:")
+	       (label-input "telnum" :label "Tel:")
 	       (label-input "logo" :type "file"
 			    :label "Upload your logo:"))
 	      "")))
-	(:input :type "submit" :value "Register"))))))
+	(:input :type "submit" :value "Register"))
+       (:p (+s "By registering, you will have access to numerous<br>"
+	       "features, such as favoriting real estate properties."))))))
 
 
 (defun login-page (&key (redir "/"))

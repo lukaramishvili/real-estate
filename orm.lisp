@@ -42,6 +42,7 @@
    (fname :col-type string :initarg :fname :reader fname :initform "")
    (lname :col-type string :initarg :lname :reader lname :initform "")
    (url :col-type string :initarg :url :reader url :initform "")
+   (telnum :col-type string :initarg :telnum :reader telnum :initform "")
    (username :col-type string :initarg :username :reader username :initform "")
    (passwd :col-type string :initarg :passwd :initform "")
    (acc-type :col-type string :initarg :acc-type :reader acc-type :initform "")

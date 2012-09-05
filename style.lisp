@@ -130,6 +130,7 @@
   html, body { height:350px; }
   .reg-div { padding:20px; }
   .reg-div h1 { color:white; margin-bottom:16px; }
+  .reg-div p { color:white; font-size:11px; }
   .reg-div input,.reg-div label,.reg-div select 
       { float:left; display:block; margin-bottom:10px; }
   .reg-div label { width:130px; color:white; line-height:24px; }

@@ -105,6 +105,7 @@
 	       (if is-fav "Favorited" "Add to favorites") "</a>" "<br><br>"))
 	 (+= div (fb-like-btn (link-for-estate (@ e ix-estate))) "<br><br>")
 	 (+= div (fb-share-btn (link-for-estate (@ e ix-estate))) "<br><br>")
+	 (+= div (tweet-btn (link-for-estate (@ e ix-estate))) "<br><br>")
 	 (+= div "</div>");</#estate-images>
 	 (+= div "<div id='estate-fields'>")
 	 (for-in (k fields)
@@ -254,6 +255,11 @@
       return '<a rel=\\'nofollow\\' href=\\'http://www.facebook.com/share.php?u=' + url + '\\' onclick=\\'return fbs_click()\\' target=\\'_blank\\' class=\\'fb_share_link\\'>' + caption + '</a>';
     }
     /* end generate facebook share btn */
+    
+    function tweetBtn (url){
+        //url is not needed;
+        return \"<a href='https://twitter.com/share' class='twitter-share-button' data-lang='nl' data-related='RGCFINANCE_INFO'>Tweeten</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='//platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','twitter-wjs');</script>\";
+    }
     
     "))
 
