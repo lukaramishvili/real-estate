@@ -61,6 +61,11 @@
     text-indent:6px; padding-top:3px; }
   #view-estate #estate-images { width:250px; float:left; margin-right:20px; }
   #view-estate #other-imgs { width:250px; }
+  #view-estate #estate-toggle-fav { width:22px; height:20px; display:block; }
+  #view-estate #estate-toggle-fav.fav-yes { background:transparent url(/css/img/star.png) 
+    left top no-repeat; }
+  #view-estate #estate-toggle-fav.fav-no { background:transparent url(/css/img/star_gray.png) 
+    left top no-repeat; }
   #view-estate #estate-broker-logo { width:60px; }
   #view-estate #other-imgs img { width:50px; height:50px; }
   #view-estate #estate-fields { width:250px; float:left; margin-right:20px; }

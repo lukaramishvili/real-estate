@@ -105,7 +105,8 @@
 	 (when can-fav
 	   (+= div "<a id='estate-toggle-fav' href='javascript:;' class='fav-" 
 	       (if is-fav "yes" "no") "' ixestate='" (@ e ix-estate) "'>" 
-	       (if is-fav "Favorited" "Add to favorites") "</a>" "<br><br>"))
+	       ;;(if is-fav "Favorited" "Add to favorites") 
+	       "</a>" "<br><br>"))
 	 (+= div (fb-like-btn (link-for-estate (@ e ix-estate))) "<br><br>")
 	 (+= div (fb-share-btn (link-for-estate (@ e ix-estate))) "<br><br>")
 	 (+= div (tweet-btn (link-for-estate (@ e ix-estate))) "<br><br>")
