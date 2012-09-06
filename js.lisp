@@ -89,6 +89,11 @@
 	     (broker-url (@ e broker-url))
 	     (broker-logo (@ e broker-logo)))
 	 (var div "<div>")
+	 (when can-fav
+	   (+= div "<a id='estate-toggle-fav' href='javascript:;' class='fav-" 
+	       (if is-fav "yes" "no") "' ixestate='" (@ e ix-estate) "'>" 
+	       ;;(if is-fav "Favorited" "Add to favorites") 
+	       "</a>" "<br><br>"))
 	 (+= div "<div id='estate-images'>")
 	 (+= div "<a href='" (@ main-pic path) 
 	     "' id='estate-main-img-a' rel='estate-gallery'>" 
@@ -102,11 +107,6 @@
 	    (+= div "<a href='" next-img "' rel='estate-gallery'>"
 		"<img src='" next-img "' /></a>")))
 	 (+= div "</div>");</#other-imgs>
-	 (when can-fav
-	   (+= div "<a id='estate-toggle-fav' href='javascript:;' class='fav-" 
-	       (if is-fav "yes" "no") "' ixestate='" (@ e ix-estate) "'>" 
-	       ;;(if is-fav "Favorited" "Add to favorites") 
-	       "</a>" "<br><br>"))
 	 (+= div (fb-like-btn (link-for-estate (@ e ix-estate))) "<br><br>")
 	 (+= div (fb-share-btn (link-for-estate (@ e ix-estate))) "<br><br>")
 	 (+= div (tweet-btn (link-for-estate (@ e ix-estate))) "<br><br>")
@@ -281,7 +281,6 @@
    "
   var fSearchOpen = false;
   function toggleSearchBar(){
-    return;//search is now always visible
     hideEstateDiv();
     $('#search-bar').animate({ 'left' : fSearchOpen ? -272 : 0 }, 'slow');
     /*$('#top-menu').animate({ 'padding-left' : fSearchOpen ? 12 : 282 }, 

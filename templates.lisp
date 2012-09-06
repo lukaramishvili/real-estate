@@ -413,8 +413,7 @@
       (*standard-output* nil :prologue nil :indent t)
     (:div 
      :id "top-menu"
-     ;;search is now always visible
-     ;;(:a :href "javascript:toggleSearchBar();" "Search")
+     (:a :href "javascript:toggleSearchBar();" :id "top-search-btn" "Search")
      (if 
       (session-value 'logged-in-p)
       (cl-who:htm
