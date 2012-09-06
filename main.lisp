@@ -82,7 +82,11 @@
 (defun linkable-pic-path (p)
   (declare (type pic p))
   (smake "/uploads/pics/" (ix-pic p) "/" (file-namestring (path p))))
-      
+
+(defun broker-logo-url (ix-user)
+  (if (cl-fad:file-exists-p (smake *upload-dir* "users/" ix-user "/logo.png"))
+      (smake "/uploads/users/" ix-user "/logo.png")
+      ""));"/css/img/no-pic.jpg" is inappropriate for brokers without logo
 
 (htoot-handler (home "/" ())
 	       (re-main :title "Browse Real Estate in Real Time!"
@@ -356,7 +360,9 @@
 		     (session-value 'user-authed)
 		     (user-has-fav (ix-user (session-value 'user-authed))
 				   (ix-estate e))
-		     t)))
+		     t))
+	;;broker is the user who authored this estate
+	(broker (with-re-db (get-dao 'user (ix-user e)))))
     (json:encode-json-plist-to-string
      (if short
 	 (list :ix-estate (ix-estate e)
@@ -375,7 +381,10 @@
 	       :loc-lat (loc-lat e)
 	       :loc-lng (loc-lng e)
 	       :can-fav (if (session-value 'logged-in-p) t)
-	       :is-fav is-fav)))))
+	       :is-fav is-fav
+	       :ix-user (ix-user e)
+	       :broker-url (if broker (url broker) "")
+	       :broker-logo (broker-logo-url (ix-user e)))))))
 
 (htoot-handler 
     (get-estate-handler "/get-estate" 

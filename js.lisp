@@ -85,13 +85,16 @@
 	     (main-pic (@ e main-pic))
 	     (other-pics (@ e other-pics))
 	     (can-fav (@ e can-fav))
-	     (is-fav (@ e is-fav)))
+	     (is-fav (@ e is-fav))
+	     (broker-url (@ e broker-url))
+	     (broker-logo (@ e broker-logo)))
 	 (var div "<div>")
 	 (+= div "<div id='estate-images'>")
 	 (+= div "<a href='" (@ main-pic path) 
-	     "' id='estate-main-img-a' "
-	     " rel='estate-gallery'>" "<img id='estate-main-img' src='" 
-	     (@ main-pic path) "' /></a>")
+	     "' id='estate-main-img-a' rel='estate-gallery'>" 
+	     "<img id='estate-main-img' src='" (@ main-pic path) "' />" 
+	     "<span class='price-overlay'>Price: " (aref fields "price") 
+	     " &euro;</span>" "</a>")
 	 (+= div "<div id='other-imgs'>")
 	 (for-in 
 	  (op other-pics)
@@ -106,10 +109,16 @@
 	 (+= div (fb-like-btn (link-for-estate (@ e ix-estate))) "<br><br>")
 	 (+= div (fb-share-btn (link-for-estate (@ e ix-estate))) "<br><br>")
 	 (+= div (tweet-btn (link-for-estate (@ e ix-estate))) "<br><br>")
+	 (if (< 0 (@ broker-logo length))
+	     (+= div "<img src='" broker-logo "' id='estate-broker-logo' />" 
+		 "<br><br>"))
+	 (+= div "<a href='" broker-url "' target='_blank' class='underline'>" 
+	     "Broker web-site</a>" "<br><br>")
 	 (+= div "</div>");</#estate-images>
 	 (+= div "<div id='estate-fields'>")
 	 (for-in (k fields)
-		 (if (not (= k "desc"))
+		 (if (and (not (= k "desc"))
+			  (not (= k "price")))
 		     (+= div k ": " (aref fields k) "<br>")))
 	 (+= div "</div>");</#estate-fields>
 	 (+= div "<div id='estate-map-div'>")

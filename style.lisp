@@ -46,7 +46,7 @@
   .grid-10 { width:20%; float:left; height:100%; }
   .grid-10 a { width:100%; height:18.6%; display:block; margin:1px; }
   #view-estate { display:none; width:100%; height:100%; color:white;
-    position:fixed; left:0px; top:0px;
+    position:fixed; left:0px; top:0px; z-index:100000;
     background:transparent url(css/img/gray-bg.png) left top repeat; }
   #e-close-btn { display:block; position:absolute; top:20px;
     background:transparent url(css/fancybox/fancybox_sprite.png) 
@@ -54,8 +54,14 @@
     z-index:6045; /*right:20px;*/ left:860px; }
   #view-estate-inner { padding:30px 60px; }
   #view-estate #estate-main-img { width:250px; height:250px; }
+  #view-estate #estate-main-img-a { display:block; position:relative; }
+  #view-estate #estate-main-img-a .price-overlay { position:absolute; 
+    background:transparent url(css/img/gray-bg.png) left top repeat; 
+    left:0px; bottom:0px; display:block; width:100%; height:22px; 
+    text-indent:6px; padding-top:3px; }
   #view-estate #estate-images { width:250px; float:left; margin-right:20px; }
   #view-estate #other-imgs { width:250px; }
+  #view-estate #estate-broker-logo { width:60px; }
   #view-estate #other-imgs img { width:50px; height:50px; }
   #view-estate #estate-fields { width:250px; float:left; margin-right:20px; }
   #view-estate #estate-map-div { width:250px; float:left; height:250px;
