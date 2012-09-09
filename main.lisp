@@ -163,11 +163,11 @@
        (let* ((checked-type (if (valid-acc-type-p acc-type)
 				acc-type "simple"))
 	      (usr-to-save
-	      (make-instance 'user
-			     :username usr :passwd (hash-password pwd)
-			     :acc-type checked-type :email email 
-			     :fname fname :lname lname :url url
-			     :telnum telnum)))
+	       (make-instance 'user
+			      :username usr :passwd (hash-password pwd)
+			      :acc-type checked-type :email email 
+			      :fname fname :lname lname :url url
+			      :telnum telnum)))
 	 (if (plusp (save-user usr-to-save))
 	     (progn
 	       (let* ((uploaded-logo (post-parameter "logo"))
@@ -179,8 +179,8 @@
 		       (cl-fad::ensure-directories-exist logo-dest-dir)
 		       (cl-fad:copy-file path logo-dest :overwrite t))))
 	       (re-tr :registration-successful))
-	     (re-tr :couldnt-register-correct-errors)))
-       (re-tr :couldnt-save-user))))
+	   (re-tr :couldnt-register-correct-errors)))
+     (re-tr :couldnt-save-user))))
 					 
 
 (htoot-handler
