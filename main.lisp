@@ -170,7 +170,14 @@
 			     :telnum telnum)))
 	 (if (plusp (save-user usr-to-save))
 	     (progn
-	       ;;TODO: save logo
+	       (let* ((uploaded-logo (post-parameter "logo"))
+		      (logo-dest-dir (smake *upload-dir* "users/" (ix-user usr-to-save)))
+		      (logo-dest (smake logo-dest-dir "/logo.png")))
+		 (if logo
+		     (destructuring-bind (path file-name content-type)
+			 logo
+		       (cl-fad::ensure-directories-exist logo-dest-dir)
+		       (cl-fad:copy-file path logo-dest :overwrite t))))
 	       (re-tr :registration-successful))
 	     (re-tr :couldnt-register-correct-errors)))
        (re-tr :couldnt-save-user))))
