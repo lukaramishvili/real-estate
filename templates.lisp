@@ -305,7 +305,7 @@
        :id (or div-id "reg-div") :class "reg-div"
        (:form 
 	:method "post" :action "./register-handler"
-	:autocomplete "off"
+	:autocomplete "off" :enctype "multipart/form-data"
 	(:h1 "Register")
 	(:input :type "hidden" :name "reg-token" :value reg-token)
 	(:input :type "hidden" :name "acc-type" :value checked-type)

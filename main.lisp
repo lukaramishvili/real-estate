@@ -144,43 +144,44 @@
 	(register-page :reg-token reg-token :acc-type type))))))
 
 (htoot-handler
- (register-handler
-  "/register-handler"
-  ((usr :request-type :POST :parameter-type 'string :init-form nil)
-   (pwd :request-type :POST :parameter-type 'string :init-form nil)
-   (reg-token :request-type :POST :parameter-type 'string :init-form nil)
-   (acc-type :request-type :POST :parameter-type 'string :init-form "simple")
-   (email :request-type :POST :parameter-type 'string :init-form "")
-   (fname :request-type :POST :parameter-type 'string :init-form "")
-   (lname :request-type :POST :parameter-type 'string :init-form "")
-   (url :request-type :POST :parameter-type 'string :init-form "")
-   (telnum :request-type :POST :parameter-type 'string :init-form "")))
- (if (session-value 'logged-in-p)
-     (re-tr :already-logged-in)
-   (if (and usr pwd reg-token
-	    (plusp (length usr)) (plusp (length pwd))
-	    (string= (session-value 'reg-token) reg-token))
-       (let* ((checked-type (if (valid-acc-type-p acc-type)
-				acc-type "simple"))
-	      (usr-to-save
-	       (make-instance 'user
-			      :username usr :passwd (hash-password pwd)
-			      :acc-type checked-type :email email 
-			      :fname fname :lname lname :url url
-			      :telnum telnum)))
-	 (if (plusp (save-user usr-to-save))
-	     (progn
-	       (let* ((uploaded-logo (post-parameter "logo"))
-		      (logo-dest-dir (smake *upload-dir* "users/" (ix-user usr-to-save)))
-		      (logo-dest (smake logo-dest-dir "/logo.png")))
-		 (if logo
-		     (destructuring-bind (path file-name content-type)
-			 logo
-		       (cl-fad::ensure-directories-exist logo-dest-dir)
-		       (cl-fad:copy-file path logo-dest :overwrite t))))
-	       (re-tr :registration-successful))
-	   (re-tr :couldnt-register-correct-errors)))
-     (re-tr :couldnt-save-user))))
+    (register-handler
+     "/register-handler"
+     ((usr :request-type :POST :parameter-type 'string :init-form nil)
+      (pwd :request-type :POST :parameter-type 'string :init-form nil)
+      (reg-token :request-type :POST :parameter-type 'string :init-form nil)
+      (acc-type :request-type :POST :parameter-type 'string :init-form "simple")
+      (email :request-type :POST :parameter-type 'string :init-form "")
+      (fname :request-type :POST :parameter-type 'string :init-form "")
+      (lname :request-type :POST :parameter-type 'string :init-form "")
+      (url :request-type :POST :parameter-type 'string :init-form "")
+      (telnum :request-type :POST :parameter-type 'string :init-form "")))
+  (if (session-value 'logged-in-p)
+      (re-tr :already-logged-in)
+      (if (and usr pwd ;reg-token
+	       (plusp (length usr)) (plusp (length pwd))
+	       ;;(string= (session-value 'reg-token) reg-token)
+	       )
+	  (let* ((checked-type (if (valid-acc-type-p acc-type)
+				   acc-type "simple"))
+		 (usr-to-save
+		  (make-instance 'user
+				 :username usr :passwd (hash-password pwd)
+				 :acc-type checked-type :email email 
+				 :fname fname :lname lname :url url
+				 :telnum telnum)))
+	    (if (plusp (save-user usr-to-save))
+		(progn
+		  (let* ((uploaded-logo (post-parameter "logo"))
+			 (logo-dest-dir (smake *upload-dir* "users/" (ix-user usr-to-save)))
+			 (logo-dest (smake logo-dest-dir "/logo.png")))
+		    (if (and uploaded-logo (listp uploaded-logo))
+			(destructuring-bind (path file-name content-type)
+			    uploaded-logo
+			  (cl-fad::ensure-directories-exist logo-dest-dir)
+			  (cl-fad:copy-file path logo-dest :overwrite t))))
+		  (re-tr :registration-successful))
+		(re-tr :couldnt-register-correct-errors)))
+	  (re-tr :couldnt-save-user))))
 					 
 
 (htoot-handler
