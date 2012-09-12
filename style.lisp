@@ -20,7 +20,7 @@
   
   #search-bar { position:fixed; left:-250px; top:0px; width:250px; height:100%;
     background:transparent url(css/img/gray-bg.png) left top repeat; 
-    padding:12px 10px 0px 12px; }
+    padding:53px 10px 0px 12px; }
   #btn-toggle-search { position:absolute; right:-25px; top:45%; color:white;
     display:block; width:45px; height:45px; 
     background:transparent url(css/img/search-btn.png) left top no-repeat; }
