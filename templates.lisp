@@ -451,23 +451,30 @@
 			    :label "Only properties added by me"))
 	   "")
        (label-select "apt-type" :options (apt-type-options :not-sel t))
-       (label-select "status" :options (status-options :not-sel t))
        (label-select "ix-country" :options (all-countries :not-sel t))
-       (label-select "constr" :options (constr-options :not-sel t))
-       (label-input "total-min")
-       (label-input "total-max")
        (label-input "price-min")
        (label-input "price-max")
        (label-input "bedrooms-min")
-       (label-input "bathrooms-min")
-       (label-checkbox "terrace" :val 1)
-       (label-checkbox "garden" :val 1)
-       (label-checkbox "building-permit" :val 1)
-       (label-select "summons" :options (summons-options :not-sel t))
-       (label-select "preemption" :options (preemption-options :not-sel t))
-       (label-select "subdiv-permit" 
-		     :options (subdiv-permit-options :not-sel t))
-       )))
+       ))
+     (:a :href "javascript:void(0);" :id "btn-toggle-adv-search"
+	 "More filters")
+     (:div 
+      :id "search-adv"
+      (cl-who:str
+       (+s 
+	(label-select "status" :options (status-options :not-sel t))
+	(label-select "constr" :options (constr-options :not-sel t))
+	(label-input "total-min")
+	(label-input "total-max")
+	(label-input "bathrooms-min")
+	(label-checkbox "terrace" :val 1)
+	(label-checkbox "garden" :val 1)
+	(label-checkbox "building-permit" :val 1)
+	(label-select "summons" :options (summons-options :not-sel t))
+	(label-select "preemption" :options (preemption-options :not-sel t))
+	(label-select "subdiv-permit" 
+		      :options (subdiv-permit-options :not-sel t))
+	))))
     (cl-who:str (script-tag (fp-search-js)))
     (:div :id "ajax-pages"
 	  (cl-who:str 

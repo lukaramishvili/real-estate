@@ -44,7 +44,7 @@
   (hunchentoot:start
    (make-instance 'hunchentoot:easy-acceptor :port 4343)))
 
-(defun default-lang () "geo")
+(defun default-lang () "nl")
 
 (defun re-tr (keyword &key lang)
   (tr keyword (or lang (session-value 'lang) (default-lang))))

@@ -35,6 +35,9 @@
   #search-bar label.label-right { clear: right; }
   #search-bar input[type='checkbox'] { clear:left; }
   #search-bar #label_only-my-estates { width:200px; }
+  
+  #search-adv { display:none; }
+  #btn-toggle-adv-search { clear:both; display:block; color:white; }
 
   #fp-pics { /*height:100%;*/ padding-top:43px; }
   /*#fp-pics a img {  }*/

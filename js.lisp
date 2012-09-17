@@ -431,6 +431,8 @@
 			     (load-results))
 			   2200))
 		    t)))
+     ($$ "#btn-toggle-adv-search" 
+	 (click (lambda () ($$ "#search-adv" (toggle)))))
      ($$ "body" (keydown
 		 (lambda (evt)
 		   ;;hide opened estate div on ESC
