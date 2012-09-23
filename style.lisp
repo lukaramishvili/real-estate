@@ -54,7 +54,7 @@
   #e-close-btn { display:block; position:absolute; top:20px;
     background:transparent url(css/fancybox/fancybox_sprite.png) 
       0px 0px no-repeat; width:36px; height:36px; cursor:pointer;
-    z-index:6045; /*right:20px;*/ left:1010px; }
+    z-index:6045; /*right:20px;*/ left:930px; }
   #view-estate-inner { padding:30px 60px; }
   #view-estate #estate-main-img { width:250px; height:250px; }
   #view-estate #estate-main-img-a { display:block; position:relative; }
@@ -72,10 +72,10 @@
     left top no-repeat; }
   #view-estate #estate-broker-logo { width:60px; }
   #view-estate #other-imgs img { width:50px; height:50px; }
-  #view-estate #estate-fields { width:250px; float:left; margin-right:20px; }
-  #view-estate #estate-map-div { width:400px; float:left; height:250px;
-      margin-right:20px; }
-  #view-estate #single-estate-map { width:400px; height:250px; margin-bottom:20px; }
+  #view-estate #estate-fields { width:230px; float:left; margin-right:40px; }
+  #view-estate #estate-map-div { width:320px; float:left; height:250px;
+      margin-right:0px; }
+  #view-estate #single-estate-map { width:320px; height:250px; margin-bottom:20px; }
   
   html .fb_share_link { padding:2px 0 0 20px; height:16px; 
     background:url(http://static.ak.facebook.com/images/share/facebook_share_icon.gif?6:26981) no-repeat top left; }
