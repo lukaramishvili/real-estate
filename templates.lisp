@@ -115,7 +115,8 @@
     (:label :for (+s "input_" name)
 	    :id (+s "label_" name) :class "label-left"
 	    (cl-who:str (or label name)))
-    (:input :type type :id (+s "input_" name)
+    (:input :type type :id (+s "input_" name)  
+	    :class (+s "input_" name)
 	    :value (or (smake val) "")
 	    :name name :size size-attr)))
 
@@ -123,6 +124,7 @@
   `(cl-who:with-html-output-to-string 
        (*standard-output* nil :prologue nil :indent t)
      (:input :type "checkbox" :id (+s "input_" ,name)
+	     :class (+s "input_" ,name)
 	     :value (or (smake ,val) "")
 	     :name ,name
 	     ,@(if checked (list :checked "checked")))
@@ -143,7 +145,7 @@
 	(cl-who:str direct-selectbox)
 	(cl-who:htm 
 	 (:select 
-	  :id (+s "input_" name) :name name
+	  :class (+s "input_" name) :id (+s "input_" name) :name name
 	  (loop for option in options
 	     do (let ((opt-val (if (listp option) 
 				   (car option) 
@@ -178,7 +180,8 @@
   (let ((value (* 1000 (unix-time-from-universal val))))
     (+s (label-input (+s "datepicker_" name) :label (or label name))
 	(+s "<input type='hidden' name='" name "' "
-	    " id='input_" name "' value='" value "' />")
+	    " id='input_" name "' class='input_" name "' "
+	    " value='" value "' />")
 	(script-tag
 	 (eval
 	  `(ps:ps
@@ -297,12 +300,13 @@
 
 (defun register-page (&key reg-token acc-type div-id)
   (let ((checked-type (if (valid-acc-type-p acc-type) 
-			  acc-type "simple")))
+			  acc-type "simple"))
+	(id-for-div (or div-id "reg-div")))
     (cl-who:with-html-output-to-string 
 	(*standard-output* nil :prologue nil :indent t)
       (cl-who:str (style-tag (style-register-page)))
       (:div 
-       :id (or div-id "reg-div") :class "reg-div"
+       :id id-for-div :class "reg-div"
        (:form 
 	:method "post" :action "./register-handler"
 	:autocomplete "off" :enctype "multipart/form-data"
@@ -314,6 +318,8 @@
 	  (label-input "usr" :label "Username:" :val "")
 	  (label-input "email" :label "Email address:" :val "")
 	  (label-input "pwd" :label "Password:" :type "password" :val "")
+	  (label-input "confirm-pwd" :label "Confirm password:" 
+		       :type "password" :val "")
 	  (label-input "fname" :label "First name:" :val "")
 	  (label-input "lname" :label "Last name:" :val "")
 	  (if (string-equal checked-type "broker")
@@ -323,11 +329,55 @@
 	       (label-input "logo" :type "file"
 			    :label "Upload your logo:"))
 	      "")))
-	(:input :type "submit" :value "Register"))
+	(:input :type "submit" :value "Register" :class "btn-register"))
        (:br :class "clearfloat")
        (:div (cl-who:str
 	    (+s "By registering, you will have access to numerous<br>"
-		"features, such as favoriting real estate properties.")))))))
+		"features, such as favoriting real estate properties.")))
+       (cl-who:str 
+	(script-tag 
+	 (ps:ps
+	   (var cur-div-sel (lisp (+s "#" id-for-div)))
+	   ($$ 
+	    cur-div-sel
+	    (find ".btn-register")
+	    (unbind "click")
+	    (click 
+	     (lambda (e)
+	       (var ret true)
+	       (var msg "")
+	       (when (not (input-filled (+ cur-div-sel " .input_usr")))
+		 (setf ret false)
+		 (+= msg (lisp (re-tr :enter-username)) "; "))
+	       (when (not (input-filled (+ cur-div-sel " .input_email")))
+		 (setf ret false)
+		 (+= msg (lisp (re-tr :enter-email)) "; "))
+	       (when (not (input-filled (+ cur-div-sel " .input_fname")))
+		 (setf ret false)
+		 (+= msg (lisp (re-tr :enter-first-name)) "; "))
+	       (when (not (input-filled (+ cur-div-sel " .input_lname")))
+		 (setf ret false)
+		    (+= msg (lisp (re-tr :enter-last-name)) "; "))
+	       (when (not (input-filled (+ cur-div-sel " .input_pwd")))
+		 (setf ret false)
+		 (+= msg (lisp (re-tr :enter-password)) "; "))
+	       (when (not (input-filled (+ cur-div-sel " .input_confirm-pwd")))
+		 (setf ret false)
+		 (+= msg (lisp (re-tr :enter-confirm-password)) "; "))
+	       (when (not (= ($$ (+ cur-div-sel " .input_pwd") (val))
+			     ($$ (+ cur-div-sel " .input_confirm-pwd") (val))))
+			  (setf ret false)
+			  (+= msg (lisp (re-tr :passwords-dont-match)) "; "))
+	       (when (not 
+		      (chain (new (-reg-exp 
+		      	   "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$" "gi")) 
+			     (test ($$ (+ cur-div-sel " .input_email") (val)))))
+			  (setf ret false)
+			  (+= msg (lisp (re-tr :enter-valid-email)) "; "))
+		 (if (not ret) (alert msg))
+		  ret
+		  )))
+	   )))))))
 
 
 (defun login-page (&key (redir "/"))

@@ -67,6 +67,12 @@
    }
    "
    (ps:ps
+     
+     (defun input-filled (selector)
+       (let ((input-value ($$ selector (val))))
+	 (and (not (= "undefined" (typeof input-value)))
+	      (< 0 (@ input-value length)))))
+     
      (defun get-estate (id callback)
        (chain 
 	$ (ajax
