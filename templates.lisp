@@ -132,7 +132,7 @@
 	     :id (+s "label_" ,name) :class "label-right"
 	     (cl-who:str (or ,label ,name)))))
 
-(defun label-select (name &key options val direct-selectbox)
+(defun label-select (name &key options val label direct-selectbox)
   "makes <label..><select><option..>*</>. if direct-selectbox is passed, 
   its inserted instead of generated select tag. options can be either 
   ((val lbl) (val lbl)), or (opt opt); on lack of lbl, opt will be used."
@@ -140,7 +140,7 @@
       (*standard-output* nil :prologue nil :indent t)
     (:label :for (+s "select_" name)
 	    :id (+s "label_" name) :class "label-left"
-	    (cl-who:str name))
+	    (cl-who:str (or label name)))
     (if direct-selectbox
 	(cl-who:str direct-selectbox)
 	(cl-who:htm 
@@ -463,23 +463,23 @@
       (*standard-output* nil :prologue nil :indent t)
     (:div 
      :id "top-menu"
-     (:a :href "javascript:toggleSearchBar();" :id "top-search-btn" "Search")
-     (if 
-      (session-value 'logged-in-p)
-      (cl-who:htm
-       (:a :href "./account" :id "top-account-link" :class "fancybox.iframe" 
-	   (cl-who:str (+s "Logged in as " 
-			   (username (session-value 'user-authed)))))
-       (:a :href "./logout" :id "top-logout-link" "Log out"))
-      (cl-who:htm
-       (:a :href "#login-form-div" :id "top-login-link" 
-	   :class "fancybox.inline" "Login")
-       (:a :href "#reg-div" :id "top-reg-link" :class "fancybox.inline" 
-	   "Register")
-       (:a :href "#reg-broker-div" :id "top-reg-broker-link"
-	   :class "fancybox.inline" "Register as Broker")))
+     (:a :href "javascript:toggleSearchBar();" :id "top-search-btn" 
+	 (str (re-tr :search)))
+     (if (session-value 'logged-in-p)
+	 (cl-who:htm
+	  (:a :href "./account" :id "top-account-link" :class "fancybox.iframe" 
+	      (cl-who:str (+s "Logged in as " 
+			      (username (session-value 'user-authed)))))
+	  (:a :href "./logout" :id "top-logout-link" (str (re-tr :log-out))))
+	 (cl-who:htm
+	  (:a :href "#login-form-div" :id "top-login-link" 
+	      :class "fancybox.inline" (str (re-tr :login)))
+	  (:a :href "#reg-div" :id "top-reg-link" :class "fancybox.inline" 
+	      (str (re-tr :register)))
+	  (:a :href "#reg-broker-div" :id "top-reg-broker-link"
+	      :class "fancybox.inline" (str (re-tr :register-as-broker)))))
      (:a :href "./contact" :id "top-contact-link" :class "fancybox.iframe" 
-	 "Contact"))
+	 (str (re-tr :contact))))
     (:div :id "fp-pics"
 	  (:table :id "fp-pics-table" 
 		  :border 0 :cellpadding 0 :cellspacing 0
@@ -500,34 +500,40 @@
 	    (label-checkbox "only-my-estates" 
 			    :label "Only properties added by me"))
 	   "")
-       (label-select "status" :options (status-options :not-sel t))
-       (label-select "apt-type" :options (apt-type-options :not-sel t))
-       (label-select "ix-country" :options (all-countries :not-sel t))
-       (label-input "price-min" :label "Price: between " :size-attr 4)
-       (label-input "price-max" :label " and " :size-attr 4)
-       (label-input "bedrooms-min" :label "No. bedrooms: from " :size-attr 4)
-       (label-input "bedrooms-max" :label " to " :size-attr 4)
+       (label-select "status" :options (status-options :not-sel t)
+		     :label (re-tr :status))
+       (label-select "apt-type" :options (apt-type-options :not-sel t)
+		     :label (re-tr :apt-type))
+       (label-select "ix-country" :options (all-countries :not-sel t)
+		     :label (re-tr :country))
+       (label-input "price-min" :label (re-tr :lbl-price-min) :size-attr 4)
+       (label-input "price-max" :label (re-tr :lbl-price-max) :size-attr 4)
+       (label-input "bedrooms-min" :label (re-tr :lbl-bedrooms-min) :size-attr 4)
+       (label-input "bedrooms-max" :label (re-tr :lbl-bedrooms-max) :size-attr 4)
        ))
      (:a :href "javascript:void(0);" :id "btn-toggle-adv-search"
-	 "More filters")
+	 (str (re-tr :more-filters)))
      (:div 
       :id "search-adv"
       (cl-who:str
        (+s 
-	(label-input "bathrooms-min" :label "No. bathrooms: from " :size-attr 4)
-	(label-input "bathrooms-max" :label " to " :size-attr 4)
-	(label-checkbox "garden" :val 1)
-	(label-input "total-min" :label "Habitable surface: min. " :size-attr 2)
-	(label-input "total-max" :label " max. " :size-attr 3)
-	(label-input "land-min" :label "Land area: min. " :size-attr 3)
-	(label-input "land-max" :label " max. " :size-attr 4)
-	(label-input "epc-max" :label "EPC: max. " :size-attr 4)
-	(label-select "constr" :options (constr-options :not-sel t))
-	(label-checkbox "terrace" :val 1)
-	(label-checkbox "building-permit" :val 1)
-	(label-select "summons" :options (summons-options :not-sel t))
-	(label-select "preemption" :options (preemption-options :not-sel t))
-	(label-select "subdiv-permit" 
+	(label-input "bathrooms-min" :label (re-tr :lbl-bathrooms-min) :size-attr 4)
+	(label-input "bathrooms-max" :label (re-tr :lbl-bathrooms-max) :size-attr 4)
+	(label-checkbox "garden" :val 1 :label (re-tr :garden))
+	(label-input "total-min" :label (re-tr :lbl-total-min) :size-attr 2)
+	(label-input "total-max" :label (re-tr :lbl-total-max) :size-attr 3)
+	(label-input "land-min" :label (re-tr :lbl-land-min) :size-attr 3)
+	(label-input "land-max" :label (re-tr :lbl-land-max) :size-attr 4)
+	(label-input "epc-max" :label (re-tr :lbl-epc-max) :size-attr 4)
+	(label-select "constr" :options (constr-options :not-sel t)
+		      :label (re-tr :construction))
+	(label-checkbox "terrace" :val 1 :label (re-tr :terrace))
+	(label-checkbox "building-permit" :val 1 :label (re-tr :building-permit))
+	(label-select "summons" :options (summons-options :not-sel t)
+		      :label (re-tr :summons))
+	(label-select "preemption" :options (preemption-options :not-sel t)
+		      :label (re-tr :preemption))
+	(label-select "subdiv-permit" :label (re-tr :subdiv-permit)
 		      :options (subdiv-permit-options :not-sel t))
 	))))
     (cl-who:str (script-tag (fp-search-js)))

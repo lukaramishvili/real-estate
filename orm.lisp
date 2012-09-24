@@ -15,6 +15,14 @@
     ("Gallery" "./gallery")
     ("About the project" "./about")))
 
+(defclass tr ()
+  ((ix-tr :col-type serial :initarg :ix-tr :accessor ix-tr)
+   (keyword :col-type string :initarg :keyword :accessor keyword :initform "")
+   (lang :col-type string :initarg :lang :accessor lang :initform "")
+   (value :col-type string :initarg :value :accessor value :initform ""))
+  (:metaclass dao-class)
+  (:keys ix-tr))
+
 (defun tr (keyword lang)
   (with-re-db
    (or (query (:select
@@ -24,6 +32,28 @@
 	      :single)
        (string-capitalize 
 	(string-downcase (substitute #\Space #\- (+s keyword)))))))
+
+(defun tr-if-exists (keyword lang)
+  (with-re-db
+    (car 
+     (query-dao 
+      'tr 
+      (:select
+       :* :from :tr
+       :where (:and (:= :lang (string-downcase (smake lang)))
+		    (:= :keyword (string-downcase (smake keyword)))))))))
+
+(defun add-tr (keyword lang value)
+  (with-re-db 
+    (let ((tr-to-save 
+	   (or (tr-if-exists keyword lang) 
+	       (make-instance 'tr :keyword (string-downcase (smake keyword))
+			      :lang (string-downcase (smake lang))
+			      :value (string-downcase (smake value))))))
+      (setf (value tr-to-save) value)
+      (save-dao tr-to-save))))
+    
+    
 
 (defun obfuscate-password (passwd)
   (hash-password (+s "sloboda" passwd)))
