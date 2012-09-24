@@ -338,8 +338,8 @@
 	(script-tag 
 	 (ps:ps
 	   (var cur-div-sel (lisp (+s "#" id-for-div)))
-	   ($$ 
-	    cur-div-sel
+	   (chain
+	    ($ cur-div-sel)
 	    (find ".btn-register")
 	    (unbind "click")
 	    (click 
@@ -510,6 +510,9 @@
        (label-input "price-max" :label (re-tr :lbl-price-max) :size-attr 4)
        (label-input "bedrooms-min" :label (re-tr :lbl-bedrooms-min) :size-attr 4)
        (label-input "bedrooms-max" :label (re-tr :lbl-bedrooms-max) :size-attr 4)
+       (label-input "postcode-1" :label (re-tr :lbl-postcode-1) :size-attr 4)
+       (label-input "postcode-2" :label (re-tr :lbl-postcode-2) :size-attr 4)
+       (label-input "postcode-3" :label (re-tr :lbl-postcode-3) :size-attr 4)
        ))
      (:a :href "javascript:void(0);" :id "btn-toggle-adv-search"
 	 (str (re-tr :more-filters)))

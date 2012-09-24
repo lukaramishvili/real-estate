@@ -356,7 +356,10 @@
 	 (preemption (cdr (assoc :preemption fa)))
 	 (subdiv-permit (cdr (assoc :subdiv-permit fa)))
 	 (epc-min (cdr (assoc :epc-min fa)))
-	 (epc-max (cdr (assoc :epc-max fa))))
+	 (epc-max (cdr (assoc :epc-max fa)))
+	 (postcode-1 (cdr (assoc :postcode-1 fa)))
+	 (postcode-2 (cdr (assoc :postcode-2 fa)))
+	 (postcode-3 (cdr (assoc :postcode-3 fa))))
     (with-re-db
       (eval 
        `(query-dao 
@@ -388,7 +391,15 @@
 		 `(:= :subdiv-permit ,subdiv-permit) t)
 	    ,(if (spec-f-p epc-min) `(:>= :epc ,epc-min) t)
 	    ,(if (spec-f-p epc-max) `(:<= :epc ,epc-max) t)
-	   ))
+	    
+	    ,(if (or (spec-f-p postcode-1)
+		     (spec-f-p postcode-2)
+		     (spec-f-p postcode-3)) 
+		 `(:or ,(if (spec-f-p postcode-1) `(:= :pst-code ,postcode-1) nil)
+		       ,(if (spec-f-p postcode-2) `(:= :pst-code ,postcode-2) nil)
+		       ,(if (spec-f-p postcode-3) `(:= :pst-code ,postcode-3) nil)) 
+		 t)
+	    ))
 	  ,count ,offset))))))
 
 (defun estates-of-user (ix-user)

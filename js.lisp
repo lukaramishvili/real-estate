@@ -104,8 +104,8 @@
 	 (+= div "<a href='" (@ main-pic path) 
 	     "' id='estate-main-img-a' rel='estate-gallery'>" 
 	     "<img id='estate-main-img' src='" (@ main-pic path) "' />" 
-	     "<span class='price-overlay'>Price: " (aref fields "price") 
-	     " &euro;</span>" "</a>")
+	     "<span class='price-overlay'>" (lisp (re-tr :price)) ": " 
+	     (aref fields "price") " &euro;</span>" "</a>")
 	 (+= div "<div id='other-imgs'>")
 	 (for-in 
 	  (op other-pics)
@@ -339,6 +339,12 @@
 	   (setf (@ ff :bathrooms-max) ($$ "#input_bathrooms-max" (val))))
        (if (inp-pos-val "#input_epc-max") 
 	   (setf (@ ff :epc-max) ($$ "#input_epc-max" (val))))
+       (if (inp-pos-val "#input_postcode-1") 
+	   (setf (@ ff :postcode-1) ($$ "#input_postcode-1" (val))))
+       (if (inp-pos-val "#input_postcode-2") 
+	   (setf (@ ff :postcode-2) ($$ "#input_postcode-2" (val))))
+       (if (inp-pos-val "#input_postcode-3") 
+	   (setf (@ ff :postcode-3) ($$ "#input_postcode-3" (val))))
        ff)
      
      (defun load-results (args)

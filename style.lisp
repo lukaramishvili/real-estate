@@ -24,12 +24,49 @@
   #btn-toggle-search { position:absolute; right:-25px; top:45%; color:white;
     display:block; width:45px; height:45px; 
     background:transparent url(css/img/search-btn.png) left top no-repeat; }
+
+  #input_price-min { width:35px !important; clear:none !important; }
+  #label_price-max { clear:none !important; width:30px !important; 
+    line-height:20px; }
+  #input_price-max { width:35px !important; clear:none !important; }
+
+  #input_bedrooms-min { width:35px !important; clear:none !important; }
+  #label_bedrooms-max { clear:none !important; width:30px !important; 
+    line-height:20px; }
+  #input_bedrooms-max { width:35px !important; clear:none !important; }
+
+  #input_bathrooms-min { width:35px !important; clear:none !important; }
+  #label_bathrooms-max { clear:none !important; width:30px !important; 
+    line-height:20px; }
+  #input_bathrooms-max { width:35px !important; clear:none !important; }
+
+  #input_total-min { width:35px !important; clear:none !important; }
+  #label_total-max { clear:none !important; width:30px !important; 
+    line-height:20px; }
+  #input_total-max { width:35px !important; clear:none !important; }
+
+  #input_land-min { width:35px !important; clear:none !important; }
+  #label_land-max { clear:none !important; width:30px !important; 
+    line-height:20px; }
+  #input_land-max { width:35px !important; clear:none !important; }
+
+  label[for='input_postcode-1'] { width:60px !important; }
+  #input_postcode-1 { clear:none !important; width:35px !important; }
+  label[for='input_postcode-2'] { clear:none !important; width:20px !important; 
+    line-height:20px; }
+  #input_postcode-2 { clear:none !important; width:35px !important; }
+  label[for='input_postcode-3'] { clear:none !important; width:20px !important; 
+    line-height:20px; }
+  #input_postcode-3 { clear:none !important; width:35px !important; }
+
+  label[for='input_terrace'] { width:50px !important; }
+  #input_building-permit { clear:none !important; }
   
   .fancybox-skin { background:transparent url(css/img/gray-bg.png) 
       left top repeat !important; }
 
   #search-bar input,#search-bar label,#search-bar select 
-      { float:left; display:block; margin-bottom:4px; }
+      { float:left; display:block; margin-bottom:6px; }
   #search-bar label { width:100px; color:#ccc; }
   #search-bar label.label-left { clear: left; }
   #search-bar label.label-right { clear: right; }
