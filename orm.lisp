@@ -116,7 +116,8 @@
 (defun status-options (&key not-sel)
   (concatenate 'list 
 	       (if not-sel (list "*"))
-  (list "sale" "rent")))
+  (list (list "sale" (tr :sale :nl)) 
+	(list "rent" (tr :rent :nl)))))
 
 (defun all-countries (&key not-sel)
   (concatenate 'list 

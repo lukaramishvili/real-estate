@@ -505,7 +505,7 @@
        (label-select "apt-type" :options (apt-type-options :not-sel t)
 		     :label (re-tr :apt-type))
        (label-select "ix-country" :options (all-countries :not-sel t)
-		     :label (re-tr :country))
+		     :label (re-tr :country) :val 1)
        (label-input "price-min" :label (re-tr :lbl-price-min) :size-attr 4)
        (label-input "price-max" :label (re-tr :lbl-price-max) :size-attr 4)
        (label-input "bedrooms-min" :label (re-tr :lbl-bedrooms-min) :size-attr 4)
