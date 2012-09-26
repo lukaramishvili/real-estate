@@ -363,6 +363,14 @@
 		  pic-to-rem)
 	    (estate-form-pic-box uniq-rem-pic-uuid))))))
 
+(defun link-for-estate (e)
+  (smake "/#estate-" (ix-estate e) 
+	 "-" (apt-type e)
+	 "-for-" (status e)
+	 "-in-" (pst-code e) "-" (munic e) "-" (get-country (ix-country e))
+	 
+	 ))
+
 (defun estate-for-json (e &key short)
   (let ((is-fav (and (session-value 'logged-in-p)
 		     (session-value 'user-authed)
@@ -377,7 +385,8 @@
 	       :main-pic (pic-to-hashtable (ix-main-pic e)
 					   :make-path-linkable t)
 	       :can-fav (if (session-value 'logged-in-p) t)
-	       :is-fav is-fav)
+	       :is-fav is-fav
+	       :link (link-for-estate e))
 	 (list :ix-estate (ix-estate e)
 	       :main-pic (pic-to-hashtable (ix-main-pic e)
 					   :make-path-linkable t)
@@ -390,6 +399,7 @@
 	       :loc-lng (loc-lng e)
 	       :can-fav (if (session-value 'logged-in-p) t)
 	       :is-fav is-fav
+	       :link (link-for-estate e)
 	       :ix-user (ix-user e)
 	       :broker-url (if broker (url broker) "")
 	       :broker-logo (broker-logo-url (ix-user e)))))))

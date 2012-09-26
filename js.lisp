@@ -62,9 +62,12 @@
      }
    }
    function linkForEstate (ix){
-     //TODO: generate using document.location
      return 'http://' + document.location.host + '/#estate-' + ix;
    }
+  function fullLinkForSharing (link){
+     return 'http://' + document.location.host + link;
+   }
+  
    "
    (ps:ps
      
@@ -113,9 +116,9 @@
 	    (+= div "<a href='" next-img "' rel='estate-gallery'>"
 		"<img src='" next-img "' /></a>")))
 	 (+= div "</div>");</#other-imgs>
-	 (+= div (fb-like-btn (link-for-estate (@ e ix-estate))) "<br><br>")
-	 (+= div (fb-share-btn (link-for-estate (@ e ix-estate))) "<br><br>")
-	 (+= div (tweet-btn (link-for-estate (@ e ix-estate))) "<br><br>")
+	 (+= div (fb-like-btn (full-link-for-sharing (@ e link))) "<br><br>")
+	 (+= div (fb-share-btn (full-link-for-sharing (@ e link))) "<br><br>")
+	 (+= div (tweet-btn (full-link-for-sharing (@ e link))) "<br><br>")
 	 (if (< 0 (@ broker-logo length))
 	     (+= div "<img src='" broker-logo "' id='estate-broker-logo' />" 
 		 "<br><br>"))
@@ -404,7 +407,7 @@
 		  (let ((e (aref es ie)))
 		    (var e-gen (+ "<td align='left' valign='top' " 
 				  td-4x-spec ">" 
-				  "<a href='#estate-" (@ e ix-estate) "' " 
+				  "<a href='" (@ e link) "' " 
 				  " class='fp-estate-link'" 
 				  " ixestate='" (@ e ix-estate) "'>"
 				  "<img src='" (@ (@ e main-pic) path)  
