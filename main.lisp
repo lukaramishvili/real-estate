@@ -382,12 +382,14 @@
     (json:encode-json-plist-to-string
      (if short
 	 (list :ix-estate (ix-estate e)
+	       ;;:ix-user (ix-user e)
 	       :main-pic (pic-to-hashtable (ix-main-pic e)
 					   :make-path-linkable t)
 	       :can-fav (if (session-value 'logged-in-p) t)
 	       :is-fav is-fav
 	       :link (link-for-estate e))
 	 (list :ix-estate (ix-estate e)
+	       :ix-user (ix-user e)
 	       :main-pic (pic-to-hashtable (ix-main-pic e)
 					   :make-path-linkable t)
 	       :other-pics (mapcar (lambda (p)
@@ -400,9 +402,15 @@
 	       :can-fav (if (session-value 'logged-in-p) t)
 	       :is-fav is-fav
 	       :link (link-for-estate e)
-	       :ix-user (ix-user e)
 	       :broker-url (if broker (url broker) "")
-	       :broker-logo (broker-logo-url (ix-user e)))))))
+	       :broker-logo (broker-logo-url (ix-user e))
+	       :has-edit-link 
+	       (if (and (session-value 'logged-in-p)
+			(session-value 'user-authed)
+			(= (ix-user e)
+			   (ix-user (session-value 'user-authed))))
+		   "true"
+		   "false"))))))
 
 (htoot-handler 
     (get-estate-handler "/get-estate" 

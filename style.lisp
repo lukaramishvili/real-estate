@@ -24,11 +24,12 @@
   #btn-toggle-search { position:absolute; right:-25px; top:45%; color:white;
     display:block; width:45px; height:45px; 
     background:transparent url(css/img/search-btn.png) left top no-repeat; }
-
-  #input_price-min { width:35px !important; clear:none !important; }
-  #label_price-max { clear:none !important; width:30px !important; 
+  
+  #label_price-min { width:88px !important; }
+  #input_price-min { width:50px !important; clear:none !important; }
+  #label_price-max { clear:none !important; width:25px !important; 
     line-height:20px; }
-  #input_price-max { width:35px !important; clear:none !important; }
+  #input_price-max { width:55px !important; clear:none !important; }
 
   #input_bedrooms-min { width:35px !important; clear:none !important; }
   #label_bedrooms-max { clear:none !important; width:30px !important; 
@@ -78,8 +79,18 @@
 
   #fp-pics { /*height:100%;*/ padding-top:43px; }
   /*#fp-pics a img {  }*/
+  .fp-estate-link { display:block; position:relative; }
   .fp-estate-link img { width:150px; height:150px; margin:0px 1px 0px 1px; }
   td.td-4x a img { width:300px; height:300px; }
+  
+  /* not needed for now */
+  .fp-estate-link .fp-e-edit { position:absolute; right:0px; bottom:0px;
+    width:20px; height:21px; 
+    background:transparent url(css/img/edit.png) left top no-repeat; }
+
+  .view-estate-edit-link { padding-left:28px; height:25px; display:block;
+    line-height:22px;
+    background:transparent url(css/img/edit.png) left top no-repeat; }
   
   #fp-preloader { position:absolute; left:50%; top:50%; z-index:3000; }
   
@@ -102,7 +113,8 @@
   #view-estate #estate-images { width:250px; float:left; margin-right:20px; }
   #view-estate #other-imgs { width:250px; }
   #view-estate #estate-toggle-fav { width:22px; height:20px; display:block; 
-    position:absolute; left:959px; top:32px; }
+    position:absolute; /*left:959px; top:32px;*/ left:226px; top:2px;
+    z-index:3000; }
   #view-estate #estate-toggle-fav.fav-yes { background:transparent url(/css/img/star.png) 
     left top no-repeat; }
   #view-estate #estate-toggle-fav.fav-no { background:transparent url(/css/img/star_gray.png) 
@@ -138,17 +150,19 @@
   #edit-estate-form-div h1 { clear:both; margin-bottom:20px; }
   #edit-estate-form-div h4 { clear:both; }
   #edit-estate-form-div input,#edit-estate-form-div label
-   ,#edit-estate-form-div select { float:left; display:block;
-      margin-bottom:4px; }
+   ,#edit-estate-form-div select, #edit-estate-form-div textarea 
+    { float:left; display:block; margin-bottom:4px; }
   #edit-estate-form-div label { width:120px; }
   #edit-estate-form-div label.label-left { clear: left; }
   #edit-estate-form-div label.label-right { clear: right; }
-  #edit-estate-form-div input[type='text'] 
+  #edit-estate-form-div input[type='text']
       { width:135px; }
   #edit-estate-form-div input[type='checkbox'] 
       { clear:left; margin-right:105px; }
   #edit-estate-form-div input[type='submit'] 
       { clear:both; }
+
+  #label_desc { clear:both !important; float:none !important; }
   
   #estate-pics { clear:both; }
   ")

@@ -98,12 +98,12 @@
 	     (broker-url (@ e broker-url))
 	     (broker-logo (@ e broker-logo)))
 	 (var div "<div>")
+	 (+= div "<div id='estate-images'>")
 	 (when can-fav
 	   (+= div "<a id='estate-toggle-fav' href='javascript:;' class='fav-" 
 	       (if is-fav "yes" "no") "' ixestate='" (@ e ix-estate) "'>" 
 	       ;;(if is-fav "Favorited" "Add to favorites") 
-	       "</a>" "<br><br>"))
-	 (+= div "<div id='estate-images'>")
+	       "</a>"))
 	 (+= div "<a href='" (@ main-pic path) 
 	     "' id='estate-main-img-a' rel='estate-gallery'>" 
 	     "<img id='estate-main-img' src='" (@ main-pic path) "' />" 
@@ -124,6 +124,10 @@
 		 "<br><br>"))
 	 (+= div "<a href='" broker-url "' target='_blank' class='underline'>" 
 	     "Broker web-site</a>" "<br><br>")
+	 (if (= "true" (@ e has-edit-link)) 
+	     (+= div "<a class='view-estate-edit-link' " 
+		 " href='./edit-estate?ix-estate=" (@ e ix-estate) 
+		 "' >Edit estate</a>") "")
 	 (+= div "</div>");</#estate-images>
 	 (+= div "<div id='estate-fields'>")
 	 (for-in (k fields)
@@ -405,13 +409,15 @@
 				      " class='td-4x' colspan='2' rowspan='2' "
 				      ""))
 		  (let ((e (aref es ie)))
-		    (var e-gen (+ "<td align='left' valign='top' " 
-				  td-4x-spec ">" 
-				  "<a href='" (@ e link) "' " 
-				  " class='fp-estate-link'" 
-				  " ixestate='" (@ e ix-estate) "'>"
-				  "<img src='" (@ (@ e main-pic) path)  
-				  "' /></a></td>"))
+		    (var 
+		     e-gen 
+		     (+ "<td align='left' valign='top' " 
+			td-4x-spec ">" 
+			"<a href='" (@ e link) "' " 
+			" class='fp-estate-link'" 
+			" ixestate='" (@ e ix-estate) "'>"
+			"<img src='" (@ (@ e main-pic) path)  
+			"' /></a></td>"))
 		    (+= tbl e-gen))
 		  (+= col-offset 1)
 		  ;;start new tr

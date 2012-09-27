@@ -120,6 +120,16 @@
 	    :value (or (smake val) "")
 	    :name name :size size-attr)))
 
+(defun label-textarea (name &key val label (rows 4) (cols 20))
+  (cl-who:with-html-output-to-string 
+      (*standard-output* nil :prologue nil :indent t)
+    (:label :for (+s "textarea_" name)
+	    :id (+s "label_" name) :class "label-left"
+	    (cl-who:str (or label name)))
+    (:textarea :id (+s "textarea_" name) :class (+s "input_" name)
+	       :value (or (smake val) "") :name name
+	       :rows rows :cols cols)))
+
 (defmacro label-checkbox (name &key val label checked)
   `(cl-who:with-html-output-to-string 
        (*standard-output* nil :prologue nil :indent t)
@@ -591,10 +601,11 @@
 			 :val (constr e))
 	   (label-input "total" :val (total e) :label "Total m2")
 	   (label-input "land" :val (land e) :label "Land area m2")
-	   (label-input "desc" :val (desc e) :label "Description")
 	   (label-input "zmh" :val (zmh e) :label "ZMH Reference")
 	   (label-input "price" :val (price e))
-	   (label-datepicker "since" :val (since e) :label "Date added"))))
+	   (label-datepicker "since" :val (since e) :label "Date added")
+	   (label-textarea "desc" :val (desc e) :label "Description"
+			   :rows 10 :cols 80))))
 	(:div 
 	 :class "edit-estate-column"
 	 (cl-who:str
