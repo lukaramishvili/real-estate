@@ -110,8 +110,13 @@
 (defun apt-type-options (&key not-sel)
   (concatenate 'list 
 	       (if not-sel (list "*"))
-	       (list "apartment" "house" "land" "office" 
-		     "commercial" "garage" "new")))
+	       (list (list "apartment" (tr :apartment :nl))
+		     (list "house" (tr :house :nl))
+		     (list "land" (tr :land :nl))
+		     (list "office" (tr :office :nl))
+		     (list "commercial" (tr :commercial :nl))
+		     (list "garage" (tr :garage :nl))
+		     (list "new" (tr :new :nl)))))
 
 (defun status-options (&key not-sel)
   (concatenate 'list 
