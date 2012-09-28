@@ -508,7 +508,9 @@
        (if (session-value 'logged-in-p)
 	   (+s
 	    (label-checkbox "only-my-estates" 
-			    :label "Only properties added by me"))
+			    :label "Only properties added by me")
+	    (label-checkbox "only-my-favs" 
+			    :label "Only my favorites"))
 	   "")
        (label-select "status" :options (status-options :not-sel t)
 		     :label (re-tr :status))

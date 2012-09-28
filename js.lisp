@@ -291,6 +291,9 @@
 
 (defun fp-search-js ()
   (+s 
+   (if (session-value 'logged-in-p) 
+       (ps:ps (var ix-user (lisp (ix-user (session-value 'user-authed))))) 
+       "")
    "
   var fSearchOpen = false;
   function toggleSearchBar(){
@@ -327,7 +330,12 @@
 		))
        (if (and (< 0 ($$ "#input_only-my-estates" length))
 		(@ (@ ($$ "#input_only-my-estates") 0) :checked))
-	   (setf (@ ff :ix-user) "1"))
+	   (setf (@ ff :ix-user) 
+		 (chain (@ window ix-user) (to-string))))
+       (if (and (< 0 ($$ "#input_only-my-favs" length))
+		(@ (@ ($$ "#input_only-my-favs") 0) :checked))
+	   (setf (@ ff :only-favs-of-user) 
+		 (chain (@ window ix-user) (to-string))))
        (if (inp-pos-val "#input_total-min")
 	   (setf (@ ff :total-min) ($$ "#input_total-min" (val))))
        (if (inp-pos-val "#input_total-max")

@@ -345,6 +345,7 @@
 (defun filter-estates (filters-alist &key (count 10000) (offset 0))
   (let* ((fa filters-alist)
 	 (ix-user (cdr (assoc :ix-user fa)))
+	 (only-favs-of-user (cdr (assoc :only-favs-of-user fa)))
 	 (apt-type (cdr (assoc :apt-type fa)))
 	 (status (cdr (assoc :status fa)))
 	 (ix-country (cdr (assoc :ix-country fa)))
@@ -378,6 +379,11 @@
 	   (:and 
 	    t
 	    ,(if (spec-f-p ix-user) `(:= :ix-user ,ix-user) t)
+	    ,(if (spec-f-p only-favs-of-user) 
+		 `(:exists (:select :* :from :fav :where 
+				    (:and (:= :fav.ix-user ,only-favs-of-user)
+					  (:= :fav.ix-estate :estate.ix-estate))))
+		 t)
 	    ,(if (spec-f-p apt-type) `(:= :apt-type ,apt-type) t)
 	    ,(if (spec-f-p status) `(:= :status ,status) t)
 	    ,(if (spec-f-p ix-country) `(:= :ix-country ,ix-country) t)
