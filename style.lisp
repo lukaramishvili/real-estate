@@ -195,7 +195,7 @@
 
 (defun style-register-page ()
   "
-  html, body { height:350px; }
+  /*html, body { height:350px; }*/
   .reg-div { padding:20px; }
   .reg-div h1 { color:white; margin-bottom:16px; }
   .reg-div p { color:white; font-size:11px; }

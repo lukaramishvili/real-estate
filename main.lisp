@@ -97,7 +97,7 @@
   (re-gen-css))
 
 (htoot-handler (re-js-handler "/main.js" ())
-  (setf (hunchentoot:content-type*) "text/css")
+  (setf (hunchentoot:content-type*) "text/javascript")
   (re-main-js))
 
 (htoot-handler
