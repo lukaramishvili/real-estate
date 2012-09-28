@@ -132,6 +132,8 @@
   #ajax-pages #reg-div, #ajax-pages #login-form-div,
    #ajax-pages #reg-broker-div { display:none; } 
   
+  .fancybox-skin { height:400px; }
+  
   "))
 
 (defun style-edit-estate-form ()
@@ -178,7 +180,7 @@
   .text { color:white; color:12px; }
   ")
 
-(defun style-login-page()
+(defun style-login-page ()
   "
   #login-form-div { padding:20px; }
   #login-form-div h1 { color:white; margin-bottom:16px; }
@@ -208,7 +210,7 @@
   .reg-div input[type='submit'] { clear:both; margin:2px 4px; }
   ")
 
-(defun style-account-page()
+(defun style-account-page ()
   "
   h1 { color:white; font-size:16px; margin-bottom:20px; }
   h2 { color:white; font-size:14px; margin-bottom:10px; }
