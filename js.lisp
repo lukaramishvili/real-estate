@@ -34,7 +34,9 @@
    $('html').mousewheel(function(event, delta) {
      if(fAllowFurtherScrolling){
        $('html')[0].scrollLeft -= (delta * 20);
-       event.preventDefault();
+       if(document.location.href.toString().indexOf('edit-estate') == -1){
+         event.preventDefault();
+       }
        //
        var carScroll = $('html')[0].scrollLeft;
        if((1 + (carScroll - carScroll%wCarImg)/wCarImg) != lastPage){
@@ -195,6 +197,7 @@
      );end ps:ps
      "
     function createMapForId (id, options){
+      if('undefined' != typeof google){
     	var initPos = new google.maps.LatLng(41.5, 44.8);
         var DefaultOptions = {
           center: initPos,
@@ -208,6 +211,8 @@
         var map = new google.maps.Map(document.getElementById(id),
             DefaultOptions);
         return map;
+      }
+      else { return null; }
     }
     function createMarker(title, pos){
       var marker = new google.maps.Marker({
@@ -519,5 +524,9 @@
      ;;if the querystring was like /#estate-\d+, open estate with ix \d+
      (let ((arg-estate-id (estate-id-from-argument document.location.href)))
        (if (> arg-estate-id 0)
-	   (view-e arg-estate-id))))))
+	   (view-e arg-estate-id)))
+     (if (< 0 (chain document.location.href (index-of "register-success")))
+	 ($$ "<a href='#reg-success-div'></a>" 
+	     (fancybox (create :type "inline")) (click)))
+     )))
 

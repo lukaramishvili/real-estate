@@ -179,7 +179,7 @@
 			    uploaded-logo
 			  (cl-fad::ensure-directories-exist logo-dest-dir)
 			  (cl-fad:copy-file path logo-dest :overwrite t))))
-		  (re-tr :registration-successful))
+		  (redirect "/#register-success"))
 		(re-tr :couldnt-register-correct-errors)))
 	  (re-tr :couldnt-save-user))))
 					 

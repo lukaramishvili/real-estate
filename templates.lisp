@@ -551,12 +551,13 @@
 	(label-select "subdiv-permit" :label (re-tr :subdiv-permit)
 		      :options (subdiv-permit-options :not-sel t))
 	))))
-    (cl-who:str (script-tag (fp-search-js)))
     (:div :id "ajax-pages"
 	  (cl-who:str 
 	   (+s (register-page :acc-type "broker" :div-id "reg-broker-div")
 	       (register-page)
-	       (login-page))))))
+	       (login-page)
+	       (register-success-page))))
+    (cl-who:str (script-tag (fp-search-js)))))
 
 
 ;;TODO: populate a grid (generated with uneven-grid) with fp-pics
@@ -599,24 +600,29 @@
 	   (label-input "munic" :val (munic e))
 	   (label-select "ix-country" :options (all-countries)
 			 :val (ix-country e))
-	   (label-select "constr" :options (constr-options)
-			 :val (constr e))
-	   (label-input "total" :val (total e) :label "Total m2")
-	   (label-input "land" :val (land e) :label "Land area m2")
-	   (label-input "zmh" :val (zmh e) :label "ZMH Reference")
 	   (label-input "price" :val (price e))
 	   (label-datepicker "since" :val (since e) :label "Date added")
 	   (label-textarea "desc" :val (desc e) :label "Description"
-			   :rows 10 :cols 80))))
+			   :rows 7 :cols 80))))
 	(:div 
 	 :class "edit-estate-column"
 	 (cl-who:str
 	  (+s 
 	   (label-input "bedrooms" :val (bedrooms e) :label "Bedroom count")
 	   (label-input "bathrooms" :val (bathrooms e) :label "Bathroom count")
+	   (label-input "total" :val (total e) :label "Total m2")
+	   (label-input "land" :val (land e) :label "Land area m2")
 	   (label-checkbox "terrace-p" :val 1 :checked (< 0 (terrace-p e)))
 	   (label-checkbox "garden-p" :val 1 :checked (< 0 (garden-p e)))
 	   (label-input "parking-lots" :val (parking-lots e))
+	   (label-select "constr" :options (constr-options)
+			 :val (constr e))
+	   (label-checkbox "visible" :val 1 :checked (< 0 (visible e))))))
+	(:div 
+	 :class "edit-estate-column"
+	 (cl-who:str 
+	  (+s 
+	   (label-input "zmh" :val (zmh e) :label "ZMH Reference")
 	   (label-input "building-permit-p" :val (building-permit-p e))
 	   (label-input "destination" :val (destination e))
 	   (label-select "summons" :options (summons-options) 
@@ -626,11 +632,7 @@
 	   (label-select "subdiv-permit" :options (subdiv-permit-options)
 			 :val (subdiv-permit e))
 	   (label-input "epc" :val (epc e) :label "EPC")
-	   (label-input "kad-ink" :val (kad-ink e) :label "K.I.")
-	   (label-checkbox "visible" :val 1 :checked (< 0 (visible e))))))
-	(:div :class "edit-estate-column"
-	      (:div :id "estate-pics")
-	      (:button :id "add-estate-pic" :type "button" "Add image"))
+	   (label-input "kad-ink" :val (kad-ink e) :label "K.I."))))
 	(:div 
 	 :class "edit-estate-column"
 	 (cl-who:str (label-input "address" :val (address e)))
@@ -640,29 +642,14 @@
 	 (:input :type "hidden" :id "loc-lng" :name "loc-lng" :value (loc-lng e))
 	 (:div :id "edit-estate-map"))
 	(:br :class "clearfloat")
+	(:div :id "estate-pics-container"
+	      (:div :id "estate-pics")
+	      (:button :id "add-estate-pic" :type "button" "Add image"))
 	(:input :type "submit" :value "Save")))
       (:script
        :type "text/javascript"
        (cl-who:str
 	(+s (ps:ps
-	      (defvar estate-map (create-map-for-id "edit-estate-map"))
-	      (defvar loc-marker 
-		(create-marker "Real estate map location"
-			       (new (google.maps.-lat-lng 
-				     (lisp (loc-lat e)) 
-				     (lisp (loc-lng e))))))
-	      (chain loc-marker (set-map estate-map))
-	      (google.maps.event.add-listener 
-	       estate-map "click" 
-	       (lambda (event)
-		 (let ((lat (event.lat-lng.lat)) (lng (event.lat-lng.lng)))
-		   (chain ($ "#loc-lat") (val lat))
-		   (chain ($ "#loc-lng") (val lng))
-		   (chain loc-marker
-			  (set-position
-			   (new (google.maps.-lat-lng lat
-						      lng))))
-		   t)))
 	      (defun set-main-pic (pic-uuid)
 		($$ "#input_main-pic-uuid" (val pic-uuid))
 		false)
@@ -691,14 +678,33 @@
 			   (:a :href (+ "javascript:void(0);")
 			       :id (+ "set_main_pic_btn-" next-id)
 			       "Set as main pic")))))))
-	      ($$ "#add-estate-pic" 
-		  (click (lambda () (add-pic-box "") false)))
-	      ($$ "a[id|='set_main_pic_btn']"
+	      (chain ($ "#add-estate-pic")
+		     (click (lambda () (add-pic-box "") false)))
+	      (chain ($ "a[id|='set_main_pic_btn']")
 		  (live "click" 
 			(lambda ()
 			  (set-main-pic ($$ this (attr "rem-pic-uuid"))))))
-	      (-map-marker-A-C-Combo "#input_address" "#loc-lat" "#loc-lng"
-				     estate-map loc-marker)
+	      (when (!= "undefined" (typeof google))
+		(defvar estate-map (create-map-for-id "edit-estate-map"))
+		(defvar loc-marker 
+		  (create-marker "Real estate map location"
+				 (new (google.maps.-lat-lng 
+				       (lisp (loc-lat e)) 
+				       (lisp (loc-lng e))))))
+		(chain loc-marker (set-map estate-map))
+		(google.maps.event.add-listener 
+		 estate-map "click" 
+		 (lambda (event)
+		   (let ((lat (event.lat-lng.lat)) (lng (event.lat-lng.lng)))
+		     (chain ($ "#loc-lat") (val lat))
+		     (chain ($ "#loc-lng") (val lng))
+		     (chain loc-marker
+			    (set-position
+			     (new (google.maps.-lat-lng lat
+							lng))))
+		     t)))
+		(-map-marker-A-C-Combo "#input_address" "#loc-lat" "#loc-lng"
+				       estate-map loc-marker))
 	      );end main ps:ps
 	    (smake
 	     (loop for key being the hash-keys 
@@ -719,7 +725,7 @@
     (cl-who:with-html-output-to-string 
 	(*standard-output* nil :prologue nil :indent t)
       (:script :type "text/javascript" :src "/js/jquery-1.7.2.min.js")
-      (:style :type "text/css" (cl-who:str (style-pic-box-iframe)))
+      (cl-who:str (style-tag  (style-pic-box-iframe)))
       (:form 
        :action "/rem-pic" :method :post :enctype "multipart/form-data"
        :class "form-in-pic-box-iframe"
@@ -736,7 +742,7 @@
 		       "/css/img/no-pic.jpg"))
 	(cl-who:str 
 	 (label-input "img" :type "file" :label "Choose Image:" 
-		      :size-attr 10))
+		      :size-attr 4))
 	;;(:input :type "submit" :value "Update image")
 	(:script
 	 :type "text/javascript"
@@ -751,17 +757,19 @@
 			    ))))
 	    (when (< 0 (chain (ps:lisp rem-pic-uuid) length))
 	      ;;$(window.parent.document).find("iframe").each(function(i, el){if((el.contentWindow || el.contentDocument) == window){/*here, el is the iframe#pic_iframe-3, so show a#set_main_pic_btn-3*/};});
-	      ($$ window.parent.document
-		  (find "iframe")
-		  (each 
-		   (lambda (i el)
-		     (when (== (or (@ el content-window)
-				   (@ el content-document))
-			       window)
-		       (let ((pic-id 
-			      (aref (chain ($$ el (attr "id")) 
-					   (to-string) (split "-")) 1)))
-			 ($$ el (parents "body")
+	      (chain 
+	       ($ window.parent.document)
+	       (find "iframe")
+	       (each 
+		(lambda (i el)
+		  (when (== (or (@ el content-window)
+				(@ el content-document))
+			    window)
+		    (let ((pic-id 
+			   (aref (chain ($$ el (attr "id")) 
+					(to-string) (split "-")) 1)))
+		      (chain ($ el) 
+			     (parents "body")
 			     (find (+ "#set_main_pic_btn-" pic-id)) 
 			     (attr "rem-pic-uuid" (lisp rem-pic-uuid))
 			     (show))))))))
@@ -777,3 +785,12 @@
      (:div :class "text" 
 	   "You can contact us by calling +995 11 22 33"))))
 
+(defun register-success-page (&key (div-id "reg-success-div"))
+  (cl-who:with-html-output-to-string 
+      (*standard-output* nil :prologue nil :indent t)
+    (:div 
+     :class "reg-success-div" :id div-id
+     (:h1 "Congratulations!")
+     (:p " You can now add favorites, save them for later, and more! <br>
+         <br>Click on the close button or outside this box to dismiss it. "))
+    (cl-who:str (style-tag (style-register-success-page)))))

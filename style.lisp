@@ -67,7 +67,7 @@
       left top repeat !important; }
 
   #search-bar input,#search-bar label,#search-bar select 
-      { float:left; display:block; margin-bottom:6px; }
+      { float:left; display:block; margin-bottom:15px; }
   #search-bar label { width:100px; color:#ccc; }
   #search-bar label.label-left { clear: left; }
   #search-bar label.label-right { clear: right; }
@@ -130,7 +130,8 @@
     background:url(http://static.ak.facebook.com/images/share/facebook_share_icon.gif?6:26981) no-repeat top left; }
   
   #ajax-pages #reg-div, #ajax-pages #login-form-div,
-   #ajax-pages #reg-broker-div { display:none; } 
+   #ajax-pages #reg-broker-div, #ajax-pages .reg-success-div
+    { display:none; } 
   
   .fancybox-skin { height:400px; }
   
@@ -138,12 +139,14 @@
 
 (defun style-edit-estate-form ()
   "
+  body { background-color:white; }
+  
   #edit-estate-form-div { background-color:white; }
   #edit-estate-form-div { padding:20px; }
   #edit-estate-form-div .edit-estate-column { float:left; width:300px; }
 
   #edit-estate-form-div iframe { border:0; height:auto; width:auto; 
-    width:400px; height:150px;
+    width:220px; height:140px;
   }
   a[id|='set_main_pic_btn'] { display:none; }
   
@@ -154,7 +157,7 @@
   #edit-estate-form-div input,#edit-estate-form-div label
    ,#edit-estate-form-div select, #edit-estate-form-div textarea 
     { float:left; display:block; margin-bottom:4px; }
-  #edit-estate-form-div label { width:120px; }
+  #edit-estate-form-div label { width:120px; line-height:24px; }
   #edit-estate-form-div label.label-left { clear: left; }
   #edit-estate-form-div label.label-right { clear: right; }
   #edit-estate-form-div input[type='text']
@@ -167,11 +170,13 @@
   #label_desc { clear:both !important; float:none !important; }
   
   #estate-pics { clear:both; }
+  .estate-pic { width:220px; float:left; margin-right:10px; }
   ")
 
-(defun style-pic-box-iframe()
+(defun style-pic-box-iframe ()
   "
   .div-in-pic-box-iframe img { max-width:150px; height:80px; }
+  #label_img { clear:both; display:block; }
   ")
 
 (defun style-contact-page()
@@ -208,6 +213,13 @@
   .reg-div label.label-right { clear: right; }
   .reg-div input[type='checkbox'] { clear:left; }
   .reg-div input[type='submit'] { clear:both; margin:2px 4px; }
+  ")
+
+(defun style-register-success-page ()
+  "
+  .reg-success-div { padding:20px; }
+  .reg-success-div h1 { color:white; margin-bottom:16px; }
+  .reg-success-div p { color:white; font-size:12px; }
   ")
 
 (defun style-account-page ()
