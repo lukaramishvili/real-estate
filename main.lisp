@@ -109,6 +109,23 @@
 	       (+s (re-tr :not-logged-in-please-log-in)
 		   (login-page :redir "/account")))))
 
+(htoot-handler (account-page-handler "/admin" 
+    ((page :init-form :default :parameter-type 'keyword)))
+  (re-main 
+   :title (re-tr :admin-panel)
+   :body   (if (session-value 'logged-in-p) 
+	       (with-admin-template 
+		 (let ((ix-admin (ix-user (session-value 'user-authed))))
+		   (case page 
+		     (:estates (admin-page-estates))
+		     (:edit-estate (estate-edit-handler))
+		     (:users (user-management-page))
+		     ;(:default (admin-default-page))
+		     (otherwise (admin-page-estates))))
+		 :nl)
+	       (+s (re-tr :not-logged-in-please-log-in)
+		   (login-page :redir "/admin")))))
+
 (htoot-handler
  (log-in-handler
   "/login-handler"

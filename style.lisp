@@ -68,11 +68,13 @@
 
   #search-bar input,#search-bar label,#search-bar select 
       { float:left; display:block; margin-bottom:15px; }
+  #search-bar input, #search-bar select { margin-right:5px; }
   #search-bar label { width:100px; color:#ccc; }
   #search-bar label.label-left { clear: left; }
   #search-bar label.label-right { clear: right; }
   #search-bar input[type='checkbox'] { clear:left; }
   #search-bar #label_only-my-estates { width:200px; }
+  #search-bar #label_bedrooms-max { width:20px !important; }
   
   #search-adv { display:none; }
   #btn-toggle-adv-search { clear:both; display:block; color:white; }
@@ -137,6 +139,11 @@
   
   "))
 
+(defun style-admin-page ()
+  "
+  body { background-color:white; }
+  ")
+
 (defun style-edit-estate-form ()
   "
   body { background-color:white; }
@@ -146,7 +153,7 @@
   #edit-estate-form-div .edit-estate-column { float:left; width:300px; }
 
   #edit-estate-form-div iframe { border:0; height:auto; width:auto; 
-    width:220px; height:140px;
+    width:220px; height:150px;
   }
   a[id|='set_main_pic_btn'] { display:none; }
   
@@ -239,5 +246,4 @@
      (("#main") ((:position "absolute") (:left "0px") (:top "0px")
 		 (:width "100%" :height "100%")))
      ((".grid-10") ((:width "10%") (:float "left") (:height "100%"))))
-   (style-firstpage)
-   (style-edit-estate-form)))
+   (style-firstpage)))

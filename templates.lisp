@@ -270,9 +270,6 @@
 			 "Logout")))
 	      (cl-who:str (login-page))))))
 
-
-
-
 (defun main-template (page)
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
@@ -286,11 +283,45 @@
   (html-combine :head (re-head :title title)
 		:body (main-template body)))
 
+(defun with-admin-template (content lang)
+  (let ((lang (or lang (default-lang))))
+    (cl-who:with-html-output-to-string
+	(*standard-output* nil :prologue nil :indent t)
+      (:div 
+       :id :admin-header
+       (:ul 
+	:id :admin-menu
+	;(:li (:a :href "admin?page=default" (str (tr :home :lang))))
+	(:li (:a :href "admin?page=estates" (str (tr :real-estates lang))))
+	(:li (:a :href "admin?page=users" (str (tr :users :lang))))
+	))
+       (cl-who:str (style-tag (style-admin-page)))
+      (:div :id :admin-working-area 
+	    (cl-who:str content)))))
+
+(defun admin-page-estates ()
+  (cl-who:with-html-output-to-string
+	(*standard-output* nil :prologue nil :indent t)
+    (:table 
+     (loop for e in (all-estates-paged 1) do 
+	  (htm (:tr
+		(:td (str (pst-code e)))
+		(:td (:a :href "" "Edit"))))))))
+
+(defun user-management-page ()
+  (cl-who:with-html-output-to-string
+	(*standard-output* nil :prologue nil :indent t)
+    (:table 
+     (loop for u in (all-users-paged 1) do 
+	  (htm (:tr
+		(:td (str (username u)))
+		(:td (:a :href "" "Edit"))))))))
+
 (defun account-page (ix-user)
   (let* ((acc-user (single-user ix-user))
 	 (user-estates (estates-of-user ix-user)))
     (cl-who:with-html-output-to-string
-	(*standard-output* nil :prologue nil :indent t)    
+	(*standard-output* nil :prologue nil :indent t)
       (cl-who:str (style-tag (style-account-page)))
       (:h1 (cl-who:str (+s "User: " (username acc-user))))
       (if 
@@ -575,6 +606,7 @@
 		       (ix-estate e) 0)))
     (cl-who:with-html-output-to-string 
 	(*standard-output* nil :prologue nil :indent t)
+      (cl-who:str (style-tag (style-edit-estate-form)))
       (:div 
        :id "edit-estate-form-div"
        (:form 
@@ -651,18 +683,17 @@
        (cl-who:str
 	(+s (ps:ps
 	      (defun set-main-pic (pic-uuid)
-		($$ "#input_main-pic-uuid" (val pic-uuid))
+		(chain ($ "#input_main-pic-uuid") (val pic-uuid))
 		false)
 	      (defun next-avail-iframe-id ()
 		(let ((max-id 0))
-		  ($$ 
-		   "iframe[id|='pic_iframe']"
+		  (chain ($ "iframe[id|='pic_iframe']")
 		   (each 
 		    (lambda (i el)
 		      (setf max-id 
 			    (-math.max 
 			     max-id 
-			     (aref (chain ($$ el (attr "id")) 
+			     (aref (chain (chain ($ el) (attr "id")) 
 					  (to-string) (split "-")) 1))))))
 		  (+ max-id 1)))
 	      (defun add-pic-box (rem-pic-uuid)
@@ -683,7 +714,8 @@
 	      (chain ($ "a[id|='set_main_pic_btn']")
 		  (live "click" 
 			(lambda ()
-			  (set-main-pic ($$ this (attr "rem-pic-uuid"))))))
+			  (set-main-pic (chain ($ this) 
+					       (attr "rem-pic-uuid"))))))
 	      (when (!= "undefined" (typeof google))
 		(defvar estate-map (create-map-for-id "edit-estate-map"))
 		(defvar loc-marker 
@@ -766,7 +798,7 @@
 				(@ el content-document))
 			    window)
 		    (let ((pic-id 
-			   (aref (chain ($$ el (attr "id")) 
+			   (aref (chain (chain ($ el) (attr "id")) 
 					(to-string) (split "-")) 1)))
 		      (chain ($ el) 
 			     (parents "body")

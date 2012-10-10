@@ -81,6 +81,9 @@
   (:metaclass dao-class)
   (:keys ix-user))
 
+(defun all-users ()
+  (with-re-db (select-dao 'user)))
+
 (defun single-user (ix-user)
   (with-re-db
     (get-dao 'user ix-user)))
@@ -203,6 +206,18 @@
    )
   (:metaclass dao-class)
   (:keys ix-estate))
+
+(defun all-users-paged (page &key (per-page 10))
+  (with-re-db 
+  (query-dao 'user 
+	     (:limit (:order-by (:select :* :from :user) :ix-user)
+		     per-page (* (- page 1) per-page)))))
+
+(defun all-estates-paged (page &key (per-page 10))
+  (with-re-db 
+  (query-dao 'estate 
+	     (:limit (:order-by (:select :* :from :estate) :ix-estate)
+		     per-page (* (- page 1) per-page)))))
 
 (defclass pic ()
   ((ix-pic :col-type serial :initarg :ix-pic :accessor ix-pic)
