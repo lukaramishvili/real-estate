@@ -111,20 +111,23 @@
 
 (htoot-handler (account-page-handler "/admin" 
     ((page :init-form :default :parameter-type 'keyword)))
-  (re-main 
-   :title (re-tr :admin-panel)
-   :body   (if (session-value 'logged-in-p) 
-	       (with-admin-template 
-		 (let ((ix-admin (ix-user (session-value 'user-authed))))
-		   (case page 
-		     (:estates (admin-page-estates))
-		     (:edit-estate (estate-edit-handler))
-		     (:users (user-management-page))
-		     ;(:default (admin-default-page))
-		     (otherwise (admin-page-estates))))
-		 :nl)
-	       (+s (re-tr :not-logged-in-please-log-in)
-		   (login-page :redir "/admin")))))
+  (if (session-value 'logged-in-p) 
+      (with-admin-template 
+	  (let ((ix-admin (ix-user (session-value 'user-authed))))
+	    (case page 
+	      (:estates (admin-page-estates))
+	      (:estate (estate-edit-handler))
+	      (:users (user-management-page))
+	      (:user (edit-user-handler))
+	      ;;(:default (admin-default-page))
+	      (otherwise (admin-page-estates))))
+	(default-lang))
+      (+s (re-tr :not-logged-in-please-log-in)
+	  (login-page :redir "/admin"))))
+
+(htoot-handler (edit-user-handler "/edit-user" 
+    ((ix-user :parameter-type 'integer :init-form 0)))
+    "edit user form")
 
 (htoot-handler
  (log-in-handler

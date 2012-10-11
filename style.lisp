@@ -141,7 +141,10 @@
 
 (defun style-admin-page ()
   "
-  body { background-color:white; }
+  #header { clear:both; }
+  #acc-box { height:69px; }
+  #content { clear:both; }
+  #content-inner { padding:10px; }
   ")
 
 (defun style-edit-estate-form ()

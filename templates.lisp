@@ -285,19 +285,43 @@
 
 (defun with-admin-template (content lang)
   (let ((lang (or lang (default-lang))))
+    (html-combine :head (re-head :title (tr :admin-panel lang))
+		  :body
     (cl-who:with-html-output-to-string
 	(*standard-output* nil :prologue nil :indent t)
-      (:div 
-       :id :admin-header
-       (:ul 
-	:id :admin-menu
-	;(:li (:a :href "admin?page=default" (str (tr :home :lang))))
-	(:li (:a :href "admin?page=estates" (str (tr :real-estates lang))))
-	(:li (:a :href "admin?page=users" (str (tr :users :lang))))
-	))
-       (cl-who:str (style-tag (style-admin-page)))
-      (:div :id :admin-working-area 
-	    (cl-who:str content)))))
+      (:link :href "css/admin/css/960.css" :rel "stylesheet")
+      (:link :href "css/admin/css/reset.css" :rel "stylesheet")
+      (:link :href "css/admin/css/text.css" :rel "stylesheet")
+      (:link :href "css/admin/css/blue.css" :rel "stylesheet")
+      (cl-who:str (style-tag (style-admin-page)))
+      (:div :id "wrapper" :class "container_16"
+       (:div :class "grid_8" "logo")
+       (:div :class "grid_8" :id "acc-box" "about")
+       (:div :id "header" :class "grid_16"
+	(:div :id "menu"
+         (:ul :id "menu_group_main" :class "group"
+	  (:li :class "first" (:a :href "admin?page=estates" 
+	   (:span :class "outer" (:span :class "inner dashboard" 
+	    (str (tr :real-estates lang))))))
+	  (:li (:a :href "admin?page=users" 
+	   (:span :class "outer" (:span :class "inner users" 
+	    (str (tr :users lang))))))
+	  (:li :class "last" (:a :href "admin?page=users" 
+	   (:span :class "outer" (:span :class "inner settings" 
+	    (str (tr :settings lang))))))
+	  )))
+       (:div :class  "grid_16"
+	(:div :id "tabs"
+	 (:div :class "container"
+	  (:ul ;;(:li (:a :class "current" "Estates"))
+	       ;;(:li (:a "asdasdasd"))
+	       ))))
+       (:div :id "content" :class "grid_16"
+	     (:div :class "grid_9" (:h1 "Dashboard"))
+	     (:div :class "clear")
+	     (:div :id "content-inner"
+		   (cl-who:str content)))
+       (:br :class "clearfloat"))))))
 
 (defun admin-page-estates ()
   (cl-who:with-html-output-to-string
@@ -306,16 +330,19 @@
      (loop for e in (all-estates-paged 1) do 
 	  (htm (:tr
 		(:td (str (pst-code e)))
-		(:td (:a :href "" "Edit"))))))))
+		(:td (:a :href (smake "edit-estate?ix-estate=" (ix-estate e))
+			 "Edit"))))))))
 
 (defun user-management-page ()
   (cl-who:with-html-output-to-string
 	(*standard-output* nil :prologue nil :indent t)
     (:table 
      (loop for u in (all-users-paged 1) do 
-	  (htm (:tr
-		(:td (str (username u)))
-		(:td (:a :href "" "Edit"))))))))
+      (htm 
+       (:tr
+	(:td (str (username u)))
+	(:td (:a :href (smake "admin?page=user&ix-user=" (ix-user u)) 
+		 "Edit"))))))))
 
 (defun account-page (ix-user)
   (let* ((acc-user (single-user ix-user))
