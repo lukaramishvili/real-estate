@@ -145,6 +145,9 @@
   #acc-box { height:69px; }
   #content { clear:both; }
   #content-inner { padding:10px; }
+  
+  #box-table-a { width:100%; }
+  .td-action { width:90px; }
   ")
 
 (defun style-edit-estate-form ()

@@ -303,10 +303,13 @@
 	  (:li :class "first" (:a :href "admin?page=estates" 
 	   (:span :class "outer" (:span :class "inner dashboard" 
 	    (str (tr :real-estates lang))))))
+	  (:li (:a :href "admin?page=text" 
+	   (:span :class "outer" (:span :class "inner content" 
+	    (str (tr :text-pages lang))))))
 	  (:li (:a :href "admin?page=users" 
 	   (:span :class "outer" (:span :class "inner users" 
 	    (str (tr :users lang))))))
-	  (:li :class "last" (:a :href "admin?page=users" 
+	  (:li :class "last" (:a :href "admin?page=settings" 
 	   (:span :class "outer" (:span :class "inner settings" 
 	    (str (tr :settings lang))))))
 	  )))
@@ -326,22 +329,24 @@
 (defun admin-page-estates ()
   (cl-who:with-html-output-to-string
 	(*standard-output* nil :prologue nil :indent t)
-    (:table 
+    (:table :id "box-table-a" 
      (loop for e in (all-estates-paged 1) do 
 	  (htm (:tr
 		(:td (str (pst-code e)))
-		(:td (:a :href (smake "edit-estate?ix-estate=" (ix-estate e))
+		(:td :class "td-action"
+		     (:a :href (smake "edit-estate?ix-estate=" (ix-estate e))
 			 "Edit"))))))))
 
 (defun user-management-page ()
   (cl-who:with-html-output-to-string
 	(*standard-output* nil :prologue nil :indent t)
-    (:table 
+    (:table :id "box-table-a" 
      (loop for u in (all-users-paged 1) do 
       (htm 
        (:tr
 	(:td (str (username u)))
-	(:td (:a :href (smake "admin?page=user&ix-user=" (ix-user u)) 
+	(:td :class "td-action"
+	     (:a :href (smake "admin?page=user&ix-user=" (ix-user u)) 
 		 "Edit"))))))))
 
 (defun account-page (ix-user)
@@ -703,7 +708,8 @@
 	(:br :class "clearfloat")
 	(:div :id "estate-pics-container"
 	      (:div :id "estate-pics")
-	      (:button :id "add-estate-pic" :type "button" "Add image"))
+	      (:button :id "add-estate-pic" :type "button" :class "button_grey"
+		       "Add image"))
 	(:input :type "submit" :value "Save")))
       (:script
        :type "text/javascript"
