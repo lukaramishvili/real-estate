@@ -283,9 +283,9 @@
   (html-combine :head (re-head :title title)
 		:body (main-template body)))
 
-(defun with-admin-template (content lang)
+(defun with-admin-template (content &key lang (title "Dashboard"))
   (let ((lang (or lang (default-lang))))
-    (html-combine :head (re-head :title (tr :admin-panel lang))
+    (html-combine :head (re-head :title title)
 		  :body
     (cl-who:with-html-output-to-string
 	(*standard-output* nil :prologue nil :indent t)
@@ -320,7 +320,7 @@
 	       ;;(:li (:a "asdasdasd"))
 	       ))))
        (:div :id "content" :class "grid_16"
-	     (:div :class "grid_9" (:h1 "Dashboard"))
+	     (:div :class "grid_9" (:h1 (cl-who:str title)))
 	     (:div :class "clear")
 	     (:div :id "content-inner"
 		   (cl-who:str content)))
