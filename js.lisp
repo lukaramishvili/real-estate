@@ -43,7 +43,10 @@
          currPage = 1 + ((carScroll - carScroll%wCarImg)/wCarImg);
          if(currPage >= lastPage){
            fAllowFurtherScrolling = false;
-           loadResults({ count: 99, offset: imgsLoadedForNow(), 
+           loadResults({ 
+             count: 3 * imgsNeededPerPage(imgsPerRow, imgsPerCol, 
+                    bigImgsPerPage), 
+             offset: imgsLoadedForNow(), 
              callback: function(){
                fAllowFurtherScrolling = true;
                lastPage += 3;
