@@ -15,7 +15,7 @@
    //by default, one page = 9x4 images
    var imgsPerRow = 9;
    var imgsPerCol = 4;
-   var bigImgsPerPage = 1;
+   var bigImgsPerPage = 2;
    
    //ch - img count horizontally, cv - img count vertically
    function imgsNeededPerPage (ch, cv, bigImgCount){
@@ -412,7 +412,8 @@
 		    (and (@ (aref es ie) ix-estate) 
 			 (@ (aref es ie) main-pic))
 		  (var this-pic-4x-p false)
-		  (if (and (== col-offset 1) (== row-offset 1))
+		  (if (or (and (== col-offset 1) (== row-offset 1))
+			  (and (== col-offset 5) (== row-offset 0)))
 		      (setf this-pic-4x-p true))
 		  (when this-pic-4x-p 
 		    (+= this-row-skip-count 1)
@@ -471,6 +472,9 @@
 			     (load-results))
 			   2200))
 		    t)))
+     ($$ "#search-bar input[type='checkbox']"
+	 (change (lambda ()
+		   (load-results))))
      ($$ "#btn-toggle-adv-search" 
 	 (click (lambda () ($$ "#search-adv" (toggle)))))
      ($$ "body" (keydown
@@ -486,6 +490,7 @@
      ($$ "#top-reg-link" (fancybox))
      ($$ "#top-reg-broker-link" (fancybox))
      ($$ "#top-contact-link" (fancybox))
+     ($$ "#top-faq-link" (fancybox))
      ;;upon clicking on empty area in opened estate, hide it
      ($$ "#view-estate" 
 	 (click (lambda (event)

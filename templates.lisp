@@ -466,8 +466,17 @@
 		   (label-input "pwd" :label (re-tr :password)
 				:type "password")))
 		 (:input :type "submit" :value (re-tr :btn-log-in))
-		 (:a :href "./register"
-		     (cl-who:str (re-tr :register-link)))))))
+		 (:a :href "./register" :id "reg-link-on-login-page"
+		     (cl-who:str (re-tr :register-link)))))
+    (cl-who:str (script-tag 
+		 "
+    $(function(){
+      $('#reg-link-on-login-page').click(function(){
+        if($('#top-reg-link').length > 0){ 
+          $('#top-reg-link').click(); return false}
+      });
+    });
+    "))))
 
 ;;; project-specific code
 
@@ -552,7 +561,9 @@
 	  (:a :href "#reg-broker-div" :id "top-reg-broker-link"
 	      :class "fancybox.inline" (str (re-tr :register-as-broker)))))
      (:a :href "./contact" :id "top-contact-link" :class "fancybox.iframe" 
-	 (str (re-tr :contact))))
+	 (str (re-tr :contact)))
+     (:a :href "./faq" :id "top-faq-link" :class "fancybox.iframe" 
+	 (str (re-tr :faq))))
     (:div :id "fp-pics"
 	  (:table :id "fp-pics-table" 
 		  :border 0 :cellpadding 0 :cellspacing 0
@@ -843,12 +854,22 @@
 (defun contact-page ()
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
-    (cl-who:str (style-tag (style-contact-page)))
+    (cl-who:str (style-tag (style-text-page)))
     (:div 
      :id "contact-div"
      (:h1 "Contact us")
      (:div :class "text" 
 	   "You can contact us by calling +995 11 22 33"))))
+
+(defun faq-page ()
+  (cl-who:with-html-output-to-string 
+      (*standard-output* nil :prologue nil :indent t)
+    (cl-who:str (style-tag (style-text-page)))
+    (:div 
+     :id "faq-div"
+     (:h1 "Frequently asked questions")
+     (:div :class "text" 
+	   "Q: What's your number? A: 277 55 59 96"))))
 
 (defun register-success-page (&key (div-id "reg-success-div"))
   (cl-who:with-html-output-to-string 

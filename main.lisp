@@ -121,7 +121,7 @@
 	      (:user (edit-user-handler))
 	      ;;(:default (admin-default-page))
 	      (otherwise (admin-page-estates))))
-	(default-lang))
+	:lang (default-lang))
       (+s (re-tr :not-logged-in-please-log-in)
 	  (login-page :redir "/admin"))))
 
@@ -459,6 +459,9 @@
 
 (htoot-handler (contact-page-handler "/contact" ())
   (contact-page))
+
+(htoot-handler (faq-page-handler "/faq" ())
+  (faq-page))
 
 (htoot-handler 
     (set-fav-handler 

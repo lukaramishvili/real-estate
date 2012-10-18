@@ -17,6 +17,7 @@
     padding:4px 6px; margin-right:20px; display:block; float:left; }
   #top-menu #top-search-btn { margin-left:32px; }
   #top-menu #top-contact-link { float:right; }
+  #top-menu #top-faq-link { float:right; }
   
   #search-bar { position:fixed; left:-250px; top:0px; width:250px; height:100%;
     background:transparent url(css/img/gray-bg.png) left top repeat; 
@@ -67,7 +68,7 @@
       left top repeat !important; }
 
   #search-bar input,#search-bar label,#search-bar select 
-      { float:left; display:block; margin-bottom:15px; }
+      { float:left; display:block; margin-bottom:12px; }
   #search-bar input, #search-bar select { margin-right:5px; }
   #search-bar label { width:100px; color:#ccc; }
   #search-bar label.label-left { clear: left; }
@@ -192,7 +193,7 @@
   #label_img { clear:both; display:block; }
   ")
 
-(defun style-contact-page()
+(defun style-text-page ()
   "
   h1 { color:white; font-size:16px; }
   .text { color:white; color:12px; }
