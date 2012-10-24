@@ -46,14 +46,14 @@
 
 (defun config ()
   (list :default-lang "nl"
-	:domain "luka.ge"
-	:host "http://luka.ge"
-	:securehost "https://luka.ge"))
+	:domain "luka.ge:4343"
+	:host "http://luka.ge:4343"
+	:securehost "https://luka.ge:4343"))
 
-(defun get-config (config-name)
+(defun config-value (config-name)
   (getf (config) config-name))
 
-(defun default-lang () "nl")
+(defun default-lang () (config-value :default-lang))
 
 (defun re-tr (keyword &key lang)
   (tr keyword (or lang (session-value 'lang) (default-lang))))
@@ -202,19 +202,22 @@
 	(if (plusp user-insert-id)
 	  (progn
 	    (let* ((uploaded-logo (post-parameter "logo"))
-		   (logo-dest-dir (smake *upload-dir* "users/" (ix-user usr-to-save)))
-		   (logo-dest (smake logo-dest-dir "/logo.png")))
+	      (logo-dest-dir (smake *upload-dir* "users/" 
+				    (ix-user usr-to-save)))
+	 	   (logo-dest (smake logo-dest-dir "/logo.png")))
 	      (if (and uploaded-logo (listp uploaded-logo))
 		  (destructuring-bind (path file-name content-type)
 		      uploaded-logo
 		    (cl-fad::ensure-directories-exist logo-dest-dir)
 		    (cl-fad:copy-file path logo-dest :overwrite t))))
-	    (simple-send-email email 
-	      "Your registration at real estate site"
-	      (+s "You (or someone with your email) recently registered "
-		  "at our real estate site. You can activate your account by "
-		  "<a href=''>clicking this link</a> or by visiting this "
-		  "link: " "link" " . Have a nice day!"))
+	    (let ((act-url (smake (config-value :host) 
+				  "/activate?ix-user=" user-insert-id)))
+	      (simple-send-email email 
+	        "Your registration at real estate site"
+		(smake "You (or someone with your email) recently registered "
+		  "at our real estate site. You can activate your account "
+		  "by clicking <a href='" act-url "'>this link</a> " 
+		  "or by visiting this link: " act-url " . Have a nice day!")))
 	    (redirect "/#register-success"))
 	  (re-tr :couldnt-register-correct-errors)))
       (re-tr :couldnt-save-user)))))
