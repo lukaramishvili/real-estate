@@ -31,6 +31,12 @@
     :sha256 
     (ironclad:ascii-string-to-byte-array password))))
 
+(defun has-flag (set asked)
+  (= asked (boole boole-and set asked)))
+
+(defun ensure-flag (set asked)
+  (boole boole-ior set asked))
+
 (defun unix-time-from-universal (univ-to-convert)
   (let ((unix-difference (encode-universal-time 0 0 0 1 1 1970 0)))
     (- univ-to-convert unix-difference)))

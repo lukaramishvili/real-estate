@@ -198,7 +198,8 @@
 			     :acc-type checked-type :email email 
 			     :fname fname :lname lname :url url
 			     :telnum telnum)))
-	(if (plusp (save-user usr-to-save))
+      (let ((user-insert-id (save-user usr-to-save)))
+	(if (plusp user-insert-id)
 	  (progn
 	    (let* ((uploaded-logo (post-parameter "logo"))
 		   (logo-dest-dir (smake *upload-dir* "users/" (ix-user usr-to-save)))
@@ -216,17 +217,21 @@
 		  "link: " "link" " . Have a nice day!"))
 	    (redirect "/#register-success"))
 	  (re-tr :couldnt-register-correct-errors)))
-      (re-tr :couldnt-save-user))))
+      (re-tr :couldnt-save-user)))))
 
 (htoot-handler (activate-handler "/activate" 
-    (ix-user :parameter-type 'integer))
+    ((ix-user :parameter-type 'integer)))
   (with-re-db
     (let* ((usr (single-user ix-user))
 	   (usr-status (status usr))
-	   (usr-role (role usr))
-	   
-      
-    ))
+	   (usr-role (role usr)))
+      (if (has-flag usr-status (status->int :activated))
+	  "You're already activated!"
+	  (progn
+	    (setf (status usr) 
+		  (ensure-flag (status usr) (status->int :activated)))
+	    (save-user usr)
+	    "You've been successfully activated. You may log in now")))))
 
 (htoot-handler (log-out-handler "/logout" ())
   (re-main 

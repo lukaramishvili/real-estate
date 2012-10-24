@@ -66,6 +66,22 @@
 	      :test #'string=)
       t))
 
+(defun status-list ()
+  (list :activated 1
+	:verified 2))
+
+(defun status->int (status)
+  (getf (status-list) status))
+
+(defun role-list ()
+  (list :admin 1
+	:administrator 1
+	:broker 2
+	:simple 3))
+
+(defun role->int (role)
+  (getf (role-list) role))
+
 (defclass user ()
   ((ix-user :col-type serial :initarg :ix-user :reader ix-user)
    (email :col-type string :initarg :email :reader email :initform "")
