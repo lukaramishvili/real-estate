@@ -136,7 +136,7 @@
    #ajax-pages #reg-broker-div, #ajax-pages .reg-success-div
     { display:none; } 
   
-  .fancybox-skin { height:400px; }
+  /*.fancybox-skin { height:400px; }*/
   
   "))
 

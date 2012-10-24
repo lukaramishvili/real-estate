@@ -44,6 +44,15 @@
   (hunchentoot:start
    (make-instance 'hunchentoot:easy-acceptor :port 4343)))
 
+(defun config ()
+  (list :default-lang "nl"
+	:domain "luka.ge"
+	:host "http://luka.ge"
+	:securehost "https://luka.ge"))
+
+(defun get-config (config-name)
+  (getf (config) config-name))
+
 (defun default-lang () "nl")
 
 (defun re-tr (keyword &key lang)
@@ -176,36 +185,50 @@
       (url :request-type :POST :parameter-type 'string :init-form "")
       (telnum :request-type :POST :parameter-type 'string :init-form "")))
   (if (session-value 'logged-in-p)
-      (re-tr :already-logged-in)
-      (if (and usr pwd ;reg-token
-	       (plusp (length usr)) (plusp (length pwd))
-	       ;;(string= (session-value 'reg-token) reg-token)
-	       )
-	  (let* ((checked-type (if (valid-acc-type-p acc-type)
-				   acc-type "simple"))
-		 (usr-to-save
-		  (make-instance 'user
-				 :username usr :passwd (hash-password pwd)
-				 :acc-type checked-type :email email 
-				 :fname fname :lname lname :url url
-				 :telnum telnum)))
-	    (if (plusp (save-user usr-to-save))
-		(progn
-		  (let* ((uploaded-logo (post-parameter "logo"))
-			 (logo-dest-dir (smake *upload-dir* "users/" (ix-user usr-to-save)))
-			 (logo-dest (smake logo-dest-dir "/logo.png")))
-		    (if (and uploaded-logo (listp uploaded-logo))
-			(destructuring-bind (path file-name content-type)
-			    uploaded-logo
-			  (cl-fad::ensure-directories-exist logo-dest-dir)
-			  (cl-fad:copy-file path logo-dest :overwrite t))))
-		  (redirect "/#register-success"))
-		(re-tr :couldnt-register-correct-errors)))
-	  (re-tr :couldnt-save-user))))
-					 
+    (re-tr :already-logged-in)
+    (if (and usr pwd ;reg-token
+	     (plusp (length usr)) (plusp (length pwd))
+	     ;;(string= (session-value 'reg-token) reg-token)
+	     )
+      (let* ((checked-type (if (valid-acc-type-p acc-type)
+			       acc-type "simple"))
+	     (usr-to-save
+	      (make-instance 'user
+			     :username usr :passwd (hash-password pwd)
+			     :acc-type checked-type :email email 
+			     :fname fname :lname lname :url url
+			     :telnum telnum)))
+	(if (plusp (save-user usr-to-save))
+	  (progn
+	    (let* ((uploaded-logo (post-parameter "logo"))
+		   (logo-dest-dir (smake *upload-dir* "users/" (ix-user usr-to-save)))
+		   (logo-dest (smake logo-dest-dir "/logo.png")))
+	      (if (and uploaded-logo (listp uploaded-logo))
+		  (destructuring-bind (path file-name content-type)
+		      uploaded-logo
+		    (cl-fad::ensure-directories-exist logo-dest-dir)
+		    (cl-fad:copy-file path logo-dest :overwrite t))))
+	    (simple-send-email email 
+	      "Your registration at real estate site"
+	      (+s "You (or someone with your email) recently registered "
+		  "at our real estate site. You can activate your account by "
+		  "<a href=''>clicking this link</a> or by visiting this "
+		  "link: " "link" " . Have a nice day!"))
+	    (redirect "/#register-success"))
+	  (re-tr :couldnt-register-correct-errors)))
+      (re-tr :couldnt-save-user))))
 
-(htoot-handler
-    (log-out-handler "/logout" ())
+(htoot-handler (activate-handler "/activate" 
+    (ix-user :parameter-type 'integer))
+  (with-re-db
+    (let* ((usr (single-user ix-user))
+	   (usr-status (status usr))
+	   (usr-role (role usr))
+	   
+      
+    ))
+
+(htoot-handler (log-out-handler "/logout" ())
   (re-main 
    :title (re-tr :logout-page-title)
    :body (if (session-value 'logged-in-p)

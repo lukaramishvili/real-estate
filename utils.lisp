@@ -2,6 +2,7 @@
 
 (ql:quickload :cl-jpeg)
 (ql:quickload :closer-mop)
+(ql:quickload :cl-smtp)
 
 (defun +s (&rest args)
   (apply #'concatenate
@@ -51,6 +52,15 @@
 	       ((stringp slot-name) (intern (string-upcase slot-name))))))
     (if (member slotname-sym (slot-name-symbols class-name))
 	t)))
+
+;;; send email with cl-smtp and existing smtp server on localhost. 
+;;; passing :from is recommended, reply-to defaults to :from, 
+;;; passinng to/subject/body/from are sufficient for normal emails.
+(defun simple-send-email (to subject body &key (from "noreply@localhost")
+			  cc bcc reply-to)
+  (let ((reply-addr (or reply-to from)))
+    (cl-smtp:send-email "127.0.0.1" from to subject body :cc cc :bcc bcc
+			:reply-to reply-addr)))
 
 ;;; cl-rss
 

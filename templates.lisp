@@ -692,7 +692,8 @@
 	   (label-input "parking-lots" :val (parking-lots e))
 	   (label-select "constr" :options (constr-options)
 			 :val (constr e))
-	   (label-checkbox "visible" :val 1 :checked (< 0 (visible e))))))
+	   (label-checkbox "visible" :val 1 :checked (< 0 (visible e))
+			   :label "still selling"))))
 	(:div 
 	 :class "edit-estate-column"
 	 (cl-who:str 
@@ -855,21 +856,19 @@
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
     (cl-who:str (style-tag (style-text-page)))
-    (:div 
-     :id "contact-div"
-     (:h1 "Contact us")
-     (:div :class "text" 
-	   "You can contact us by calling +995 11 22 33"))))
+    (:div :id "contact-div" :class "text-div"
+      (:h1 "Contact us")
+      (:div :class "text" 
+	"You can contact us by calling +995 11 22 33"))))
 
 (defun faq-page ()
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
     (cl-who:str (style-tag (style-text-page)))
-    (:div 
-     :id "faq-div"
-     (:h1 "Frequently asked questions")
-     (:div :class "text" 
-	   "Q: What's your number? A: 277 55 59 96"))))
+    (:div :id "faq-div" :class "text-div"
+	(:h1 "Frequently asked questions")
+	(:div :class "text" 
+	  "Q: What's your number? A: 277 55 59 96"))))
 
 (defun register-success-page (&key (div-id "reg-success-div"))
   (cl-who:with-html-output-to-string 
