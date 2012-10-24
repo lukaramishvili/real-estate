@@ -233,7 +233,7 @@
 	  (progn
 	    (setf (status usr) 
 		  (ensure-flag (status usr) (status->int :activated)))
-	    (save-user usr)
+	    (update-user usr)
 	    "You've been successfully activated. You may log in now")))))
 
 (htoot-handler (log-out-handler "/logout" ())

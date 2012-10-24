@@ -118,6 +118,10 @@
     (insert-dao user)
     (ix-user user)))
 
+(defun update-user (user)
+  (with-re-db
+   (update-dao user)))
+
 ;;;;;;;; project-specific code
 
 (defun spec-f-p (filter)
