@@ -23,9 +23,10 @@ body { background:transparent url(bg.png) center center repeat; }
 }
 .login-screen input[type='text'], 
 	.login-screen input[type='password'] { 
-	width:260px; height:48px; margin-bottom:12px;
-	line-height:48px; padding-left:42px; border:0;
+	width:302px; height:48px; margin-bottom:12px;
+	line-height:48px; text-indent:42px; border:0;
 	background:transparent url(field_bg.png) left top no-repeat;
+	color:black; letter-spacing:1px;
 }
 .login-screen .login-bottom {
 	margin:0px auto; 
