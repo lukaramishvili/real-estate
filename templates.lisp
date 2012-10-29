@@ -478,6 +478,25 @@
     });
     "))))
 
+(defun admin-login-page (&key (redir "/"))
+  (cl-who:with-html-output-to-string 
+      (*standard-output* nil :prologue nil :indent t)
+    (cl-who:str (style-tag "@import url(css/login/login.css);"))
+    (:div :id "admin-login-form-div" :class "login-screen"
+      (:form :method "post" :action "./login-handler"
+        (:input :type "hidden" :name "redir" :value redir)
+	(:div :class "login-header" "Log in to Admin Panel")
+	(:div :class "login-fields"
+	  (:input :name "usr" :id "input_usr" :type "text")
+	  (:input :name "pwd" :id "input_pwd" :type "password"))
+	(:div :class "login-bottom"
+	  (:input :type "checkbox" :id "input_remember-me")
+	  (:label :class "for_checkbox" :for "input_remember-me"
+	      (cl-who:str (re-tr :remember-me)))
+	  (:input :type "submit" :value (re-tr :login))
+	  )))
+      (cl-who:str (script-tag ""))))
+
 ;;; project-specific code
 
 (defun uneven-grid (w h &key square)
@@ -549,6 +568,11 @@
 	 (str (re-tr :search)))
      (if (session-value 'logged-in-p)
 	 (cl-who:htm
+	  (if (not (equal "simple" (acc-type (session-value 'user-authed))))
+	      (cl-who:htm
+	       (:a :href "./edit-estate?ix-estate=0" :id "top-add-estate-link"
+		   "Upload new estate"))
+	      "")
 	  (:a :href "./account" :id "top-account-link" :class "fancybox.iframe" 
 	      (cl-who:str (+s "Logged in as " 
 			      (username (session-value 'user-authed)))))
@@ -630,7 +654,9 @@
 	   (+s (register-page :acc-type "broker" :div-id "reg-broker-div")
 	       (register-page)
 	       (login-page)
-	       (register-success-page))))
+	       (register-success-page)
+	       (activation-success-page)
+	       (already-activated-page))))
     (cl-who:str (script-tag (fp-search-js)))))
 
 

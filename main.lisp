@@ -131,8 +131,9 @@
 	      ;;(:default (admin-default-page))
 	      (otherwise (admin-page-estates))))
 	:lang (default-lang))
-      (+s (re-tr :not-logged-in-please-log-in)
-	  (login-page :redir "/admin"))))
+      (+s 
+       ;;(re-tr :not-logged-in-please-log-in)
+       (admin-login-page :redir "/admin"))))
 
 (htoot-handler (edit-user-handler "/edit-user" 
     ((ix-user :parameter-type 'integer :init-form 0)))

@@ -1,0 +1,44 @@
+body { background:transparent url(bg.png) center center repeat; }
+.login-screen {
+	width:361px; margin:0px auto; margin-top:70px;
+}
+.login-screen * { 
+	font-family:Helvetica, Liberation Sans, Sans Serif; 
+	color:white;
+}
+.login-screen .login-header
+{
+	width:331px; height:45px; padding-top:22px;
+	text-align:center; margin:0px auto;
+	position:relative; left:0px; top:3px; z-index:500200;
+	background:transparent url(header.png) left top no-repeat;
+	font-weight:bold; 
+}
+.login-screen .login-fields
+{
+	border-left:1px solid #b39da3;	border-right:1px solid #b39da3; 
+	width:300px; padding:12px 13px 6px 14px; margin-left:1px;
+	margin:0px auto;
+	background:white url(fields_bottom_bg.png) left bottom no-repeat;
+}
+.login-screen input[type='text'], 
+	.login-screen input[type='password'] { 
+	width:260px; height:48px; margin-bottom:12px;
+	line-height:48px; padding-left:42px; border:0;
+	background:transparent url(field_bg.png) left top no-repeat;
+}
+.login-screen .login-bottom {
+	margin:0px auto; 
+	background:transparent url(bottom_bg.png) left top no-repeat;
+	width:335px; height:37px; padding:21px 13px 11px 13px;
+}
+.login-screen label.for_checkbox
+{
+	font-size:10px; color:#7D7D7D;
+}
+.login-screen input[type='submit'], .login-screen button
+{
+	background:transparent url(button_bg.png) left top no-repeat;
+	width:90px; height:36px; border:0;
+	font-weight:bold; float:right;
+}
