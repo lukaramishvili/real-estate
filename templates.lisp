@@ -44,10 +44,10 @@
 	  ""))
      (cl-who:str (smake (or more ""))))))
 
-(defun simple-page (heading text)
+(defun simple-page (heading text &key (div-class "") (div-id ""))
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
-    (:div :class "simple-page-div"
+    (:div :class (+s "simple-page-div" " " div-class) :id div-id
 	  (:h5 (cl-who:str heading))
 	  (:div :class "text" (cl-who:str text)))))
 
@@ -458,6 +458,7 @@
       (*standard-output* nil :prologue nil :indent t)
     (cl-who:str (style-tag (style-login-page)))
     (:div :id "login-form-div"
+	  (:div :class "warning")
 	  (:form :method "post" :action "./login-handler"
 		 (:input :type "hidden" :name "redir" :value redir)
 		 (cl-who:str
@@ -905,3 +906,20 @@
      (:p " You can now add favorites, save them for later, and more! <br>
          <br>Click on the close button or outside this box to dismiss it. "))
     (cl-who:str (style-tag (style-register-success-page)))))
+
+(defun activation-success-page ()
+  (simple-page 
+   "Activation Successful!"
+   "Your account was activated successfully. <br>
+    You can now log in <a href='./login'>here</a>."
+   :div-id "div-activation-success"))
+
+(defun already-activated-page ()
+  (simple-page 
+   "Activation Successful!"
+   "Your account was activated successfully. <br>
+    You can now log in <a href='./login'>here</a>."
+   :div-id "div-already-activated"))
+
+
+

@@ -536,5 +536,18 @@
      (if (< 0 (chain document.location.href (index-of "register-success")))
 	 ($$ "<a href='#reg-success-div'></a>" 
 	     (fancybox (create :type "inline")) (click)))
+     (if (< 0 (chain document.location.href (index-of "login")))
+	 ($$ "<a href='#login-form-div'></a>" 
+	     (fancybox (create :type "inline")) (click)))
+     (if (< 0 (chain document.location.href (index-of "couldnt-login")))
+	 ($$ "#login-form-div .warning" 
+	     (html "Incorrect username or password!") 
+	     (show)))
+     (if (< 0 (chain document.location.href (index-of "activation-success")))
+	 ($$ "<a href='#div-activation-success'></a>" 
+	     (fancybox (create :type "inline")) (click)))
+     (if (< 0 (chain document.location.href (index-of "already-activated")))
+	 ($$ "<a href='#div-already-activated'></a>" 
+	     (fancybox (create :type "inline")) (click)))
      )))
 

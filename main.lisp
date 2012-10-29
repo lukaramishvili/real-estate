@@ -158,7 +158,9 @@
 	    (setf (session-value 'user-authed) user-authed)
 	    (setf (session-value 'logged-in-p) t)
 	    (redirect redir));"successfully logged in")
-	  (re-tr :couldnt-log-in))))))
+	  ;;(re-tr :couldnt-log-in)
+	  (redirect "/#couldnt-login")
+	  )))))
 
 (htoot-handler
  (register-page-handler

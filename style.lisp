@@ -133,7 +133,8 @@
     background:url(http://static.ak.facebook.com/images/share/facebook_share_icon.gif?6:26981) no-repeat top left; }
   
   #ajax-pages #reg-div, #ajax-pages #login-form-div,
-   #ajax-pages #reg-broker-div, #ajax-pages .reg-success-div
+   #ajax-pages #reg-broker-div, #ajax-pages .reg-success-div,
+   #ajax-pages #div-already-activated, #ajax-pages #div-activation-success
     { display:none; } 
   
   /*.fancybox-skin { height:400px; }*/
@@ -202,6 +203,7 @@
 (defun style-login-page ()
   "
   #login-form-div { padding:20px; }
+  #login-form-div .warning { display:none; margin-bottom:16px; }
   #login-form-div h1 { color:white; margin-bottom:16px; }
   #login-form-div input,#login-form-div label,#login-form-div select 
       { float:left; display:block; margin-bottom:10px; }
