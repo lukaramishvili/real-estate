@@ -369,7 +369,9 @@
 	        
 	       :apt-type apt-type :status status :pst-code pst-code :munic munic 
 	       :ix-country ix-country :constr constr :total total :land land 
-	       :desc desc :zmh zmh :price price :since since :bedrooms bedrooms 
+	       :desc desc :zmh zmh :price price 
+	       :since (universal-time-from-unix (/ since 1000))
+	       :bedrooms bedrooms 
 	       :bathrooms bathrooms :terrace-p (> terrace-p 0) 
 	       :garden-p (> garden-p 0) :parking-lots parking-lots 
 	       :building-permit-p (> building-permit-p 0)

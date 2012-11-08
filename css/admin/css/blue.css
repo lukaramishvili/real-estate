@@ -365,9 +365,9 @@ a.inline_tip { padding-left:21px; background:url(../images/icons/lightbulb_off.g
 #box-table-a td {
 	padding: 8px;
 	background: none; 
-	border-top: 1px solid #CCC;
+	border-bottom: 1px solid #CCC;
 	color: #666;
-	border-bottom: none !important;
+	border-top: none !important;
 }
 #box-table-a tr:hover td {
 	background: #FBFBFB;

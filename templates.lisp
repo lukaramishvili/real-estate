@@ -185,8 +185,7 @@
 		       (cl-who:str 
 			(slot-value item label-slot))))))))
 
-(defun label-datepicker
-    (name &key (val (get-universal-time)) label)
+(defun label-datepicker (name &key (val (get-universal-time)) label)
   (let ((value (* 1000 (unix-time-from-universal val))))
     (+s (label-input (+s "datepicker_" name) :label (or label name))
 	(+s "<input type='hidden' name='" name "' "
@@ -198,7 +197,10 @@
 	     (chain ($ ,(+s "#input_datepicker_" name))
 		    (datepicker
 		     (ps:create alt-field ,(+s "#input_" name)
-				alt-format "@")))
+				alt-format "@"
+				default-date (new (-Date ,value)))))
+	     (chain ($ ,(+s "#input_datepicker_" name))
+		    (datepicker "setDate" (new (-Date ,value))))
 	     ""))))))
 
 
@@ -726,7 +728,9 @@
 	 (cl-who:str 
 	  (+s 
 	   (label-input "zmh" :val (zmh e) :label "ZMH Reference")
-	   (label-input "building-permit-p" :val (building-permit-p e))
+	   (label-checkbox "building-permit-p" :val 1 
+			   :checked (< 0 (building-permit-p e))
+			   :label "Building permit")
 	   (label-input "destination" :val (destination e))
 	   (label-select "summons" :options (summons-options) 
 			 :val (summons e))
@@ -780,14 +784,21 @@
 				    :id (+ "pic_iframe-" next-id))
 			   (:a :href (+ "javascript:void(0);")
 			       :id (+ "set_main_pic_btn-" next-id)
-			       "Set as main pic")))))))
+			       "Set as main pic")
+			   (:br)
+			   (:a :href (+ "javascript:void(0);")
+			       :id (+ "remove_pic_btn-" next-id)
+			       "Remove pic")))))))
 	      (chain ($ "#add-estate-pic")
 		     (click (lambda () (add-pic-box "") false)))
 	      (chain ($ "a[id|='set_main_pic_btn']")
-		  (live "click" 
-			(lambda ()
-			  (set-main-pic (chain ($ this) 
-					       (attr "rem-pic-uuid"))))))
+		(live "click" (lambda ()
+	          (set-main-pic (chain ($ this) 
+				       (attr "rem-pic-uuid"))))))
+	      (chain ($ "a[id|='remove_pic_btn']")
+	        (live "click" (lambda ()
+		   (let ((pic-uuid (chain ($ this) (attr "rem-pic-uuid"))))
+		     (alert (+ "remove pic " pic-uuid))))))
 	      (when (!= "undefined" (typeof google))
 		(defvar estate-map (create-map-for-id "edit-estate-map"))
 		(defvar loc-marker 
@@ -874,7 +885,8 @@
 					(to-string) (split "-")) 1)))
 		      (chain ($ el) 
 			     (parents "body")
-			     (find (+ "#set_main_pic_btn-" pic-id)) 
+			     (find (+ "#set_main_pic_btn-" pic-id
+				      "," "#remove_pic_btn-" pic-id))
 			     (attr "rem-pic-uuid" (lisp rem-pic-uuid))
 			     (show))))))))
 	    ))))))))

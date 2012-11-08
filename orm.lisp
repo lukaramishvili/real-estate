@@ -406,18 +406,15 @@
 	 (postcode-3 (cdr (assoc :postcode-3 fa))))
     (with-re-db
       (eval 
-       `(query-dao 
-	 'estate
-	 (:limit 
-	  (:select 
-	   :* :from :estate :where
+       `(query-dao 'estate
+	 (:limit (:select :* :from :estate :where
 	   (:and 
 	    t
 	    ,(if (spec-f-p ix-user) `(:= :ix-user ,ix-user) t)
 	    ,(if (spec-f-p only-favs-of-user) 
 		 `(:exists (:select :* :from :fav :where 
-				    (:and (:= :fav.ix-user ,only-favs-of-user)
-					  (:= :fav.ix-estate :estate.ix-estate))))
+			       (:and (:= :fav.ix-user ,only-favs-of-user)
+				     (:= :fav.ix-estate :estate.ix-estate))))
 		 t)
 	    ,(if (spec-f-p apt-type) `(:= :apt-type ,apt-type) t)
 	    ,(if (spec-f-p status) `(:= :status ,status) t)
