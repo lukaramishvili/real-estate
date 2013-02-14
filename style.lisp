@@ -21,16 +21,18 @@
   
   #search-bar { position:fixed; left:-250px; top:0px; width:250px; height:100%;
     background:transparent url(css/img/gray-bg.png) left top repeat; 
-    padding:53px 10px 0px 12px; }
+    padding:48px 10px 0px 12px; }
   #btn-toggle-search { position:absolute; right:-25px; top:45%; color:white;
     display:block; width:45px; height:45px; 
     background:transparent url(css/img/search-btn.png) left top no-repeat; }
   
-  #label_price-min { width:88px !important; }
-  #input_price-min { width:50px !important; clear:none !important; }
+  #label_only-my-favs { width:150px !important; }
+  
+  #label_price-min { /*width:88px !important;*/ }
+  #input_price-min { width:45px !important; clear:none !important; }
   #label_price-max { clear:none !important; width:25px !important; 
     line-height:20px; }
-  #input_price-max { width:55px !important; clear:none !important; }
+  #input_price-max { width:50px !important; clear:none !important; }
 
   #input_bedrooms-min { width:35px !important; clear:none !important; }
   #label_bedrooms-max { clear:none !important; width:30px !important; 
@@ -68,7 +70,7 @@
       left top repeat !important; }
 
   #search-bar input,#search-bar label,#search-bar select 
-      { float:left; display:block; margin-bottom:12px; }
+      { float:left; display:block; margin-bottom:11px; }
   #search-bar input, #search-bar select { margin-right:5px; }
   #search-bar label { width:100px; color:#ccc; }
   #search-bar label.label-left { clear: left; }
