@@ -13,12 +13,16 @@
 	   (cl-who:str head)
 	   (:body (cl-who:str body)))))
 
-(defun head (title &key css-files js-files more)
+(defun head (title &key css-files js-files disable-cache more)
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
     (:head
      (:meta :http-equiv "Content-Type" 
 	    :content "text/html; charset=utf-8")
+     (when disable-cache
+       (cl-who:htm
+	(:meta :http-equiv "Pragma" :content "no-cache")
+	(:meta :http-equiv "Expires" :content "-1")))
      (:title (cl-who:str title))
      (cl-who:str
       (if (and css-files (listp css-files))
@@ -133,11 +137,12 @@
 (defmacro label-checkbox (name &key val label checked)
   `(cl-who:with-html-output-to-string 
        (*standard-output* nil :prologue nil :indent t)
-     (:input :type "checkbox" :id (+s "input_" ,name)
-	     :class (+s "input_" ,name)
-	     :value (or (smake ,val) "")
-	     :name ,name
-	     ,@(if checked (list :checked "checked")))
+      (if ,checked
+	  (htm (:input :type "checkbox" :id (+s "input_" ,name) :name ,name
+		  :class (+s "input_" ,name) :value (or (smake ,val) "") 
+		  :checked "checked"))
+	  (htm (:input :type "checkbox" :id (+s "input_" ,name) :name ,name
+		  :class (+s "input_" ,name) :value (or (smake ,val) ""))))
      (:label :for (+s "input_" ,name)
 	     :id (+s "label_" ,name) :class "label-right"
 	     (cl-who:str (or ,label ,name)))))
@@ -232,7 +237,7 @@
 
 ;;;re-specific templates
 
-(defun re-head (&key title)
+(defun re-head (&key title disable-cache (more ""))
   (head (or title "Welcome to Project RE!")
 	:css-files '("css/smoothness/jquery-ui-1.8.21.custom.css"
 		     "css/reset.css" "css/elements.css" 
@@ -244,7 +249,8 @@
 		    "js/jquery.mousewheel.min.js"
 		    "http://maps.googleapis.com/maps/api/js?key=AIzaSyDl2UEh2szaf3AjDf24cj4AFN-7a0oIUM0&sensor=false"
 		    "main.js")
-	:more "<meta name=\"viewport\" content=\"initial-scale=1.0, user-scalable=no\" />"))
+	:disable-cache disable-cache
+	:more (+s "<meta name=\"viewport\" content=\"initial-scale=1.0, user-scalable=no\" />" more)))
 
 (defun do-menu (items-list)
   (smake (mapcar #'(lambda (item) 
@@ -281,8 +287,8 @@
 		;;(cl-who:str (re-home-search-bar))
 		(cl-who:str page)))))
 
-(defun re-main (&key title body)
-  (html-combine :head (re-head :title title)
+(defun re-main (&key title body (disable-cache nil))
+  (html-combine :head (re-head :title title :disable-cache disable-cache)
 		:body (main-template body)))
 
 (defun with-admin-template (content &key lang (title "Dashboard"))
@@ -716,12 +722,12 @@
 	   (label-input "bathrooms" :val (bathrooms e) :label "Bathroom count")
 	   (label-input "total" :val (total e) :label "Total m2")
 	   (label-input "land" :val (land e) :label "Land area m2")
-	   (label-checkbox "terrace-p" :val 1 :checked (< 0 (terrace-p e)))
-	   (label-checkbox "garden-p" :val 1 :checked (< 0 (garden-p e)))
+	   (label-checkbox "terrace-p" :val 1 :checked (terrace-p e))
+	   (label-checkbox "garden-p" :val 1 :checked (garden-p e))
 	   (label-input "parking-lots" :val (parking-lots e))
 	   (label-select "constr" :options (constr-options)
 			 :val (constr e))
-	   (label-checkbox "visible" :val 1 :checked (< 0 (visible e))
+	   (label-checkbox "visible" :val 1 :checked (visible e)
 			   :label "still selling"))))
 	(:div 
 	 :class "edit-estate-column"
@@ -729,7 +735,7 @@
 	  (+s 
 	   (label-input "zmh" :val (zmh e) :label "ZMH Reference")
 	   (label-checkbox "building-permit-p" :val 1 
-			   :checked (< 0 (building-permit-p e))
+			   :checked (building-permit-p e)
 			   :label "Building permit")
 	   (label-input "destination" :val (destination e))
 	   (label-select "summons" :options (summons-options) 
@@ -839,7 +845,8 @@
   (let ((saved-pic (gethash rem-pic-uuid (session-value 'rem-pics))))
     (cl-who:with-html-output-to-string 
 	(*standard-output* nil :prologue nil :indent t)
-      (:script :type "text/javascript" :src "/js/jquery-1.7.2.min.js")
+      (cl-who:str (head "" :js-files '("/js/jquery-1.7.2.min.js") 
+			:disable-cache t))
       (cl-who:str (style-tag  (style-pic-box-iframe)))
       (:form 
        :action "/rem-pic" :method :post :enctype "multipart/form-data"

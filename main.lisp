@@ -292,6 +292,7 @@
 	(setf (session-value 'ix-editing-estate) ix-estate)
 	;;(with-admin-template (estate-edit-form ed-estate) :title "Edit Estate")
 	(re-main :title "Edit real estate"
+		 :disable-cache t
 		 :body (estate-edit-form ed-estate)))
    (login-page :redir "/edit-estate")))
 
