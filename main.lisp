@@ -64,6 +64,12 @@
      (setf (hunchentoot:content-type*) "text/html")
      ,@body))
 
+(defun disable-http-cache ()
+    (setf (hunchentoot:header-out :expires)
+	  (hunchentoot:rfc-1123-date))
+    (setf (hunchentoot:header-out :cache-control)
+	  "max-age=0, no-store, no-cache, must-revalidate"))
+
 
 ;;serve css folder
 (push (create-folder-dispatcher-and-handler
@@ -266,6 +272,7 @@
      "/edit-estate"
      ((ix-estate :request-type :GET :parameter-type 'integer 
 		 :init-form 0)))
+  (disable-http-cache)
   (if (session-value 'logged-in-p)
    (let ((ed-estate (or (with-re-db (get-dao 'estate ix-estate))
 			(make-instance 'estate))))
@@ -292,7 +299,6 @@
 	(setf (session-value 'ix-editing-estate) ix-estate)
 	;;(with-admin-template (estate-edit-form ed-estate) :title "Edit Estate")
 	(re-main :title "Edit real estate"
-		 :disable-cache t
 		 :body (estate-edit-form ed-estate)))
    (login-page :redir "/edit-estate")))
 
@@ -394,6 +400,7 @@
 (htoot-handler (estate-form-pic-box-handler 
 		"/estate-form-pic-box" 
 		((rem-pic-uuid :init-form "")))
+  (disable-http-cache)
   (estate-form-pic-box rem-pic-uuid))
 
 (htoot-handler

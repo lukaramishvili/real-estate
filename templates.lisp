@@ -13,16 +13,17 @@
 	   (cl-who:str head)
 	   (:body (cl-who:str body)))))
 
-(defun head (title &key css-files js-files disable-cache more)
+(defun head (title &key css-files js-files more)
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
     (:head
      (:meta :http-equiv "Content-Type" 
 	    :content "text/html; charset=utf-8")
-     (when disable-cache
+     ;;meta cache-control/pragma tags don't work
+     #|(when disable-cache
        (cl-who:htm
 	(:meta :http-equiv "Pragma" :content "no-cache")
-	(:meta :http-equiv "Expires" :content "-1")))
+	(:meta :http-equiv "Expires" :content "-1")))|#
      (:title (cl-who:str title))
      (cl-who:str
       (if (and css-files (listp css-files))
@@ -237,7 +238,7 @@
 
 ;;;re-specific templates
 
-(defun re-head (&key title disable-cache (more ""))
+(defun re-head (&key title (more ""))
   (head (or title "Welcome to Project RE!")
 	:css-files '("css/smoothness/jquery-ui-1.8.21.custom.css"
 		     "css/reset.css" "css/elements.css" 
@@ -249,7 +250,6 @@
 		    "js/jquery.mousewheel.min.js"
 		    "http://maps.googleapis.com/maps/api/js?key=AIzaSyDl2UEh2szaf3AjDf24cj4AFN-7a0oIUM0&sensor=false"
 		    "main.js")
-	:disable-cache disable-cache
 	:more (+s "<meta name=\"viewport\" content=\"initial-scale=1.0, user-scalable=no\" />" more)))
 
 (defun do-menu (items-list)
@@ -287,8 +287,8 @@
 		;;(cl-who:str (re-home-search-bar))
 		(cl-who:str page)))))
 
-(defun re-main (&key title body (disable-cache nil))
-  (html-combine :head (re-head :title title :disable-cache disable-cache)
+(defun re-main (&key title body)
+  (html-combine :head (re-head :title title)
 		:body (main-template body)))
 
 (defun with-admin-template (content &key lang (title "Dashboard"))
@@ -845,8 +845,7 @@
   (let ((saved-pic (gethash rem-pic-uuid (session-value 'rem-pics))))
     (cl-who:with-html-output-to-string 
 	(*standard-output* nil :prologue nil :indent t)
-      (cl-who:str (head "" :js-files '("/js/jquery-1.7.2.min.js") 
-			:disable-cache t))
+      (cl-who:str (head "" :js-files '("/js/jquery-1.7.2.min.js")))
       (cl-who:str (style-tag  (style-pic-box-iframe)))
       (:form 
        :action "/rem-pic" :method :post :enctype "multipart/form-data"
