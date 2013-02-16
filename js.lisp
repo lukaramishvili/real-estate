@@ -201,7 +201,7 @@
      "
     function createMapForId (id, options){
       if('undefined' != typeof google){
-    	var initPos = new google.maps.LatLng(41.5, 44.8);
+    	var initPos = new google.maps.LatLng(51.209895,4.399338);
         var DefaultOptions = {
           center: initPos,
           zoom: 8,

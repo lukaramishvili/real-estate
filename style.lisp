@@ -159,8 +159,12 @@
   body { background-color:white; }
   
   #edit-estate-form-div { background-color:white; }
-  #edit-estate-form-div { padding:20px; }
+  #edit-estate-form-div { padding:15px; padding-top:10px; }
   #edit-estate-form-div .edit-estate-column { float:left; width:300px; }
+
+  #estate-form-message-div { display:none; padding:6px; margin:4px 4px; 
+    background-color:#3491D8; font-size:14px; font-family:sans-serif;
+    color:white; }
 
   #edit-estate-form-div iframe { border:0; height:auto; width:auto; 
     width:220px; height:150px;
@@ -169,7 +173,7 @@
   
   #edit-estate-map { width:300px; height:300px; }
   
-  #edit-estate-form-div h1 { clear:both; margin-bottom:20px; }
+  #edit-estate-form-div h1 { clear:both; margin-bottom:14px; }
   #edit-estate-form-div h4 { clear:both; }
   #edit-estate-form-div input,#edit-estate-form-div label
    ,#edit-estate-form-div select, #edit-estate-form-div textarea 
@@ -181,8 +185,14 @@
       { width:135px; }
   #edit-estate-form-div input[type='checkbox'] 
       { clear:left; margin-right:105px; }
-  #edit-estate-form-div input[type='submit'] 
-      { clear:both; }
+  #edit-estate-form-div input[type='submit'] { 
+    clear:both; border:2px solid #3491D8; background-color:#D5E4F2;
+    margin-top:10px; cursor:pointer;
+    border-radius:6px; padding:4px 10px; font-size:16px;
+  }
+  #edit-estate-form-div input[type='submit']:hover {
+    background-color:#E3EDF7;
+  }
 
   #label_desc { clear:both !important; float:none !important; }
   

@@ -271,7 +271,8 @@
     (estate-edit-handler
      "/edit-estate"
      ((ix-estate :request-type :GET :parameter-type 'integer 
-		 :init-form 0)))
+		 :init-form 0)
+      (message :request-type :GET :parameter-type 'string :init-form "")))
   (disable-http-cache)
   (if (session-value 'logged-in-p)
    (let ((ed-estate (or (with-re-db (get-dao 'estate ix-estate))
@@ -299,7 +300,7 @@
 	(setf (session-value 'ix-editing-estate) ix-estate)
 	;;(with-admin-template (estate-edit-form ed-estate) :title "Edit Estate")
 	(re-main :title "Edit real estate"
-		 :body (estate-edit-form ed-estate)))
+		 :body (estate-edit-form ed-estate :message message)))
    (login-page :redir "/edit-estate")))
 
 ;;;returns a list of success (bool), ix-estate, error message
@@ -328,8 +329,8 @@
 		;;here save-e is definitely in db
 		(update-dao save-e))
 	    )
-       (list t (ix-estate save-e) "Real estate saved!"))
-     (list nil ix-estate "Error while saving estate!"))))
+       (list t (ix-estate save-e) "msg-estate-save-success"))
+     (list nil ix-estate "msg-estate-save-error"))))
 
 (htoot-handler
     (estate-save-handler
@@ -394,7 +395,8 @@
 				  :main-pic-uuid main-pic-uuid)
 	  ;;if saved successfully, remove images in session
 	  (if success-p (setf (session-value 'rem-pics) nil))
-	  error-message))
+	  (redirect (smake "/edit-estate?ix-estate=" ix-saved-e
+			   "&message=" (hunchentoot:url-encode error-message)))))
       "Not logged in!"))
 
 (htoot-handler (estate-form-pic-box-handler 

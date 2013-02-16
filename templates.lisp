@@ -679,12 +679,14 @@
 		  "' /><br>")))))
 
 
-(defun estate-edit-form (e)
+(defun estate-edit-form (e &key message)
   (let ((ix-estate (if (slot-boundp e 'ix-estate)
 		       (ix-estate e) 0)))
     (cl-who:with-html-output-to-string 
 	(*standard-output* nil :prologue nil :indent t)
       (cl-who:str (style-tag (style-edit-estate-form)))
+      (:div :id "estate-form-message-div" 
+	    (cl-who:str (re-tr (hunchentoot:url-decode message))))
       (:div 
        :id "edit-estate-form-div"
        (:form 
@@ -763,7 +765,9 @@
       (:script
        :type "text/javascript"
        (cl-who:str
-	(+s (ps:ps
+	(+s (if (< 0 (length message)) 
+		"$('#estate-form-message-div').show(200);" "")
+	 (ps:ps
 	      (defun set-main-pic (pic-uuid)
 		(chain ($ "#input_main-pic-uuid") (val pic-uuid))
 		false)
