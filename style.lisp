@@ -193,6 +193,7 @@
   #edit-estate-form-div input[type='submit']:hover {
     background-color:#E3EDF7;
   }
+  #input_address { width:290px !important; }
 
   #label_desc { clear:both !important; float:none !important; }
   

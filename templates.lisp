@@ -114,7 +114,7 @@
     (:style :type "text/css"
 	     (cl-who:str code))))
 
-(defun label-input (name &key val label (type "text") (size-attr ""))
+(defun label-input (name &key val label (type "text") (size-attr "") disabled)
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
     (:label :for (+s "input_" name)
@@ -123,7 +123,8 @@
     (:input :type type :id (+s "input_" name)  
 	    :class (+s "input_" name)
 	    :value (or (smake val) "")
-	    :name name :size size-attr)))
+	    :name name :size size-attr
+	    :disabled disabled)))
 
 (defun label-textarea (name &key val label (rows 4) (cols 20))
   (cl-who:with-html-output-to-string 
@@ -135,18 +136,15 @@
 	       :value (or (smake val) "") :name name
 	       :rows rows :cols cols)))
 
-(defmacro label-checkbox (name &key val label checked)
-  `(cl-who:with-html-output-to-string 
-       (*standard-output* nil :prologue nil :indent t)
-      (if ,checked
-	  (htm (:input :type "checkbox" :id (+s "input_" ,name) :name ,name
-		  :class (+s "input_" ,name) :value (or (smake ,val) "") 
-		  :checked "checked"))
-	  (htm (:input :type "checkbox" :id (+s "input_" ,name) :name ,name
-		  :class (+s "input_" ,name) :value (or (smake ,val) ""))))
-     (:label :for (+s "input_" ,name)
-	     :id (+s "label_" ,name) :class "label-right"
-	     (cl-who:str (or ,label ,name)))))
+(defun label-checkbox (name &key val label checked)
+  (cl-who:with-html-output-to-string 
+      (*standard-output* nil :prologue nil :indent t)
+    (htm (:input :type "checkbox" :id (+s "input_" name) :name name
+		 :class (+s "input_" name) :value (or (smake val) "") 
+		 :checked checked))
+    (:label :for (+s "input_" name)
+	    :id (+s "label_" name) :class "label-right"
+	    (cl-who:str (or label name)))))
 
 (defun label-select (name &key options val label direct-selectbox)
   "makes <label..><select><option..>*</>. if direct-selectbox is passed, 
@@ -713,7 +711,8 @@
 	   (label-select "ix-country" :options (all-countries)
 			 :val (ix-country e))
 	   (label-input "price" :val (price e))
-	   (label-datepicker "since" :val (since e) :label "Date added")
+	   (label-datepicker "since" :label "Date added"
+	       :val (if (plusp ix-estate) (since e) (get-universal-time)))
 	   (label-textarea "desc" :val (desc e) :label "Description"
 			   :rows 7 :cols 80))))
 	(:div 
@@ -735,7 +734,11 @@
 	 :class "edit-estate-column"
 	 (cl-who:str 
 	  (+s 
-	   (label-input "zmh" :val (zmh e) :label "ZMH Reference")
+	   (label-input "zmh" :label "ZMH Reference" :val ix-estate #|(zmh e)|#
+			:disabled t)
+	   (if (plusp ix-estate) ""
+	       "<br class='clearfloat' />
+               <div>ZMH reference will be generated after saving</div>")
 	   (label-checkbox "building-permit-p" :val 1 
 			   :checked (building-permit-p e)
 			   :label "Building permit")
