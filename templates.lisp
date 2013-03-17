@@ -6,6 +6,11 @@
 
 (in-package :re)
 
+(defmacro html-out (&body body)
+  `(cl-who:with-html-output-to-string 
+       (*standard-output* nil :prologue nil :indent t)
+     ,@body))
+
 (defun html-combine (&key head body)
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue t :indent t)
