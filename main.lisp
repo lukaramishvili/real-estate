@@ -186,6 +186,7 @@
      "/register-handler"
      ((usr :request-type :POST :parameter-type 'string :init-form nil)
       (pwd :request-type :POST :parameter-type 'string :init-form nil)
+      (confirm-pwd :request-type :POST :parameter-type 'string :init-form nil)
       (reg-token :request-type :POST :parameter-type 'string :init-form nil)
       (acc-type :request-type :POST :parameter-type 'string :init-form "simple")
       (email :request-type :POST :parameter-type 'string :init-form "")
@@ -193,12 +194,22 @@
       (lname :request-type :POST :parameter-type 'string :init-form "")
       (url :request-type :POST :parameter-type 'string :init-form "")
       (telnum :request-type :POST :parameter-type 'string :init-form "")))
-  (if (session-value 'logged-in-p)
-    (re-tr :already-logged-in)
-    (if (and usr pwd ;reg-token
-	     (plusp (length usr)) (plusp (length pwd))
-	     ;;(string= (session-value 'reg-token) reg-token)
-	     )
+  (let ((failure-reason nil))
+    (if (session-value 'logged-in-p) (setf failure-reason :already-logged-in))
+    (if (not (and usr pwd email;reg-token
+		  (plusp (length usr)) (plusp (length pwd)) 
+		  (plusp (length confirm-pwd))
+		  (plusp (length email))
+		  ;;(string= (session-value 'reg-token) reg-token)
+		  ))
+	(setf failure-reason :incomplete-fields))
+    (if (not (equal pwd confirm-pwd)) 
+	(setf failure-reason :passwords-dont-match))
+    (if (user-with-email email) (setf failure-reason :duplicate-email))
+    (if (user-with-username usr) (setf failure-reason :duplicate-username))
+    (if failure-reason
+      (redirect (make-qs "/#register" :acc-type acc-type
+			 :error (string-downcase (smake failure-reason))))
       (let* ((checked-type (if (valid-acc-type-p acc-type)
 			       acc-type "simple"))
 	     (usr-to-save
@@ -207,29 +218,35 @@
 			     :acc-type checked-type :email email 
 			     :fname fname :lname lname :url url
 			     :telnum telnum)))
-      (let ((user-insert-id (save-user usr-to-save)))
-	(if (plusp user-insert-id)
-	  (progn
-	    (let* ((uploaded-logo (post-parameter "logo"))
-	      (logo-dest-dir (smake *upload-dir* "users/" 
-				    (ix-user usr-to-save)))
-	 	   (logo-dest (smake logo-dest-dir "/logo.png")))
-	      (if (and uploaded-logo (listp uploaded-logo))
-		  (destructuring-bind (path file-name content-type)
-		      uploaded-logo
-		    (cl-fad::ensure-directories-exist logo-dest-dir)
-		    (cl-fad:copy-file path logo-dest :overwrite t))))
-	    (let ((act-url (smake (config-value :host) 
-				  "/activate?ix-user=" user-insert-id)))
-	      (simple-send-email email 
+	(let ((user-insert-id (save-user usr-to-save)))
+	  (if (plusp user-insert-id)
+	      (progn
+		(let* ((uploaded-logo (post-parameter "logo"))
+		       (logo-dest-dir (smake *upload-dir* "users/" 
+					     (ix-user usr-to-save)))
+		       (logo-dest (smake logo-dest-dir "/logo.png")))
+		  (if (and uploaded-logo (listp uploaded-logo))
+		      (destructuring-bind (path file-name content-type)
+			  uploaded-logo
+			(cl-fad::ensure-directories-exist logo-dest-dir)
+			(cl-fad:copy-file path logo-dest :overwrite t))))
+		(let ((act-url (smake (config-value :host) 
+				      "/activate?ix-user=" user-insert-id))
+		      (redir-url "/#register-success"))
+		  ;;handler error when mail cant be sent
+		  (handler-case
+		      (simple-send-email email 
 	        "Your registration at real estate site"
 		(smake "You (or someone with your email) recently registered "
 		  "at our real estate site. You can activate your account "
 		  "by clicking <a href='" act-url "'>this link</a> " 
-		  "or by visiting this link: " act-url " . Have a nice day!")))
-	    (redirect "/#register-success"))
-	  (re-tr :couldnt-register-correct-errors)))
-      (re-tr :couldnt-save-user)))))
+		  "or by visiting this link: " act-url " . Have a nice day!"))
+		(mail-server-unreachable-error (c)
+		  ;;add ?error-code=1 to notify the user that mail cant be sent
+		  (setf redir-url (make-qs redir-url :error-code (code c)))))
+		  (redirect redir-url)))
+	      (re-tr :couldnt-register-correct-errors)))
+	(re-tr :couldnt-save-user)))))
 
 (htoot-handler (activate-handler "/activate" 
     ((ix-user :parameter-type 'integer)))

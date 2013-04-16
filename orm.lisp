@@ -113,6 +113,12 @@
       (if (< 0 (length matched-users))
 	  (car matched-users)))))
 
+(defun user-with-username (username)
+  (with-re-db (car (select-dao 'user (:= :username username)))))
+
+(defun user-with-email (email)
+  (with-re-db (car (select-dao 'user (:= :email email)))))
+
 (defun save-user (user)
   (with-re-db 
     (insert-dao user)

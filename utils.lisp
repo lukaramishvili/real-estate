@@ -25,6 +25,15 @@
   (values (intern (string-upcase str)
 		  "KEYWORD")))
 
+(defun make-qs (url &rest params) 
+  (labels ((make-one-param (pairs accum &key (sep "&"))
+	     (if pairs
+		 (make-one-param (cddr pairs)
+		     (smake accum sep (string-downcase (smake (car pairs))) "=" 
+			    (cadr pairs)))
+		 accum)))
+    (make-one-param params url :sep "?")))
+
 (defun hash-password (password)
   (ironclad:byte-array-to-hex-string 
    (ironclad:digest-sequence 
@@ -59,14 +68,24 @@
     (if (member slotname-sym (slot-name-symbols class-name))
 	t)))
 
+
+(define-condition mail-server-unreachable-error (error)
+  ((text :initarg :text :reader text)
+   (code :initarg :code :reader code)))
+
 ;;; send email with cl-smtp and existing smtp server on localhost. 
 ;;; passing :from is recommended, reply-to defaults to :from, 
 ;;; passinng to/subject/body/from are sufficient for normal emails.
 (defun simple-send-email (to subject body &key (from "noreply@localhost")
 			  cc bcc reply-to)
-  (let ((reply-addr (or reply-to from)))
-    (cl-smtp:send-email "127.0.0.1" from to subject body :cc cc :bcc bcc
-			:reply-to reply-addr)))
+  (let ((reply-addr (or reply-to from))
+	(smtp-server "127.0.0.1"))
+    (handler-case
+	(cl-smtp:send-email smtp-server from to subject body 
+			    :cc cc :bcc bcc :reply-to reply-addr)
+      (usocket:connection-refused-error ()
+	(error 'mail-server-unreachable-error :code 1
+	       :text (smake "SMTP server unreachable on " smtp-server))))))
 
 ;;; cl-rss
 

@@ -418,7 +418,8 @@
        (:div (cl-who:str
 	    (+s "By registering, you will have access to numerous<br>"
 		"features, such as favoriting real estate properties.")))
-       (cl-who:str 
+       (:div :class "register-page-scripts-container" 
+        (cl-who:str 
 	(script-tag 
 	 (ps:ps
 	   (var cur-div-sel (lisp (+s "#" id-for-div)))
@@ -461,7 +462,7 @@
 		 (if (not ret) (alert msg))
 		  ret
 		  )))
-	   )))))))
+	   ))))))))
 
 
 (defun login-page (&key (redir "/"))
