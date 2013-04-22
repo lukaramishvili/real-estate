@@ -547,3 +547,10 @@
 	 (list :result "failure" 
 	       :action action)))))
 
+
+(htoot-handler (loan-calc-page-handler
+		"/loan-calc"
+		())
+  (html-combine 
+   :head (re-head :title "Calculate my loan")
+   :body (loan-calc-page)))
