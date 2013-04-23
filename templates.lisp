@@ -960,9 +960,9 @@
      (:h1 "TODO: implement PMT function; find out what b31's supposed to do")
      (str (+s
 	   (label-input "b10" :val "185000")
-	   (label-input "b12" :val "38500")
+	   (label-input "b12" :val "0")
 	   (label-input "b13" :val "0")
-	   (label-input "b19" :val "0")
+	   (label-input "b19" :val "38500")
 	   (label-input "b29" :val "0.042")
 	   (label-select "b31" :options (list "20 jaar vast"
 					      "25 jaar vast"
@@ -982,16 +982,21 @@
    input[type='checkbox'] { clear:left;}")
    (script-tag 
     (ps 
-      (defun pmt (a b c)
-	"TODO PMT function from Apache POI"
-	1)
+      (defun pmt (Rate Nper Pv &optional (Fv 0) (Type nil))
+	"shamelessly copied from http://svn.apache.org/repos/asf/poi/trunk/src/java/org/apache/poi/ss/formula/functions/FinanceLib.java"
+      (if (= Rate 0)
+	  (- (/ (+ Fv Pv) Nper))
+	  (let ((r1 (1+ Rate)))
+	    (/
+	     (* (+ Fv (* Pv (expt r1 Nper))) Rate)
+	     (* (if Type r1 1) (- 1 (expt r1 Nper)))))))
       (defun calculate-loan (params)
-	(let* ((b10 (@ params b10))
-	       (b12 (@ params b12))
-	       (b13 (@ params b13))
-	       (b19 (@ params b19))
-	       (b29 (@ params b29))
-	       (b32 (@ params b32))
+	(let* ((b10 (parse-float (@ params b10)))
+	       (b12 (parse-float (@ params b12)))
+	       (b13 (parse-float (@ params b13)))
+	       (b19 (parse-float (@ params b19)))
+	       (b29 (parse-float (@ params b29)))
+	       (b32 (parse-int (@ params b32)))
 	       ;;now follow the derived variables
 	       (b11 (* b10 0.11))
 	       (b15 (+ b10 b11 b12 b13))
@@ -1003,7 +1008,7 @@
 	       (b30 (- (expt (1+ b29) (/ 1 12)) 1))
 	       (b31 "todo dropdown")
 	       (b33 (- (pmt b30 b32 b28))))
-      b33))
+	  b33))
       ($$ "#btn-calc" (click (lambda ()
           (let ((calc-result (calculate-loan 
 			      (create b10 ($$ "#input_b10" (val))
@@ -1012,7 +1017,7 @@
 				      b19 ($$ "#input_b19" (val))
 				      b29 ($$ "#input_b29" (val))
 				      b32 ($$ "#input_b32" (val))))))
-	    ($$ "#input_calc-result" (val calc-result))))))
+	    ($$ "#input_calc-result" (val (chain calc-result (to-fixed 2))))))))
       #|(alert (calculate-loan (create b10 185000 b19 38500 b12 0 b13 0
 				    b29 0.042 b32 360)))|#
       ))))
