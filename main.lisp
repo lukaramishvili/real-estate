@@ -548,9 +548,16 @@
 	       :action action)))))
 
 
-(htoot-handler (loan-calc-page-handler
-		"/loan-calc"
-		())
-  (html-combine 
-   :head (re-head :title "Calculate my loan")
-   :body (loan-calc-page)))
+
+(htoot-handler (loan-about-page-handler "/zml-about" ())
+  (zml-template (simple-page "About the ZML Calculator"
+			     "ZML Calculator helps you find the optimal loan<br>
+                            It can be used to calculate apartment loan rates")))
+
+(htoot-handler (zml-calc-page-handler "/zml-calc" ())
+  (zml-template (loan-calc-page)))
+
+(htoot-handler (zml-contact-page-handler "/zml-contact" ())
+  (zml-template (simple-page "Contact us"
+			     "This is a simple contact page<br>
+                              Tel: 0995 568 12 31 14")))

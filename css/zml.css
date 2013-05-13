@@ -1,0 +1,44 @@
+body {
+	background-color: #ffffff; margin:0px; padding:0px; color:#454545;
+	font-family:Verdana; font-size:11px;
+}
+
+h1{ color:#2D2939; font-size:30px; line-height:30px; margin:0px;
+    font-weight:normal; margin:10px 0px 18px 0px;
+}
+
+li{ list-style-position:outside; list-style-image:url(bullet.gif); color:#000;
+}
+
+.AbsWrap { width: 100%;	position: relative; }
+.rowWrap { width: 100%;}
+
+#zml-main {
+    width:1024px; margin: 0 auto; border:0px solid #f0f0f0;
+}
+#zml-header {
+    width:936px; padding-top:0px; height:74px; margin:19px 0px 0px 36px;
+    float:left; display:inline; border-bottom:1px solid #CCCCCC;
+}
+#zml-menu { float:left; margin:42px 0px 0px 0px; }
+#zml-menu a { display:block; float:left; margin-right:12px; font-size:16px; }
+#zml-menu a:hover { color:#FF5F49; text-decoration:underline; }
+#zml-header-title { color:#2D293A; font-family:Georgia,Nimbus Roman No9 L;
+    font-size:42px; float:right; margin-top:18px; }
+#zml-content {
+    width:936px; padding:0px 0px 0px 3px; min-height:423px;
+    margin:0px 0px 0px 36px; float:left; display:inline;
+    background:transparent url(img/zml_text_bg.png) right bottom no-repeat;
+}
+#zml-footer {
+    width:936px; padding-top:10px; height:49px; margin:0px 0px 0px 36px;
+    float:left; display:inline; border-top:1px solid #CCCCCC;
+    text-align:center;
+}
+
+label, input, select { display:block; float:left; margin-bottom:12px; }
+button { display:block; clear:both; margin-bottom:12px; }
+label { width:200px; line-height:24px; }
+label.label-left { clear: left; }
+label.label-right { clear: right; }
+input[type='checkbox'] { clear:left;}

@@ -58,7 +58,7 @@
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
     (:div :class (+s "simple-page-div" " " div-class) :id div-id
-	  (:h5 (cl-who:str heading))
+	  (:h1 (cl-who:str heading))
 	  (:div :class "text" (cl-who:str text)))))
 
 (defmacro do-table ((rows row) &body body)
@@ -232,27 +232,35 @@
 ;;(for-each-class-slot ('foo slot type)
 ;;  (format nil "next slot type is: ~a" type))
 
-					;code reuse
-					;(defmacro do-table-to-s ((rows row) &body body)
-					;  `(format nil "~{~a~}" ,`(labels ((do-row (,row)
-					;	      (append (list ,@body)
-					;		    (if (cdr ,row) (do-row (cdr ,row)) NIL ))))
-					;     (do-row ,rows))))
+;;code reuse
+;;(defmacro do-table-to-s ((rows row) &body body)
+;;  `(format nil "~{~a~}" ,`(labels ((do-row (,row)
+;;	      (append (list ,@body)
+;;		    (if (cdr ,row) (do-row (cdr ,row)) NIL ))))
+;;     (do-row ,rows))))
+
+
+
+(defun generic-css-files ()
+  (list "css/smoothness/jquery-ui-1.8.21.custom.css"
+	"css/reset.css" "css/elements.css" 
+	"css/fancybox/jquery.fancybox.css"))
+
+(defun generic-js-files ()
+  (list "js/jquery-1.7.2.min.js" 
+	"js/jquery-ui-1.8.21.custom.min.js"
+	"js/jquery.fancybox.pack.js"
+	"js/jquery.mousewheel.min.js"
+	"http://maps.googleapis.com/maps/api/js?key=AIzaSyDl2UEh2szaf3AjDf24cj4AFN-7a0oIUM0&sensor=false"))
 
 ;;;re-specific templates
 
 (defun re-head (&key title (more ""))
   (head (or title "Welcome to Project RE!")
-	:css-files '("css/smoothness/jquery-ui-1.8.21.custom.css"
-		     "css/reset.css" "css/elements.css" 
-		     "css/fancybox/jquery.fancybox.css"
-		     "css/re.css" "re-gen.css")
-	:js-files '("js/jquery-1.7.2.min.js" 
-		    "js/jquery-ui-1.8.21.custom.min.js"
-		    "js/jquery.fancybox.pack.js"
-		    "js/jquery.mousewheel.min.js"
-		    "http://maps.googleapis.com/maps/api/js?key=AIzaSyDl2UEh2szaf3AjDf24cj4AFN-7a0oIUM0&sensor=false"
-		    "main.js")
+	:css-files (concatenate 'list (generic-css-files)
+				(list "css/re.css" "re-gen.css"))
+	:js-files (concatenate 'list (generic-js-files)
+				(list "main.js"))
 	:more (+s "<meta name=\"viewport\" content=\"initial-scale=1.0, user-scalable=no\" />" more)))
 
 (defun do-menu (items-list)
@@ -953,33 +961,48 @@
    :div-id "div-already-activated"))
 
 
+(defun zml-template (page)
+  (html-combine 
+   :head (head "Calculate my loan" 
+	       :css-files (generic-css-files)
+	       :js-files (generic-js-files)
+	       :more (html-out (:link :rel "stylesheet" :href "css/zml.css")))
+   :body 
+   (html-out
+     (:div :id "zml-main"
+	   (:div :id "zml-header"
+		 (:div :id "zml-menu"
+		       (:a :href "/zml-calc" "About the calculator")
+		       (:a :href "/zml-about" "Zoek Mijn Lening")
+		       (:a :href "/zml-contact" "Contact us"))
+		 (:div :id "zml-header-title"
+		       "Zoek Mijn Lening"))
+	   (:div :id "zml-content"
+		 (cl-who:str page))
+	   (:div :id "zml-footer"
+		 (cl-who:str (+s
+			      "Copyright 2013 &copy; Zoek Mijn Lening LLC"
+			      )))))))
 
 (defun loan-calc-page ()
   (+s 
    (html-out
-     (:h1 "TODO: implement PMT function; find out what b31's supposed to do")
+     (:h1 "Calculate monthly/yearly loan rate")
      (str (+s
-	   (label-input "b10" :val "185000")
-	   (label-input "b12" :val "0")
-	   (label-input "b13" :val "0")
-	   (label-input "b19" :val "38500")
-	   (label-input "b29" :val "0.042")
-	   (label-select "b31" :options (list "20 jaar vast"
-					      "25 jaar vast"
-					      "30 jaar vast"
-					      "Accordeon 15-18"
-					      "Accordeon 20-25"))
-	   (label-input "b32" :val "360")))
+	   (label-input "b10" :val "185000" :label "aankoopprijs")
+	   (label-input "b12" :val "0" :label "bijkomend voor renovatie")
+	   (label-input "b13" :val "0" :label "Kostprijs nieuwbouw (incl.btw)")
+	   (label-input "b19" :val "38500" :label "eigen inbreng")
+	   (label-input "b29" :val "0.042" :label "Rentevoet")
+	   (label-select "b31" :label "Renteformule"
+			 :options (list "20 jaar vast"
+					"25 jaar vast"
+					"30 jaar vast"
+					"Accordeon 15-18"
+					"Accordeon 20-25"))
+	   (label-input "b32" :val "360" :label "looptijd (maanden)")))
      (:button :type "button" :id "btn-calc" "Calculate")
      (str (label-input "calc-result" :val "0" :label "Result")))
-   (style-tag "
-   body { background-color:white; } 
-   label, input, select { display:block; float:left; margin-bottom:12px; }
-   button { display:block; clear:both; margin-bottom:12px; }
-   label { width:120px; line-height:24px; }
-   label.label-left { clear: left; }
-   label.label-right { clear: right; }
-   input[type='checkbox'] { clear:left;}")
    (script-tag 
     (ps 
       (defun pmt (Rate Nper Pv &optional (Fv 0) (Type nil))
