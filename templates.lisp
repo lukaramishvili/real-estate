@@ -207,7 +207,8 @@
 		    (datepicker
 		     (ps:create alt-field ,(+s "#input_" name)
 				alt-format "@"
-				default-date (new (-Date ,value)))))
+				default-date (new (-Date ,value))
+				date-format "dd/mm/yy")))
 	     (chain ($ ,(+s "#input_datepicker_" name))
 		    (datepicker "setDate" (new (-Date ,value))))
 	     ""))))))
