@@ -989,6 +989,11 @@
   (+s 
    (html-out
      (:h1 "Calculate monthly/yearly loan rate")
+     
+     (:label :for "select_b9" "beschrijf")
+     (:select :id "select_b9" :name "b9"
+	      (:option :value "0.11" "Grootbeschrijf 10%")
+	      (:option :value "0.63" "Grootbeschrijf 5%"))
      (str (+s
 	   (label-input "b10" :val "185000" :label "aankoopprijs")
 	   (label-input "b12" :val "0" :label "bijkomend voor renovatie")
@@ -1015,14 +1020,15 @@
 	     (* (+ Fv (* Pv (expt r1 Nper))) Rate)
 	     (* (if Type r1 1) (- 1 (expt r1 Nper)))))))
       (defun calculate-loan (params)
-	(let* ((b10 (parse-float (@ params b10)))
+	(let* ((b9  (parse-float (@ params b9)))
+	       (b10 (parse-float (@ params b10)))
 	       (b12 (parse-float (@ params b12)))
 	       (b13 (parse-float (@ params b13)))
 	       (b19 (parse-float (@ params b19)))
 	       (b29 (parse-float (@ params b29)))
 	       (b32 (parse-int (@ params b32)))
 	       ;;now follow the derived variables
-	       (b11 (* b10 0.11))
+	       (b11 (* b10 b9))
 	       (b15 (+ b10 b11 b12 b13))
 	       (b16 (+ (* (- b15 b19) 0.01881234) 1200))
 	       (b18 (+ b15 b16))
@@ -1035,7 +1041,8 @@
 	  b33))
       ($$ "#btn-calc" (click (lambda ()
           (let ((calc-result (calculate-loan 
-			      (create b10 ($$ "#input_b10" (val))
+			      (create b9  ($$ "#select_b9" (val))
+				      b10 ($$ "#input_b10" (val))
 				      b12 ($$ "#input_b12" (val))
 				      b13 ($$ "#input_b13" (val))
 				      b19 ($$ "#input_b19" (val))

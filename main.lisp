@@ -548,11 +548,23 @@
 	       :action action)))))
 
 
+(htoot-handler (loan-home-page-handler "/zml-home" ())
+  (zml-template 
+   (simple-page 
+    "Welcome to ZoekMijnLening"
+    (html-out
+      (:div :style "margin:90px 0px 0px 50px;"
+        (:h3 :style "margin-bottom:20px;"
+	    "Please choose application type:")
+	(:br)
+	(:a :class "zml-home-button blue" :href "./zml-express" "Express")
+	(:a :class "zml-home-button white" :href "./zml-calc" "Advanced"))))))
 
 (htoot-handler (loan-about-page-handler "/zml-about" ())
-  (zml-template (simple-page "About the ZML Calculator"
-			     "ZML Calculator helps you find the optimal loan<br>
-                            It can be used to calculate apartment loan rates")))
+  (zml-template (simple-page 
+		 "About the ZML Calculator"
+		 "ZML Calculator helps you find the optimal loan<br>
+                  It can be used to calculate apartment loan rates")))
 
 (htoot-handler (zml-calc-page-handler "/zml-calc" ())
   (zml-template (loan-calc-page)))
@@ -561,3 +573,15 @@
   (zml-template (simple-page "Contact us"
 			     "This is a simple contact page<br>
                               Tel: 0995 568 12 31 14")))
+
+
+(htoot-handler (zml-submit-page-handler "/zml-submit-express"
+    ())
+  (format nil "~a" 
+	  "todo 1. POST parameters 2. saving them to db 3. emailing them"))
+
+
+(htoot-handler (zml-submit-page-handler "/zml-submit-advanced"
+    ())
+  (format nil "~a" 
+	  "todo 1. POST parameters 2. saving them to db 3. emailing them"))
