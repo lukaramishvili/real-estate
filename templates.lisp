@@ -985,6 +985,27 @@
 			      "Copyright 2013 &copy; Zoek Mijn Lening LLC"
 			      )))))))
 
+(defun loan-express-page ()
+  (html-out
+    (:div :class "zml-express-div"
+      (:form :method :post :action "./zml-submit-express"
+	(:h1 "Express loan request")
+	(:br)
+        (str (+s
+	  (label-input "first-name")
+	  (label-input "last-name")
+	  (label-input "phone")
+	  (label-input "email")
+	  (label-input "amount")
+	  (label-datepicker "start")
+	  (label-datepicker "end")
+	  (label-select "formula"
+	    :options `((1 "Long-term formula")
+		       (2 "Short-term formula")))))
+	(:br :class "clearfloat")
+	(:input :type :submit :value "Submit")
+    ))))
+
 (defun loan-calc-page ()
   (+s 
    (html-out
