@@ -36,12 +36,17 @@ li{ list-style-position:outside; list-style-image:url(bullet.gif); color:#000;
     text-align:center;
 }
 
+.float-left { display:block; float:left; }
+.half { width:50%; }
+
+h4 { clear:both; margin-bottom:10px; }
 label, input, select { display:block; float:left; margin-bottom:12px; }
 button { display:block; clear:both; margin-bottom:12px; }
 label { width:200px; line-height:24px; }
 label.label-left { clear: left; }
 label.label-right { clear: right; }
 input[type='checkbox'] { clear:left;}
+input[type='text'], select { width:160px; }
 
 
 .zml-home-button { display:block; margin-right:20px; float:left; }

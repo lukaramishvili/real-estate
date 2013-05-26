@@ -1011,25 +1011,41 @@
    (html-out
      (:h1 "Calculate monthly/yearly loan rate")
      
-     (:label :for "select_b9" "beschrijf")
-     (:select :id "select_b9" :name "b9"
-	      (:option :value "0.11" "Grootbeschrijf 10%")
-	      (:option :value "0.63" "Grootbeschrijf 5%"))
-     (str (+s
-	   (label-input "b10" :val "185000" :label "aankoopprijs")
-	   (label-input "b12" :val "0" :label "bijkomend voor renovatie")
-	   (label-input "b13" :val "0" :label "Kostprijs nieuwbouw (incl.btw)")
-	   (label-input "b19" :val "38500" :label "eigen inbreng")
-	   (label-input "b29" :val "0.042" :label "Rentevoet")
-	   (label-select "b31" :label "Renteformule"
-			 :options (list "20 jaar vast"
-					"25 jaar vast"
-					"30 jaar vast"
-					"Accordeon 15-18"
-					"Accordeon 20-25"))
-	   (label-input "b32" :val "360" :label "looptijd (maanden)")))
-     (:button :type "button" :id "btn-calc" "Calculate")
-     (str (label-input "calc-result" :val "0" :label "Result")))
+     (:div :class "float-left half"
+       (:label :for "select_b9" "beschrijf")
+       (:select :id "select_b9" :name "b9"
+		(:option :value "0.11" "Grootbeschrijf 10%")
+		(:option :value "0.63" "Grootbeschrijf 5%"))
+       (str (+s
+         (label-input "b10" :val "185000" :label "aankoopprijs")
+	 (label-input "b11" :val "0" :label "Notaris &amp; regk")
+	 (label-input "b12" :val "0" :label "bijkomend voor renovatie")
+	 (label-input "b13" :val "0" :label "Kostprijs nieuwbouw (incl.btw)")
+	 (label-input "b15" :val "0" :label "subtotaal")
+	 (label-input "b16" :val "0" :label "hypotheekkosten")
+	 (label-input "b18" :val "0" :label "totaal")
+	 (label-input "b19" :val "38500" :label "eigen inbreng")
+	 (label-input "b21" :val "0" :label "gevraagd kredietbedrag")
+	 (label-input "b22" :val "0" 
+		      :label "Venale waard van het onroerend goed")
+	 (label-select "b25" :label "Aard van het pand"
+           :options `(("grond") ("appartement") ("huis") ("villa")
+		      ("nieuwbouw") ("opbrengsteigendom") ("andere"))))))
+     (:div :class "float-left half"
+       (:h4 "klassieke lening")
+       (str (+s
+         (label-input "b28" :val "0" :label "bedrag")
+	 (label-input "b29" :val "0.042" :label "Rentevoet")
+	 (label-input "b30" :val "0" :label "maandelijks rentevoet")
+	 (label-select "b31" :label "Renteformule"
+	   :options (list "20 jaar vast"
+			  "25 jaar vast"
+			  "30 jaar vast"
+			  "Accordeon 15-18"
+			  "Accordeon 20-25"))
+	 (label-input "b32" :val "360" :label "looptijd (maanden)"))))
+     ;;(:button :type "button" :id "btn-calc" "Calculate")
+     (str (label-input "calc-result" :val "0" :label "maandlast")))
    (script-tag 
     (ps 
       (defun pmt (Rate Nper Pv &optional (Fv 0) (Type nil))
@@ -1040,6 +1056,8 @@
 	    (/
 	     (* (+ Fv (* Pv (expt r1 Nper))) Rate)
 	     (* (if Type r1 1) (- 1 (expt r1 Nper)))))))
+      (defun calculate-b30 (b29)
+	(- (expt (1+ b29) (/ 1 12)) 1))
       (defun calculate-loan (params)
 	(let* ((b9  (parse-float (@ params b9)))
 	       (b10 (parse-float (@ params b10)))
@@ -1056,11 +1074,78 @@
 	       (b21 (- b18 b19))
 	       (b22 (+ b10 b13))
 	       (b28 b21)
-	       (b30 (- (expt (1+ b29) (/ 1 12)) 1))
+	       (b30 (calculate-b30 b29))
 	       (b31 "todo dropdown")
 	       (b33 (- (pmt b30 b32 b28))))
 	  b33))
-      ($$ "#btn-calc" (click (lambda ()
+      ($$ "#select_b9,#input_b10" 
+	(change (lambda ()
+          ($$ "#input_b11" 
+	      (val (chain (* (parse-float ($$ "#select_b9" (val)))
+			     (parse-float ($$ "#input_b10" (val))))
+			  (to-fixed 2)))
+	      (change)#|trigger programmatic onchange handlers|#)))
+	(change))
+      ($$ "#input_b10,#input_b11,#input_b12,#input_b13" 
+	(change (lambda ()
+          ($$ "#input_b15" 
+	      (val (chain (+ (parse-float ($$ "#input_b10" (val)))
+			     (parse-float ($$ "#input_b11" (val)))
+			     (parse-float ($$ "#input_b12" (val)))
+			     (parse-float ($$ "#input_b13" (val))))
+			  (to-fixed 2)))
+	      (change)#|trigger programmatic onchange handlers|#)))
+	(change))
+      ($$ "#input_b15,#input_b19" 
+	(change (lambda ()
+          ($$ "#input_b16" 
+	   (val (chain (+ 1200 (* 0.01881234
+				  (- (parse-float ($$ "#input_b15" (val)))
+				     (parse-float ($$ "#input_b19" (val))))))
+		       (to-fixed 2)))
+	   (change)#|trigger programmatic onchange handlers|#)))
+	(change))
+      ($$ "#input_b15,#input_b16" 
+	(change (lambda ()
+          ($$ "#input_b18"
+	      (val (chain (+ (parse-float ($$ "#input_b15" (val)))
+			     (parse-float ($$ "#input_b16" (val))))
+			  (to-fixed 2)))
+	      (change)#|trigger programmatic onchange handlers|#)))
+	(change))
+      ($$ "#input_b18,#input_b19"
+	(change (lambda ()
+          ($$ "#input_b21"
+	      (val (chain (- (parse-float ($$ "#input_b18" (val)))
+			     (parse-float ($$ "#input_b19" (val))))
+			  (to-fixed 2)))
+	      (change)#|trigger programmatic onchange handlers|#)))
+	(change))
+      ($$ "#input_b10,#input_b13"
+	(change (lambda ()
+          ($$ "#input_b22"
+	      (val (chain (+ (parse-float ($$ "#input_b10" (val)))
+			     (parse-float ($$ "#input_b13" (val))))
+			  (to-fixed 2)))
+	      (change)#|trigger programmatic onchange handlers|#)))
+	(change))
+      ($$ "#input_b21"
+	(change (lambda ()
+          ($$ "#input_b28"
+	      (val (chain (+ (parse-float ($$ "#input_b21" (val))))
+			  (to-fixed 2)))
+	      (change)#|trigger programmatic onchange handlers|#)))
+	(change))
+      ($$ "#input_b29"
+	(change (lambda ()
+          ($$ "#input_b30"
+	      (val (chain (calculate-b30 (parse-float ($$ "#input_b29" (val))))
+			  (to-fixed 6)))
+	      (change)#|trigger programmatic onchange handlers|#)))
+	(change))
+      ;;($$ "#btn-calc" (click (lambda ()
+      ($$ "#zml-content select,#zml-content input"
+	(change (lambda ()
           (let ((calc-result (calculate-loan 
 			      (create b9  ($$ "#select_b9" (val))
 				      b10 ($$ "#input_b10" (val))
@@ -1069,7 +1154,8 @@
 				      b19 ($$ "#input_b19" (val))
 				      b29 ($$ "#input_b29" (val))
 				      b32 ($$ "#input_b32" (val))))))
-	    ($$ "#input_calc-result" (val (chain calc-result (to-fixed 2))))))))
+	    ($$ "#input_calc-result" (val (chain calc-result (to-fixed 2)))))))
+	(change))#|call onchange for the first time to display result|#
       #|(alert (calculate-loan (create b10 185000 b19 38500 b12 0 b13 0
 				    b29 0.042 b32 360)))|#
       ))))
