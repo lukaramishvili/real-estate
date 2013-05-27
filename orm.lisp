@@ -52,6 +52,12 @@
 			      :value (string-downcase (smake value))))))
       (setf (value tr-to-save) value)
       (save-dao tr-to-save))))
+
+(defun all-tr (lang)
+  (with-re-db (select-dao 'tr (:= :lang (string-downcase (smake lang))))))
+
+(defun wrap-like (val)
+  (+s "%" val "%"))
     
     
 

@@ -20,6 +20,13 @@ a.edit_inline { background:url(../images/icons/edit.gif) no-repeat left top; dis
 a.delete_inline { background:url(../images/icons/action_delete.gif) no-repeat left top;	display:inline-block; line-height:16px; color: #D23333 !important; font-size:10px; padding-left:20px; margin-right:5px; }
 a.reject_inline { background:url(../images/icons/action_remove.gif) no-repeat left top;	display:inline-block; line-height:16px; color: #D23333 !important; font-size:10px; padding-left:20px; margin-right:5px; }
 a.approve_inline { background:url(../images/icons/action_check.gif) no-repeat left top;	display:inline-block; line-height:16px; color: #5a801b !important; font-size:10px; padding-left:20px; margin-right:5px; }
+
+
+.edit-btn { background:url(../images/icons/edit.gif) no-repeat left top; display:inline-block; width: 16px; height:16px; border:0; cursor:pointer; }
+.remove-btn { background:url(../images/icons/action_delete.gif) no-repeat left top; display:inline-block; width: 16px; height:16px; border:0; cursor:pointer; }
+.save-btn { background:url(../images/icons/action_check.gif) no-repeat left top; display:inline-block; width: 16px; height:16px; border:0; cursor:pointer; }
+
+
 .news_items li { margin-left:15px; }
 /*******************************************************************************
   HEADING CLASSES
@@ -175,6 +182,7 @@ a.inline_tip { padding-left:21px; background:url(../images/icons/lightbulb_off.g
 #menu .media_library { background-image: url(../images/icon_media.png); background-repeat: no-repeat;  }
 #menu .event_manager { background-image: url(../images/icon_clock.png); background-repeat: no-repeat;  } 
 #menu .newsletter { background-image: url(../images/icon_news.png); background-repeat: no-repeat;  }
+#menu .trans { background-image: url(../images/icon_translate.png); background-repeat: no-repeat;  }
 #menu .settings { background-image: url(../images/icon_settings.png); background-repeat: no-repeat;  }
 #hidden_submenu {
 	background:#FFF;

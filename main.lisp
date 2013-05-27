@@ -55,6 +55,11 @@
 
 (defun default-lang () (config-value :default-lang))
 
+(defun re-lang (&key lang)
+  (or lang 
+      (if (boundp '*session*) (session-value 'lang))
+      (default-lang)))
+
 (defun re-tr (keyword &key lang)
   (tr keyword (or lang (session-value 'lang) (default-lang))))
 
@@ -69,6 +74,21 @@
 	  (hunchentoot:rfc-1123-date))
     (setf (hunchentoot:header-out :cache-control)
 	  "max-age=0, no-store, no-cache, must-revalidate"))
+
+;;if the user is not logged in, presents with login dialog 
+;;after logging in, the user will be redirected what (s)he tried to access
+(defmacro require-login (&body body)
+  `(if (session-value 'logged-in-p)
+       (progn (disable-http-cache) ,@body)
+       (login-page-handler :redir (request-uri*))))
+
+
+(defmacro require-admin-login (&body body)
+  `(if (session-value 'logged-in-p)
+       (if t #|TODO:test that (session-value user-authed) is an admin|#
+	   (progn (disable-http-cache) ,@body)
+	   "You should log in as admin to access this page.")
+       (admin-login-page :redir (request-uri*))))
 
 
 ;;serve css folder
@@ -132,11 +152,12 @@
 	    (case page 
 	      (:estates (admin-page-estates))
 	      (:estate (estate-edit-handler))
+	      (:trans (admin-page-tr))
 	      (:users (user-management-page))
 	      (:user (edit-user-handler))
 	      ;;(:default (admin-default-page))
 	      (otherwise (admin-page-estates))))
-	:lang (default-lang))
+	:lang (re-lang))
       (+s 
        ;;(re-tr :not-logged-in-please-log-in)
        (admin-login-page :redir "/admin"))))
@@ -144,6 +165,17 @@
 (htoot-handler (edit-user-handler "/edit-user" 
     ((ix-user :parameter-type 'integer :init-form 0)))
     "edit user form")
+
+(htoot-handler (save-tr-handler "/save-tr"
+    ((keyword :parameter-type 'keyword)
+     (lang :parameter-type 'keyword)
+     (value :parameter-type 'string)))
+  (require-admin-login
+     (let* ((saved-tr (add-tr keyword lang value)))
+       (json:encode-json-plist-to-string
+	(if (slot-boundp saved-tr 'ix-tr)
+	    (list :message "success" :ix-tr (ix-tr saved-tr))
+	    (list :message "failed" :ix-tr 0))))))
 
 (htoot-handler
  (log-in-handler

@@ -326,6 +326,9 @@
 	  (:li (:a :href "admin?page=text" 
 	   (:span :class "outer" (:span :class "inner content" 
 	    (str (tr :text-pages lang))))))
+	  (:li (:a :href "admin?page=trans" 
+	   (:span :class "outer" (:span :class "inner trans" 
+	    (str (tr :translations lang))))))
 	  (:li (:a :href "admin?page=users" 
 	   (:span :class "outer" (:span :class "inner users" 
 	    (str (tr :users lang))))))
@@ -356,6 +359,55 @@
 		(:td :class "td-action"
 		     (:a :href (smake "edit-estate?ix-estate=" (ix-estate e))
 			 "Edit"))))))))
+
+(defun admin-page-tr (&key (lang (re-lang)))
+  (html-out
+    (:h1 "Editing translations for language " (str lang))
+    (:table 
+     :id "table-edit-tr"
+     (loop for tt in (concatenate 'list (all-tr lang) 
+				  ;;in-memory tr for adding new translations
+		     	(list (make-instance 'tr :ix-tr 0 :lang lang))) do
+       (htm 
+	(:tr
+	 (:td (str (keyword tt))
+	      ;;allow the user to edit(see) and save in-memory tr's keyword
+	      (:input :type (if (equal (ix-tr tt) 0) "text" "hidden")
+		      :id (smake "tr_keyword-" (ix-tr tt))
+		      :value (keyword tt)))
+	 (:td (:input :type "text" :id (smake "tr_value-" (ix-tr tt))
+		      :value (value tt)))
+	 (:td :class "td-action"
+	      (:button :type "button" :id (smake "btn_save_tr-" (ix-tr tt))
+		       :class "save-btn" " " #|(str (re-tr :save))|#)
+	      (:button :type "button" :id (smake "btn_remove_tr-" (ix-tr tt))
+		       :class "remove-btn" " " #|(str (re-tr :remove))|#))))))
+    (str
+     (+s
+      (style-tag "#table-edit-tr td { vertical-align:top; }")
+      (script-tag
+       (ps
+	 ($$ "[id|='btn_save_tr']" 
+	     (click (lambda ()
+		(let* ((ix-tr (elt (chain ($$ this (attr "id")) 
+					  (split "-")) 
+				   1))
+		       (keyword ($$ (+ "#tr_keyword-" ix-tr) (val)))
+		       (lang (lisp lang))
+		       (value ($$ (+ "#tr_value-" ix-tr) (val))))
+		  (chain $ (ajax 
+		  	(create url "./save-tr"
+				data (create :keyword keyword
+					     :lang lang
+					     :value value)
+				type "GET"
+				data-type "json"
+				success (lambda (data)
+					  (alert (@ data ix-tr))
+					  (alert (@ data message))))))))))
+	 ($$ "[id|='btn_remove_tr']" 
+	     (click (lambda () 
+		      (alert 6))))))))))
 
 (defun user-management-page ()
   (cl-who:with-html-output-to-string
