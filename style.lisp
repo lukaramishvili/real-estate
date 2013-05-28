@@ -197,6 +197,8 @@
 
   #label_desc { clear:both !important; float:none !important; }
 
+  #input_zmh { width:90px !important; }
+
   #label_destination { width:95px !important; }
   #input_destination { width:165px !important; }
   #input_building-permit-p { margin-right:10px !important; }

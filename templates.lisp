@@ -803,7 +803,14 @@
 	  (+s 
 	   (label-input "zmh" :label "ZMH Reference" :val ix-estate #|(zmh e)|#
 			:disabled t)
-	   (if (plusp ix-estate) ""
+	   (if (plusp ix-estate)
+	       (+s (html-out 
+		     (:a :href "javascript:void(0)" :id "copy-zmh-btn" 
+			 :style "line-height:24px; margin-left:8px;" 
+			 (:u "Copy")))
+		   (script-tag (ps ($$ "#copy-zmh-btn" (click (lambda ()
+	             (chain window (prompt "Copy to clipboard: Ctrl+C then Enter"
+					   ($$ "#input_zmh" (val))))))))))
 	       "<br class='clearfloat' />
                <div>ZMH reference will be generated after saving</div>")
 	   (html-out (:br) (:h3 "Ruimtelijke Ordening")
