@@ -196,6 +196,14 @@
   #input_address { width:290px !important; }
 
   #label_desc { clear:both !important; float:none !important; }
+
+  #label_destination { width:95px !important; }
+  #input_destination { width:165px !important; }
+  #input_building-permit-p { margin-right:10px !important; }
+  #label_building-permit-p { width:265px !important; }
+  #label_summons, #label_preemption, #label_subdiv-permit {
+      width: 200px !important;
+  }
   
   #estate-pics { clear:both; }
   .estate-pic { width:220px; float:left; margin-right:10px; }

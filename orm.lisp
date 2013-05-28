@@ -51,7 +51,8 @@
 			      :lang (string-downcase (smake lang))
 			      :value (string-downcase (smake value))))))
       (setf (value tr-to-save) value)
-      (save-dao tr-to-save))))
+      (save-dao tr-to-save)
+      tr-to-save)))
 
 (defun all-tr (lang)
   (with-re-db (select-dao 'tr (:= :lang (string-downcase (smake lang))))))
@@ -169,23 +170,47 @@
 
 (defun constr-options (&key not-sel)
   (concatenate 'list 
-	       (if not-sel (list "*"))
+	       (if not-sel (list "*" "*"))
   (list "detached" "terraced" "semi-detached")))
 
 (defun summons-options (&key not-sel)
   (concatenate 'list 
-	       (if not-sel (list "*"))
+	       (if not-sel (list "*" "*"))
   (list (list "nvt" "NVT") (list "vt" "VT"))))
 
 (defun preemption-options (&key not-sel)
   (concatenate 'list 
-	       (if not-sel (list "*"))
+	       (if not-sel (list "*" "*"))
   (list (list "nvt" "NVT") (list "vt" "VT"))))
 
 (defun subdiv-permit-options (&key not-sel)
   (concatenate 'list 
-	       (if not-sel (list "*"))
+	       (if not-sel (list "*" "*"))
   (list (list "nvt" "NVT") (list "vt" "VT"))))
+
+(defun destination-options (&key not-sel)
+  (concatenate 'list 
+	       (if not-sel (list "*" "*"))
+  `((1 "Agrarisch gebied")
+    (5 "Bosgebied")
+    (2 "Gebied met economische activiteiten")
+    (16 "Gebied voor dagrecreatie")
+    (17 "Gebied voor verblijfsrecreatie")
+    (8 "Gemengd woongebied")
+    (12 "Groengebied")
+    (4 "Grondreservegebied (woonuitbreidingsgebied)")
+    (6 "Industriegebied")
+    (15 "Industriegebied voor ambachtelijke bedrijven of gebieden voor kleine en middelgrote ondernemingen")
+    (18 "Landschappelijk waardevol agrarisch gebied")
+    (9 "Natuurgebied")
+    (19 "Natuurreservaat")
+    (20 "Niet ingegeven")
+    (10 "Parkgebied")
+    (7 "Recreatiegebied")
+    (3 "Winningsgebied")
+    (11 "Woongebied")
+    (13 "Woongebied met een culturele historische en/of esthetische waarde")
+    (14 "Woonpark"))))
 
 (defclass estate ()
   ((ix-estate :col-type serial :initarg :ix-estate :accessor ix-estate)

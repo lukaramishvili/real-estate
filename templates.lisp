@@ -767,7 +767,6 @@
 	 :class "edit-estate-column"
 	 (cl-who:str
 	  (+s 
-	   (label-input "telnum" :val (telnum e))
 	   (label-select "apt-type" 
 			 :options (apt-type-options)
 			 :val (apt-type e))
@@ -780,8 +779,9 @@
 	   (label-input "price" :val (price e))
 	   (label-datepicker "since" :label "Date added"
 	       :val (if (plusp ix-estate) (since e) (get-universal-time)))
+	   (label-input "telnum" :val (telnum e))
 	   (label-textarea "desc" :val (desc e) :label "Description"
-			   :rows 7 :cols 80))))
+			   :rows 7 :cols 66))))
 	(:div 
 	 :class "edit-estate-column"
 	 (cl-who:str
@@ -806,16 +806,38 @@
 	   (if (plusp ix-estate) ""
 	       "<br class='clearfloat' />
                <div>ZMH reference will be generated after saving</div>")
+	   (html-out (:br) (:h3 "Ruimtelijke Ordening")
+	    (:div :id "ordening-tip"
+	     (:a ;:onclick "$(\"#ordening-tip\").toggle();" :href "#"
+		 :style "line-height:25px;"
+		 "<b><u>Wat is dit?</u></b>")
+	     (:p #|:id "ordening-tip"|# :style "display:none;padding-right:20px;"
+		 "In bepaalde Vlaamse gemeenten is het verplicht bepaalde 
+                  stedenbouwkundige gegevens te vermelden bij het publiceren 
+                  van uw pand op het internet. Voor meer info: "
+		 (:a :target "_blank" :href "http://www.ruimtelijkeordening.be/"
+		     :style "color:#0066cc;"
+		     "http://www.ruimtelijkeordening.be/"))
+	     (:br :class "clearfloat")))
+	    (script-tag (ps
+	      ($$ "#ordening-tip"
+		  (mouseenter (lambda () ($$ this (find "p") (show))))
+		  (mouseleave (lambda () ($$ this (find "p") (hide)))))))
 	   (label-checkbox "building-permit-p" :val 1 
 			   :checked (building-permit-p e)
-			   :label "Building permit")
-	   (label-input "destination" :val (destination e))
+			   :label (re-tr :building-permit))
+	   #+nil(label-input "destination" :val (destination e)
+			:label (re-tr :destination))
+	   (label-select "destination" :options (destination-options)
+			 :val (destination e) :label (re-tr :destination))
 	   (label-select "summons" :options (summons-options) 
-			 :val (summons e))
+			 :val (summons e) :label (re-tr :summons))
 	   (label-select "preemption" :options (preemption-options)
-			 :val (preemption e))
+			 :val (preemption e) :label (re-tr :preemption))
 	   (label-select "subdiv-permit" :options (subdiv-permit-options)
-			 :val (subdiv-permit e))
+			 :val (subdiv-permit e) :label (re-tr :subdiv-permit))
+	   (html-out (:hr :style "display:block; margin:10px 30px 10px 0px; 
+                                 clear:both;"))
 	   (label-input "epc" :val (epc e) :label "EPC")
 	   (label-input "kad-ink" :val (kad-ink e) :label "K.I."))))
 	(:div 
