@@ -114,3 +114,12 @@ input[type='text'], select { width:160px; }
 	position:relative;
 	top:1px;
 }
+#creditors_div { clear:left; }
+[id|="creditor_div"] { width:50%; float:left; }
+[id|="creditor_div"] input[type="text"] { }
+
+#loans_table { border-collapse:collapse; width:100%; background-color:#fff; }
+#loans_table, #loans_table th, #loans_table td { border-color:#aaa; }
+#loans_table td select,#loans_table td input[type="text"] {
+    width:90%;
+}

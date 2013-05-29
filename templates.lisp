@@ -1092,7 +1092,8 @@
    (html-out
      (:h1 "Calculate monthly/yearly loan rate")
      
-     (:div :class "float-left half"
+     (:div :class "float-left half step-1"
+       (:h2 "Aankoop")
        (:label :for "select_b9" "beschrijf")
        (:select :id "select_b9" :name "b9"
 		(:option :value "0.11" "Grootbeschrijf 10%")
@@ -1111,9 +1112,11 @@
 		      :label "Venale waard van het onroerend goed")
 	 (label-select "b25" :label "Aard van het pand"
            :options `(("grond") ("appartement") ("huis") ("villa")
-		      ("nieuwbouw") ("opbrengsteigendom") ("andere"))))))
-     (:div :class "float-left half"
-       (:h4 "klassieke lening")
+		      ("nieuwbouw") ("opbrengsteigendom") ("andere")))
+	 ;;(:button :type "button" :id "btn-calc" "Calculate")
+	 (label-input "calc-result" :val "0" :label "maandlast"))))
+     (:div :class "float-left half step-1"
+       (:h3 "klassieke lening")
        (str (+s
          (label-input "b28" :val "0" :label "bedrag")
 	 (label-input "b29" :val "0.042" :label "Rentevoet")
@@ -1125,8 +1128,20 @@
 			  "Accordeon 15-18"
 			  "Accordeon 20-25"))
 	 (label-input "b32" :val "360" :label "looptijd (maanden)"))))
-     ;;(:button :type "button" :id "btn-calc" "Calculate")
-     (str (label-input "calc-result" :val "0" :label "maandlast")))
+     (:div :id "creditors_div" :class "step-2"
+	   (:h2 "Kredietaanvragers")
+	   (:button :type :button :id "add_creditor_btn"
+		    (str (re-tr :add-creditor))))
+     (:div :id "loans_div" :class "step-3"
+       (:h2 "Maandelijkse lasten")
+       (:table :id "loans_table" :border 1 :cellspacing 0 :cellpadding 0
+         (:tr (:th "Type krediet") (:th "Bank") (:th "Ontleend bedrag") 
+	      (:th "openstaand saldo") (:th "begindatum") (:th "looptijd") 
+	      (:th "rentevoet %") (:th "maandlast") (:th "Overnemen")
+	      ))
+       (:button :type :button :id "add_loan_btn"
+		(str (re-tr :add-loan))))
+     )
    (script-tag 
     (ps 
       (defun pmt (Rate Nper Pv &optional (Fv 0) (Type nil))
@@ -1237,6 +1252,88 @@
 				      b32 ($$ "#input_b32" (val))))))
 	    ($$ "#input_calc-result" (val (chain calc-result (to-fixed 2)))))))
 	(change))#|call onchange for the first time to display result|#
+      ;;end of calculator, creditor name/contact info following
+      (defun js-input (name &key (val ""))
+	(who-ps-html 
+	 (:input :type "text" :name name :id (+ "input_" name) :value val)))
+      (defun js-label-input (name &key (val "") label)
+	(who-ps-html 
+	 (:label :for (+ "input_" name) 
+		 (if label label name))
+	 (:input :type "text" :name name :id (+ "input_" name) :value val)
+	 (:br)))
+      ;;edit multiple creditors
+      (defun gen-creditor (cr-id)
+	(who-ps-html 
+	 (:div :id (+ "creditor_div-" cr-id)
+	   (:h3 (+ "Kredietaanvrager " cr-id))
+	   (:br)
+	   (js-label-input (+ "cr_name-" cr-id) :label "Naam &amp; Voornaam *")
+	   (js-label-input (+ "cr_birth-" cr-id) :label "Geboortedatum *")
+	   (js-label-input (+ "cr_regnum-" cr-id) :label "Rijksregisternummer *")
+	   (js-label-input (+ "cr_street-" cr-id) :label "Straat &amp; nr *")
+	   (js-label-input (+ "cr_city-" cr-id) :label "Gemeente *")
+	   (js-label-input (+ "cr_postcode-" cr-id) :label "postcode *")
+	   (:br)
+	   (:label :for (+ "input_" "cr_marital-" cr-id) "Burgerlijke stand *")
+	   (:select :name (+ "cr_marital-" cr-id) 
+		    :id (+ "input_" "cr_marital-" cr-id)
+	       (:option :value 1 "Arbeider") (:option :value 2 "Bediende ")
+	       (:option :value 3 "Vrij beroep ") (:option :value 4 "Handelaar")
+	       (:option :value 5 "Bedrijfsleider") (:option :value 6 "Ambtenaar")
+	       (:option :value 7 "Diplomaat") (:option :value 8 "Zelfstandig"))
+	   (:label :for (+ "input_" "cr_-" cr-id) "Burgerlijke stand *")
+	   (:select :name (+ "cr_-" cr-id) :id (+ "input_" "cr_-" cr-id)
+	       (:option :value 1 "Ongehuwd")
+	       (:option :value 2 "Gehuwd")
+	       (:option :value 3 "Echtgescheiden")
+	       (:option :value 4 "Feitelijk gescheiden")
+	       (:option :value 5 "Gescheiden van tafel en bed")
+	       (:option :value 6 "Samenwonend")
+	       (:option :value 7 "Wettelijk samenwonend")
+	       (:option :value 8 "Weduwe")
+	       (:option :value 9 "Weduwnaar"))
+	   )))
+      (defun next-creditor-id ()
+	  (let ((retval 1))
+	    (loop for i from 1 to 100 
+	       do (when (= 0 (@ ($$ (+ "#creditor_div-" i)) length))
+		    (setf retval i) (break)))
+	    retval))
+      ($$ "#add_creditor_btn" 
+	(click (lambda ()
+          ($$ "#add_creditor_btn" (before (gen-creditor (next-creditor-id))))))
+	(click))
+      ;;edit multiple loans
+      (defun gen-loan (ln-id)
+	(who-ps-html 
+	 (:tr :id (+ "loan_div-" ln-id)
+	   (:td (:select :name (+ "ln_type-" ln-id) 
+		    :id (+ "input_" "ln_type-" ln-id)
+		    (:option :value 1 "Hypothecaire lening")
+		    (:option :value 2 "lening op afbetaling")
+		    (:option :value 3 "verkoop op afbetaling")
+		    (:option :value 4 "Kredietopening (kredietkaarten)")
+		    (:option :value 5 "Leasing")))
+	   (:td (js-input (+ "ln_bank-" ln-id)))
+	   (:td (js-input (+ "ln_amount-" ln-id)))
+	   (:td (js-input (+ "ln_outstanding-" ln-id)))
+	   (:td (js-input (+ "ln_start_date-" ln-id)))
+	   (:td (js-input (+ "ln_maturity-" ln-id)))
+	   (:td (js-input (+ "ln_interest_rate-" ln-id)))
+	   (:td (js-input (+ "ln_monthly_payment-" ln-id)))
+	   (:td (js-input (+ "ln_take_over-" ln-id)))
+	   )))
+      (defun next-loan-id ()
+	  (let ((retval 1))
+	    (loop for i from 1 to 100 
+	       do (when (= 0 (@ ($$ (+ "#loan_div-" i)) length))
+		    (setf retval i) (break)))
+	    retval))
+      ($$ "#add_loan_btn" 
+	(click (lambda ()
+          ($$ "#loans_table" (append (gen-loan (next-loan-id))))))
+	(click))
       #|(alert (calculate-loan (create b10 185000 b19 38500 b12 0 b13 0
 				    b29 0.042 b32 360)))|#
       ))))
