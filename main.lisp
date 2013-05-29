@@ -598,7 +598,7 @@
 		 "ZML Calculator helps you find the optimal loan<br>
                   It can be used to calculate apartment loan rates")))
 
-(htoot-handler (zml-calc-page-handler "/zml-express" ())
+(htoot-handler (zml-express-page-handler "/zml-express" ())
   (zml-template (loan-express-page)))
 
 (htoot-handler (zml-calc-page-handler "/zml-calc" ())
