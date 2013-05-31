@@ -119,7 +119,8 @@
     (:style :type "text/css"
 	     (cl-who:str code))))
 
-(defun label-input (name &key val label (type "text") (size-attr "") disabled)
+(defun label-input (name &key val label (type "text") (size-attr "") disabled
+		    readonly)
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
     (:label :for (+s "input_" name)
@@ -129,7 +130,7 @@
 	    :class (+s "input_" name)
 	    :value (or (smake val) "")
 	    :name name :size size-attr
-	    :disabled disabled)))
+	    :disabled disabled :readonly readonly)))
 
 (defun label-textarea (name &key val label (rows 4) (cols 20))
   (cl-who:with-html-output-to-string 
@@ -1100,27 +1101,27 @@
 		(:option :value "0.63" "Grootbeschrijf 5%"))
        (str (+s
          (label-input "b10" :val "185000" :label "aankoopprijs")
-	 (label-input "b11" :val "0" :label "Notaris &amp; regk")
+	 (label-input "b11" :val "0" :label "Notaris &amp; regk" :readonly t)
 	 (label-input "b12" :val "0" :label "bijkomend voor renovatie")
 	 (label-input "b13" :val "0" :label "Kostprijs nieuwbouw (incl.btw)")
-	 (label-input "b15" :val "0" :label "subtotaal")
-	 (label-input "b16" :val "0" :label "hypotheekkosten")
-	 (label-input "b18" :val "0" :label "totaal")
+	 (label-input "b15" :val "0" :label "subtotaal" :readonly t)
+	 (label-input "b16" :val "0" :label "hypotheekkosten" :readonly t)
+	 (label-input "b18" :val "0" :label "totaal" :readonly t)
 	 (label-input "b19" :val "38500" :label "eigen inbreng")
-	 (label-input "b21" :val "0" :label "gevraagd kredietbedrag")
-	 (label-input "b22" :val "0" 
+	 (label-input "b21" :val "0" :label "gevraagd kredietbedrag" :readonly t)
+	 (label-input "b22" :val "0" :readonly t
 		      :label "Venale waard van het onroerend goed")
 	 (label-select "b25" :label "Aard van het pand"
            :options `(("grond") ("appartement") ("huis") ("villa")
 		      ("nieuwbouw") ("opbrengsteigendom") ("andere")))
 	 ;;(:button :type "button" :id "btn-calc" "Calculate")
-	 (label-input "calc-result" :val "0" :label "maandlast"))))
+	 (label-input "calc-result" :val "0" :label "maandlast" :readonly t))))
      (:div :class "float-left half step-1"
        (:h3 "klassieke lening")
        (str (+s
-         (label-input "b28" :val "0" :label "bedrag")
+         (label-input "b28" :val "0" :label "bedrag" :readonly t)
 	 (label-input "b29" :val "0.042" :label "Rentevoet")
-	 (label-input "b30" :val "0" :label "maandelijks rentevoet")
+	 (label-input "b30" :val "0" :label "maandelijks rentevoet" :readonly t)
 	 (label-select "b31" :label "Renteformule"
 	   :options (list "20 jaar vast"
 			  "25 jaar vast"
@@ -1141,6 +1142,15 @@
 	      ))
        (:button :type :button :id "add_loan_btn"
 		(str (re-tr :add-loan))))
+     (:div :class "step-4"
+	   (:h2 "Contactgegevens")
+	   (str (+s (label-input "email" :label "E-mail adres *")
+		    (label-input "gsmphone" :label "Gsmnummer *")
+		    (label-input "phone" :label "Telefoonnummer")
+		    (label-textarea "comment" :label "Comment" 
+				    :rows 10 :cols 40)))
+	   (:br :class "clearfloat")
+	   (:input :type :submit :value (re-tr :submit)))
      )
    (script-tag 
     (ps 
