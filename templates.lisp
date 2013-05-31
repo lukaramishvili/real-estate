@@ -1288,12 +1288,6 @@
 	   (:label :for (+ "input_" "cr_marital-" cr-id) "Burgerlijke stand *")
 	   (:select :name (+ "cr_marital-" cr-id) 
 		    :id (+ "input_" "cr_marital-" cr-id)
-	       (:option :value 1 "Arbeider") (:option :value 2 "Bediende ")
-	       (:option :value 3 "Vrij beroep ") (:option :value 4 "Handelaar")
-	       (:option :value 5 "Bedrijfsleider") (:option :value 6 "Ambtenaar")
-	       (:option :value 7 "Diplomaat") (:option :value 8 "Zelfstandig"))
-	   (:label :for (+ "input_" "cr_-" cr-id) "Burgerlijke stand *")
-	   (:select :name (+ "cr_-" cr-id) :id (+ "input_" "cr_-" cr-id)
 	       (:option :value 1 "Ongehuwd")
 	       (:option :value 2 "Gehuwd")
 	       (:option :value 3 "Echtgescheiden")
@@ -1303,6 +1297,36 @@
 	       (:option :value 7 "Wettelijk samenwonend")
 	       (:option :value 8 "Weduwe")
 	       (:option :value 9 "Weduwnaar"))
+	   (:label :for (+ "input_" "cr_-" cr-id) "Worker type *")
+	   (:select :name (+ "cr_-" cr-id) :id (+ "input_" "cr_-" cr-id)
+	       (:option :value 1 "Arbeider") (:option :value 2 "Bediende ")
+	       (:option :value 3 "Vrij beroep ") (:option :value 4 "Handelaar")
+	       (:option :value 5 "Bedrijfsleider") (:option :value 6 "Ambtenaar")
+	       (:option :value 7 "Diplomaat") (:option :value 8 "Zelfstandig"))
+	   (:div :id (+ "cr_worker_type_div_" cr-id "-" 1)
+		 :class "worker_type_div"
+		 "Arbeider fields here")
+	   (:div :id (+ "cr_worker_type_div_" cr-id "-" 2)
+		 :class "worker_type_div"
+		 "Bediende fields here")
+	   (:div :id (+ "cr_worker_type_div_" cr-id "-" 3)
+		 :class "worker_type_div"
+		 "Vrij beroep fields here")
+	   (:div :id (+ "cr_worker_type_div_" cr-id "-" 4)
+		 :class "worker_type_div"
+		 "Handelaar fields here")
+	   (:div :id (+ "cr_worker_type_div_" cr-id "-" 5)
+		 :class "worker_type_div"
+		 "Bedrijfsleider fields here")
+	   (:div :id (+ "cr_worker_type_div_" cr-id "-" 6)
+		 :class "worker_type_div"
+		 "Ambtenaar fields here")
+	   (:div :id (+ "cr_worker_type_div_" cr-id "-" 7)
+		 :class "worker_type_div"
+		 "Diplomaat fields here")
+	   (:div :id (+ "cr_worker_type_div_" cr-id "-" 8)
+		 :class "worker_type_div"
+		 "Zelfstandig fields here")
 	   )))
       (defun next-creditor-id ()
 	  (let ((retval 1))
