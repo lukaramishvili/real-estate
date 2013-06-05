@@ -294,6 +294,58 @@
   (:metaclass dao-class)
   (:keys ix-fav))
 
+(defun zml-app-type-options (&key not-sel)
+  (concatenate 'list 
+	       (if not-sel (list "*" "*"))
+  (list (list "express" "Express") (list "advanced" "Advanced"))))
+
+(defclass zml-app ()
+  ((ix-zml-app :col-type serial :initarg :ix-zml-app :accessor ix-zml-app)
+   (:app-type :col-type string :initarg :app-type :accessor app-type 
+	      :initform "")
+   ;; common fields - used both in express and advanced applications
+   (:first-name :col-type string :initarg :first-name :accessor first-name 
+		:initform "")
+   (:last-name :col-type string :initarg :last-name :accessor last-name 
+	       :initform "")
+   (:email :col-type string :initarg :email :accessor email :initform "")
+   (:phone :col-type string :initarg :phone :accessor phone :initform "")
+   ;; express fields
+   (:amount :col-type string :initarg :amount :accessor amount :initform "")
+   (:start :col-type bigint :initarg :start :accessor start :initform "")
+   (:end :col-type bigint :initarg :end :accessor end :initform "")
+   (:formula :col-type string :initarg :formula :accessor formula :initform "")
+   ;; advanced fields - calculator
+   (:b9 :col-type string :initarg :b9 :accessor b9 :initform "")
+   (:b10 :col-type string :initarg :b10 :accessor b10 :initform "")
+   (:b11 :col-type string :initarg :b11 :accessor b11 :initform "")
+   (:b12 :col-type string :initarg :b12 :accessor b12 :initform "")
+   (:b13 :col-type string :initarg :b13 :accessor b13 :initform "")
+   (:b15 :col-type string :initarg :b15 :accessor b15 :initform "")
+   (:b16 :col-type string :initarg :b16 :accessor b16 :initform "")
+   (:b18 :col-type string :initarg :b18 :accessor b18 :initform "")
+   (:b19 :col-type string :initarg :b19 :accessor b19 :initform "")
+   (:b21 :col-type string :initarg :b21 :accessor b21 :initform "")
+   (:b22 :col-type string :initarg :b22 :accessor b22 :initform "")
+   (:b25 :col-type string :initarg :b25 :accessor b25 :initform "")
+   (:b28 :col-type string :initarg :b28 :accessor b28 :initform "")
+   (:b29 :col-type string :initarg :b29 :accessor b29 :initform "")
+   (:b30 :col-type string :initarg :b30 :accessor b30 :initform "")
+   (:b31 :col-type string :initarg :b31 :accessor b31 :initform "")
+   (:b32 :col-type string :initarg :b32 :accessor b32 :initform "")
+   (:calc-result :col-type string :initarg :calc-result :accessor calc-result 
+		 :initform "")
+   ;; advanced fields - contact fields
+   ;; email and phone are included in common fields
+   (:gsm-phone :col-type string :initarg :gsm-phone :accessor gsm-phone
+	       :initform "")
+   (:comment :col-type string :initarg :comment :accessor comment :initform "")
+   )
+  (:metaclass dao-class)
+  (:keys ix-zml-app))
+
+;;TODO: defclass zml-creditor and zml-loan
+
 (defun user-has-fav (ix-user ix-estate)
   (< 0
      (with-re-db 

@@ -1144,7 +1144,9 @@
 		(str (re-tr :add-loan))))
      (:div :class "step-4"
 	   (:h2 "Contactgegevens")
-	   (str (+s (label-input "email" :label "E-mail adres *")
+	   (str (+s (label-input "first-name" :label "First name")
+		    (label-input "last-name" :label "Last name")
+		    (label-input "email" :label "E-mail adres *")
 		    (label-input "gsmphone" :label "Gsmnummer *")
 		    (label-input "phone" :label "Telefoonnummer")
 		    (label-textarea "comment" :label "Comment" 
