@@ -131,6 +131,10 @@
   (setf (hunchentoot:content-type*) "text/css")
   (re-gen-css))
 
+(htoot-handler (re-formulas-js-handler "/formulas.js" ())
+  (setf (hunchentoot:content-type*) "text/javascript")
+  (re-formulas-js))
+
 (htoot-handler (re-js-handler "/main.js" ())
   (setf (hunchentoot:content-type*) "text/javascript")
   (re-main-js))

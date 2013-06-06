@@ -9,6 +9,26 @@
 (defpsmacro += (var &rest what-to-append)
       `(setf ,var (+ ,var ,@what-to-append)))
 
+(defun re-formulas-js ()
+  (ps
+    (defun pmt (Rate Nper Pv &optional (Fv 0) (Type nil))
+      "shamelessly copied from http://svn.apache.org/repos/asf/poi/trunk/src/java/org/apache/poi/ss/formula/functions/FinanceLib.java"
+      (if (= Rate 0)
+	  (- (/ (+ Fv Pv) Nper))
+	  (let ((r1 (1+ Rate)))
+	    (/
+	     (* (+ Fv (* Pv (expt r1 Nper))) Rate)
+	     (* (if Type r1 1) (- 1 (expt r1 Nper)))))))
+    (defun pv (Rate Nper payment &optional (Fv 0) (Type nil))
+      "also shamelessly copied from http://svn.apache.org/repos/asf/poi/trunk/src/java/org/apache/poi/ss/formula/functions/FinanceLib.java"
+      (if (= Rate 0)
+	  (* -1 (+ (* Nper payment) Fv))
+	  (let ((r1 (+ Rate 1)))
+	    (/ (- (* (/ (- 1 (-Math.pow r1 Nper))
+			Rate)
+		     (if Type r1 1) payment) Fv)
+	       (-math.pow r1 Nper)))))))
+
 (defun re-main-js ()
   (+s 
    "

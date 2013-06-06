@@ -253,6 +253,7 @@
 	"js/jquery-ui-1.8.21.custom.min.js"
 	"js/jquery.fancybox.pack.js"
 	"js/jquery.mousewheel.min.js"
+	"formulas.js"
 	"http://maps.googleapis.com/maps/api/js?key=AIzaSyDl2UEh2szaf3AjDf24cj4AFN-7a0oIUM0&sensor=false"))
 
 ;;;re-specific templates
@@ -1154,16 +1155,8 @@
 	   (:br :class "clearfloat")
 	   (:input :type :submit :value (re-tr :submit)))
      )
-   (script-tag 
-    (ps 
-      (defun pmt (Rate Nper Pv &optional (Fv 0) (Type nil))
-	"shamelessly copied from http://svn.apache.org/repos/asf/poi/trunk/src/java/org/apache/poi/ss/formula/functions/FinanceLib.java"
-      (if (= Rate 0)
-	  (- (/ (+ Fv Pv) Nper))
-	  (let ((r1 (1+ Rate)))
-	    (/
-	     (* (+ Fv (* Pv (expt r1 Nper))) Rate)
-	     (* (if Type r1 1) (- 1 (expt r1 Nper)))))))
+   (script-tag
+    (ps
       (defun calculate-b30 (b29)
 	(- (expt (1+ b29) (/ 1 12)) 1))
       (defun calculate-loan (params)

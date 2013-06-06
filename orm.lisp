@@ -344,7 +344,44 @@
   (:metaclass dao-class)
   (:keys ix-zml-app))
 
-;;TODO: defclass zml-creditor and zml-loan
+(defclass zml-creditor ()
+  ((ix-zml-creditor :col-type serial :initarg :ix-zml-creditor
+		    :accessor ix-zml-creditor)
+   (:name :col-type string :initarg :name :accessor name :initform "")
+   (:birth :col-type bigint :initarg :birth :accessor birth :initform "")
+   (:regnum :col-type string :initarg :regnum :accessor regnum :initform "")
+   (:street :col-type string :initarg :street :accessor street :initform "")
+   (:city :col-type string :initarg :city :accessor city :initform "")
+   (:postcode :col-type string :initarg :postcode :accessor postcode 
+	      :initform "")
+   (:marital :col-type string :initarg :marital :accessor marital :initform "")
+   (:worker-type :col-type integer :initarg :worker-type :accessor worker-type
+		 :initform "")
+   ;; TODO: fields for each worker-type (arbeider bediende etc.)
+   )
+  (:metaclass dao-class)
+  (:keys ix-zml-creditor))
+
+(defclass zml-loan ()
+  ((ix-zml-loan :col-type serial :initarg :ix-zml-loan :accessor ix-zml-loan)
+   (:type :col-type string :initarg :type :accessor type :initform "")
+   (:bank :col-type string :initarg :bank :accessor bank :initform "")
+   (:amount :col-type string :initarg :amount :accessor amount :initform "")
+   (:outstanding :col-type string :initarg :outstanding :accessor outstanding
+		 :initform "")
+   (:start-date :col-type string :initarg :start-date :accessor start-date
+		:initform "")
+   (:maturity :col-type string :initarg :maturity :accessor maturity
+	      :initform "")
+   (:interest-rate :col-type string :initarg :interest-rate
+		   :accessor interest-rate :initform "")
+   (:monthly-payment :col-type string :initarg :monthly-payment 
+		     :accessor monthly-payment :initform "")
+   (:take-over :col-type string :initarg :take-over :accessor take-over
+	       :initform ""))
+  (:metaclass dao-class)
+  (:keys ix-zml-loan))
+
 
 (defun user-has-fav (ix-user ix-estate)
   (< 0
