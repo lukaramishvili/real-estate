@@ -694,6 +694,8 @@
 		     :label (re-tr :country) :val 1)
        (label-input "price-min" :label (re-tr :lbl-price-min) :size-attr 4)
        (label-input "price-max" :label (re-tr :lbl-price-max) :size-attr 4)
+       (label-input "desired-monthly-pay" :label (re-tr :desired-monthly-pay)
+		    :size-attr 6)
        (label-input "bedrooms-min" :label (re-tr :lbl-bedrooms-min) :size-attr 4)
        (label-input "bedrooms-max" :label (re-tr :lbl-bedrooms-max) :size-attr 4)
        (label-input "postcode-1" :label (re-tr :lbl-postcode-1) :size-attr 4)
