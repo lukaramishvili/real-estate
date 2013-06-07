@@ -24,10 +24,10 @@
       (if (= Rate 0)
 	  (* -1 (+ (* Nper payment) Fv))
 	  (let ((r1 (+ Rate 1)))
-	    (/ (- (* (/ (- 1 (-Math.pow r1 Nper))
+	    (/ (- (* (/ (- 1 (expt r1 Nper))
 			Rate)
 		     (if Type r1 1) payment) Fv)
-	       (-math.pow r1 Nper)))))))
+	       (expt r1 Nper)))))))
 
 (defun re-main-js ()
   (+s 

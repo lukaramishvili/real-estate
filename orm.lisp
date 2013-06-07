@@ -503,6 +503,13 @@
 	       '(:= :apt-type (car (assoc :apt-type f-a))))))
 	))))
 
+(defun max-e-price-for-dmp (dmp) ; dmp is b27
+  "Calculates how costly house you can buy by paying no more than ,dmp monthly"
+  (let* ((apr 0.0375) ; apr = annual percentage rate, b28
+	 (mir (- (expt (1+ apr) 1/12) 1)) ; mir = monthly interest rate, b29
+	 (duration 300)) ; duration, in months, b30
+    (- (pv mir duration dmp))))
+
 (defun filter-estates (filters-alist &key (count 10000) (offset 0))
   (let* ((fa filters-alist)
 	 (ix-user (cdr (assoc :ix-user fa)))
@@ -515,6 +522,7 @@
 	 (total-max (cdr (assoc :total-max fa)))
 	 (price-min (cdr (assoc :price-min fa)))
 	 (price-max (cdr (assoc :price-max fa)))
+	 (desired-monthly-pay (cdr (assoc :desired-monthly-pay fa)))
 	 (bedrooms-min (cdr (assoc :bedrooms-min fa)))
 	 (bedrooms-max (cdr (assoc :bedrooms-max fa)))
 	 (bathrooms-min (cdr (assoc :bathrooms-min fa)))
@@ -550,6 +558,14 @@
 	    ,(if total-max `(:<= :total ,total-max) t)
 	    ,(if price-min `(:>= :price ,price-min) t)
 	    ,(if price-max `(:<= :price ,price-max) t)
+	    ;;desired monthly pay calculates maximum estate price (m.e.p) which 
+	    ;;can be purchased by paying no more than d.m.p amount monthly.
+	    ;;if both d.m.p. and price-max filters exist, then just find estates
+	    ;;with both (> price price-max) [above] and (> price m.e.p) [below]
+	    ,(if desired-monthly-pay 
+		 `(:<= :price ,(max-e-price-for-dmp 
+				(read-from-string desired-monthly-pay)))
+		 t)
 	    ,(if bedrooms-min `(:>= :bedrooms ,bedrooms-min) t)
 	    ,(if bedrooms-max `(:<= :bedrooms ,bedrooms-max) t)
 	    ,(if bathrooms-min `(:>= :bathrooms ,bathrooms-min) t)
@@ -567,10 +583,10 @@
 	    ,(if (or (spec-f-p postcode-1)
 		     (spec-f-p postcode-2)
 		     (spec-f-p postcode-3)) 
-		 `(:or ,(if (spec-f-p postcode-1) `(:= :pst-code ,postcode-1) nil)
-		       ,(if (spec-f-p postcode-2) `(:= :pst-code ,postcode-2) nil)
-		       ,(if (spec-f-p postcode-3) `(:= :pst-code ,postcode-3) nil)) 
-		 t)
+	       `(:or ,(if (spec-f-p postcode-1) `(:= :pst-code ,postcode-1) nil)
+		     ,(if (spec-f-p postcode-2) `(:= :pst-code ,postcode-2) nil)
+		     ,(if (spec-f-p postcode-3) `(:= :pst-code ,postcode-3) nil))
+	       t)
 	    ))
 	  ,count ,offset))))))
 
