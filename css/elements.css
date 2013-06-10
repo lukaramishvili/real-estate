@@ -64,6 +64,18 @@ li{
 }
 
 @font-face {
+	font-family: 'Roboto Light';
+	src: url('fonts/Roboto-Light.eot');
+	src: local('Roboto Light'), local('Roboto Light'), url('fonts/Roboto-Light.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Alte Haas Grotesk';
+	src: url('fonts/AlteHaasGroteskRegular.eot');
+	src: local('Alte Haas Grotesk'), local('Alte Haas Grotesk'), url('fonts/AlteHaasGroteskRegular.ttf') format('truetype');
+}
+
+@font-face {
       font-family: Helvetica63ExtendedMedium;
       src: url(Helvetica63-ExtendedMedium.ttf);
 }

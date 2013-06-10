@@ -1058,11 +1058,12 @@
      (:div :id "zml-header"
          (:div :id "zml-header-in"
 	   (:div :id "zml-menu"
-	       (:a :href "/zml-calc" "About the calculator")
-	       (:a :href "/zml-about" "Zoek Mijn Lening")
-	       (:a :href "/zml-contact" "Contact us"))
+	       (:a :href "/zml-home" "Home")
+	       (:a :href "/zml-about" "About Zoek Mijn Lening")
+	       (:a :href "/zml-express" "Express loan form")
+	       (:a :href "/zml-calc" "Advanced Loan Calculator"))
 	   (:div :id "zml-header-title"
-		 "Zoek Mijn Lening")))
+	       (:a :href "/zml-contact" "Contact us"))))
      (:div :id "zml-main"
        (:div :id "zml-content"
 	     (cl-who:str page))
