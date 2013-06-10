@@ -54,7 +54,7 @@ h2 { margin-bottom:10px; font-size:24px; }
 h3 { margin-bottom:10px; font-size:20px; }
 h4 { clear:both; margin-bottom:10px; font-size:16px; }
 h1 { color:#2D2939; font-size:30px; line-height:30px; }
-h2 { margin-top:16px; margin-bottom:30px; }
+h2, h3 { margin-top:16px; margin-bottom:30px; }
 
 label, input, select, textarea { display:block; float:left; margin-bottom:12px; }
 button { display:block; clear:both; margin-bottom:12px; }
