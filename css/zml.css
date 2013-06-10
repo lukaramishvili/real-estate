@@ -13,18 +13,28 @@ li{ list-style-position:outside; list-style-image:url(bullet.gif); color:#000;
 .AbsWrap { width: 100%;	position: relative; }
 .rowWrap { width: 100%;}
 
+body { background:transparent url(img/zml_body_bg.png) left top repeat; 
+       background:#f2f2f2; background-image:none;
+}
 #zml-main {
     width:1024px; margin: 0 auto; border:0px solid #f0f0f0;
+    background-color:white; box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
-#zml-header {
-    width:936px; padding-top:0px; height:74px; margin:19px 0px 0px 36px;
-    float:left; display:inline; border-bottom:1px solid #CCCCCC;
+#zml-header { width:100%; height:49px;
+    background:transparent url(img/zml_header_bg.png) left top repeat;
 }
-#zml-menu { float:left; margin:42px 0px 0px 0px; }
-#zml-menu a { display:block; float:left; margin-right:12px; font-size:16px; }
+#zml-header-in {
+    width:936px; padding-top:0px; height:49px; 
+    padding:0px 0px 0px 36px; margin:0 auto;
+    display:block; /*border-bottom:1px solid #CCCCCC;*/
+}
+#zml-menu { float:left; /*margin:42px 0px 0px 0px;*/ }
+#zml-menu a { display:block; float:left; margin-right:12px; font-size:12px;
+	    color:white; line-height:49px; font-family:Helvetica Bold, Arial; 
+	    font-weight:bold; }
 #zml-menu a:hover { color:#FF5F49; text-decoration:underline; }
-#zml-header-title { color:#2D293A; font-family:Georgia,Nimbus Roman No9 L;
-    font-size:42px; float:right; margin-top:18px; }
+#zml-header-title { color:white; font-family:Georgia,Nimbus Roman No9 L;
+    font-size:16px; float:right; line-height:49px; }
 #zml-content {
     width:936px; padding:0px 0px 0px 3px; min-height:423px;
     margin:0px 0px 0px 36px; float:left; display:inline;
@@ -48,9 +58,16 @@ label.label-left { clear: left; }
 label.label-right { clear: right; }
 input[type='checkbox'] { clear:left;}
 input[type='text'], select { width:160px; }
+.simple-blue-button {
+    background: -moz-linear-gradient(center top , #4AA6D6, #207DAA) repeat scroll 0 0 transparent; border-radius: 5px 5px 5px 5px; color: white; font-size: 15px;
+    border:medium none; padding: 5px 25px;
+    margin-top:5px;
+}
 
 
-.zml-home-button { display:block; margin-right:20px; float:left; }
+.zml-home-button { display:block; margin-right:20px; float:left;
+    cursor:pointer;
+}
 
 .zml-home-button.white {
 	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;

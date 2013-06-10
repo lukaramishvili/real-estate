@@ -1053,22 +1053,24 @@
 	       :css-files (generic-css-files)
 	       :js-files (generic-js-files)
 	       :more (html-out (:link :rel "stylesheet" :href "css/zml.css")))
-   :body 
+   :body
    (html-out
+     (:div :id "zml-header"
+         (:div :id "zml-header-in"
+	   (:div :id "zml-menu"
+	       (:a :href "/zml-calc" "About the calculator")
+	       (:a :href "/zml-about" "Zoek Mijn Lening")
+	       (:a :href "/zml-contact" "Contact us"))
+	   (:div :id "zml-header-title"
+		 "Zoek Mijn Lening")))
      (:div :id "zml-main"
-	   (:div :id "zml-header"
-		 (:div :id "zml-menu"
-		       (:a :href "/zml-calc" "About the calculator")
-		       (:a :href "/zml-about" "Zoek Mijn Lening")
-		       (:a :href "/zml-contact" "Contact us"))
-		 (:div :id "zml-header-title"
-		       "Zoek Mijn Lening"))
-	   (:div :id "zml-content"
-		 (cl-who:str page))
-	   (:div :id "zml-footer"
-		 (cl-who:str (+s
-			      "Copyright 2013 &copy; Zoek Mijn Lening LLC"
-			      )))))))
+       (:div :id "zml-content"
+	     (cl-who:str page))
+       (:div :id "zml-footer"
+	     (cl-who:str (+s
+			  "Copyright 2013 &copy; Zoek Mijn Lening LLC"
+			  )))
+       (:br :class "clearfloat")))))
 
 (defun loan-express-page ()
   (html-out
@@ -1134,7 +1136,8 @@
 	 (label-input "b32" :val "360" :label "looptijd (maanden)"))))
      (:div :id "creditors_div" :class "step-2"
 	   (:h2 "Kredietaanvragers")
-	   (:button :type :button :id "add_creditor_btn"
+	   (:button :type "button" :id "add_creditor_btn" 
+		    :class "simple-blue-button"
 		    (str (re-tr :add-creditor))))
      (:div :id "loans_div" :class "step-3"
        (:h2 "Maandelijkse lasten")
@@ -1143,7 +1146,7 @@
 	      (:th "openstaand saldo") (:th "begindatum") (:th "looptijd") 
 	      (:th "rentevoet %") (:th "maandlast") (:th "Overnemen")
 	      ))
-       (:button :type :button :id "add_loan_btn"
+       (:button :type "button" :id "add_loan_btn" :class "simple-blue-button"
 		(str (re-tr :add-loan))))
      (:div :class "step-4"
 	   (:h2 "Contactgegevens")
@@ -1155,7 +1158,8 @@
 		    (label-textarea "comment" :label "Comment" 
 				    :rows 10 :cols 40)))
 	   (:br :class "clearfloat")
-	   (:input :type :submit :value (re-tr :submit)))
+	   (:input :type :submit :class "zml-home-button blue"
+		   :value (re-tr :submit)))
      )
    (script-tag
     (ps
