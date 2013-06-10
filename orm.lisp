@@ -301,45 +301,45 @@
 
 (defclass zml-app ()
   ((ix-zml-app :col-type serial :initarg :ix-zml-app :accessor ix-zml-app)
-   (:app-type :col-type string :initarg :app-type :accessor app-type 
+   (app-type :col-type string :initarg :app-type :accessor app-type 
 	      :initform "")
    ;; common fields - used both in express and advanced applications
-   (:first-name :col-type string :initarg :first-name :accessor first-name 
+   (first-name :col-type string :initarg :first-name :accessor first-name 
 		:initform "")
-   (:last-name :col-type string :initarg :last-name :accessor last-name 
+   (last-name :col-type string :initarg :last-name :accessor last-name 
 	       :initform "")
-   (:email :col-type string :initarg :email :accessor email :initform "")
-   (:phone :col-type string :initarg :phone :accessor phone :initform "")
+   (email :col-type string :initarg :email :accessor email :initform "")
+   (phone :col-type string :initarg :phone :accessor phone :initform "")
    ;; express fields
-   (:amount :col-type string :initarg :amount :accessor amount :initform "")
-   (:start :col-type bigint :initarg :start :accessor start :initform "")
-   (:end :col-type bigint :initarg :end :accessor end :initform "")
-   (:formula :col-type string :initarg :formula :accessor formula :initform "")
+   (amount :col-type string :initarg :amount :accessor amount :initform "")
+   (start :col-type bigint :initarg :start :accessor start :initform "")
+   (end :col-type bigint :initarg :end :accessor end :initform "")
+   (formula :col-type string :initarg :formula :accessor formula :initform "")
    ;; advanced fields - calculator
-   (:b9 :col-type string :initarg :b9 :accessor b9 :initform "")
-   (:b10 :col-type string :initarg :b10 :accessor b10 :initform "")
-   (:b11 :col-type string :initarg :b11 :accessor b11 :initform "")
-   (:b12 :col-type string :initarg :b12 :accessor b12 :initform "")
-   (:b13 :col-type string :initarg :b13 :accessor b13 :initform "")
-   (:b15 :col-type string :initarg :b15 :accessor b15 :initform "")
-   (:b16 :col-type string :initarg :b16 :accessor b16 :initform "")
-   (:b18 :col-type string :initarg :b18 :accessor b18 :initform "")
-   (:b19 :col-type string :initarg :b19 :accessor b19 :initform "")
-   (:b21 :col-type string :initarg :b21 :accessor b21 :initform "")
-   (:b22 :col-type string :initarg :b22 :accessor b22 :initform "")
-   (:b25 :col-type string :initarg :b25 :accessor b25 :initform "")
-   (:b28 :col-type string :initarg :b28 :accessor b28 :initform "")
-   (:b29 :col-type string :initarg :b29 :accessor b29 :initform "")
-   (:b30 :col-type string :initarg :b30 :accessor b30 :initform "")
-   (:b31 :col-type string :initarg :b31 :accessor b31 :initform "")
-   (:b32 :col-type string :initarg :b32 :accessor b32 :initform "")
-   (:calc-result :col-type string :initarg :calc-result :accessor calc-result 
+   (b9 :col-type string :initarg :b9 :accessor b9 :initform "")
+   (b10 :col-type string :initarg :b10 :accessor b10 :initform "")
+   (b11 :col-type string :initarg :b11 :accessor b11 :initform "")
+   (b12 :col-type string :initarg :b12 :accessor b12 :initform "")
+   (b13 :col-type string :initarg :b13 :accessor b13 :initform "")
+   (b15 :col-type string :initarg :b15 :accessor b15 :initform "")
+   (b16 :col-type string :initarg :b16 :accessor b16 :initform "")
+   (b18 :col-type string :initarg :b18 :accessor b18 :initform "")
+   (b19 :col-type string :initarg :b19 :accessor b19 :initform "")
+   (b21 :col-type string :initarg :b21 :accessor b21 :initform "")
+   (b22 :col-type string :initarg :b22 :accessor b22 :initform "")
+   (b25 :col-type string :initarg :b25 :accessor b25 :initform "")
+   (b28 :col-type string :initarg :b28 :accessor b28 :initform "")
+   (b29 :col-type string :initarg :b29 :accessor b29 :initform "")
+   (b30 :col-type string :initarg :b30 :accessor b30 :initform "")
+   (b31 :col-type string :initarg :b31 :accessor b31 :initform "")
+   (b32 :col-type string :initarg :b32 :accessor b32 :initform "")
+   (calc-result :col-type string :initarg :calc-result :accessor calc-result 
 		 :initform "")
    ;; advanced fields - contact fields
    ;; email and phone are included in common fields
-   (:gsm-phone :col-type string :initarg :gsm-phone :accessor gsm-phone
+   (gsm-phone :col-type string :initarg :gsm-phone :accessor gsm-phone
 	       :initform "")
-   (:comment :col-type string :initarg :comment :accessor comment :initform "")
+   (comment :col-type string :initarg :comment :accessor comment :initform "")
    )
   (:metaclass dao-class)
   (:keys ix-zml-app))
@@ -347,15 +347,15 @@
 (defclass zml-creditor ()
   ((ix-zml-creditor :col-type serial :initarg :ix-zml-creditor
 		    :accessor ix-zml-creditor)
-   (:name :col-type string :initarg :name :accessor name :initform "")
-   (:birth :col-type bigint :initarg :birth :accessor birth :initform "")
-   (:regnum :col-type string :initarg :regnum :accessor regnum :initform "")
-   (:street :col-type string :initarg :street :accessor street :initform "")
-   (:city :col-type string :initarg :city :accessor city :initform "")
-   (:postcode :col-type string :initarg :postcode :accessor postcode 
+   (name :col-type string :initarg :name :accessor name :initform "")
+   (birth :col-type bigint :initarg :birth :accessor birth :initform "")
+   (regnum :col-type string :initarg :regnum :accessor regnum :initform "")
+   (street :col-type string :initarg :street :accessor street :initform "")
+   (city :col-type string :initarg :city :accessor city :initform "")
+   (postcode :col-type string :initarg :postcode :accessor postcode 
 	      :initform "")
-   (:marital :col-type string :initarg :marital :accessor marital :initform "")
-   (:worker-type :col-type integer :initarg :worker-type :accessor worker-type
+   (marital :col-type string :initarg :marital :accessor marital :initform "")
+   (worker-type :col-type integer :initarg :worker-type :accessor worker-type
 		 :initform "")
    ;; TODO: fields for each worker-type (arbeider bediende etc.)
    )
@@ -364,21 +364,21 @@
 
 (defclass zml-loan ()
   ((ix-zml-loan :col-type serial :initarg :ix-zml-loan :accessor ix-zml-loan)
-   (:type :col-type string :initarg :type :accessor type :initform "")
-   (:bank :col-type string :initarg :bank :accessor bank :initform "")
-   (:amount :col-type string :initarg :amount :accessor amount :initform "")
-   (:outstanding :col-type string :initarg :outstanding :accessor outstanding
+   (type :col-type string :initarg :type :accessor type :initform "")
+   (bank :col-type string :initarg :bank :accessor bank :initform "")
+   (amount :col-type string :initarg :amount :accessor amount :initform "")
+   (outstanding :col-type string :initarg :outstanding :accessor outstanding
 		 :initform "")
-   (:start-date :col-type string :initarg :start-date :accessor start-date
+   (start-date :col-type string :initarg :start-date :accessor start-date
 		:initform "")
-   (:maturity :col-type string :initarg :maturity :accessor maturity
+   (maturity :col-type string :initarg :maturity :accessor maturity
 	      :initform "")
-   (:interest-rate :col-type string :initarg :interest-rate
+   (interest-rate :col-type string :initarg :interest-rate
 		   :accessor interest-rate :initform "")
-   (:monthly-payment :col-type string :initarg :monthly-payment 
+   (monthly-payment :col-type string :initarg :monthly-payment 
 		     :accessor monthly-payment :initform "")
-   (:take-over :col-type string :initarg :take-over :accessor take-over
-	       :initform ""))
+   (take-over :col-type string :initarg :take-over :accessor take-over
+	      :initform ""))
   (:metaclass dao-class)
   (:keys ix-zml-loan))
 
