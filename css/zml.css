@@ -30,8 +30,10 @@ body { background:transparent url(img/zml_body_bg.png) left top repeat;
 	    color:white; line-height:49px; font-family:Helvetica Bold, Arial; 
 	    font-weight:bold; }
 #zml-menu a:hover { color:#FF5F49; text-decoration:underline; }
-#zml-header-title { color:white; font-family:Georgia,Nimbus Roman No9 L;
-    font-size:16px; float:right; line-height:49px; }
+#zml-header-title { color:white; /*font-family:Georgia,Nimbus Roman No9 L;*/
+    font-size:12px; font-family:Helvetica Bold, Arial; font-weight:bold;
+    /*font-size:16px;*/ float:right; line-height:49px; }
+#zml-header-title:hover { color:#FF5F49; text-decoration:underline; }
 #zml-content {
     width:936px; padding:0px 0px 0px 3px; min-height:423px;
     margin:0px 0px 0px 36px; float:left; display:inline;
