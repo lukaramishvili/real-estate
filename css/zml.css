@@ -76,7 +76,7 @@ input[readonly] { color:#777; }
 
 label, input, select, textarea { font-size:14px;
     font-family:Helvetica Neue, Roboto Light, Verdana, Arial;
-    text-transform:capitalize;
+    /*text-transform:capitalize;*/
 }
 label { font-weight:bold; }
 input, select, textarea { color:#232323; }

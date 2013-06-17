@@ -1080,16 +1080,24 @@
 	(:h1 "Express loan request")
 	(:br)
         (str (+s
-	  (label-input "first-name")
-	  (label-input "last-name")
-	  (label-input "phone")
-	  (label-input "email")
-	  (label-input "amount")
-	  (label-datepicker "start")
-	  (label-datepicker "end")
-	  (label-select "formula"
-	    :options `((1 "Long-term formula")
-		       (2 "Short-term formula")))))
+	  (label-input "full-name" :label "Naam &amp; voornaam")
+	  (label-input "postcode" :label "Postcode")
+	  (label-input "phone" :label "Gsmnummer")
+	  (label-input "email" :label "E-mail adres")
+	  (label-input "amount" :label "Gevraagd kredietbedrag")
+	  (label-datepicker "years" :label "Looptijd (aantal jaren)")
+	  (label-select "formula" :label "Rente formule"
+	    :options `((2.82 "1/1") (2.98 "3/3") (3.28 "5/5")
+		       (3.69 "10/5") (3.89 "15/5") (4 "Vast")))
+	  (label-input "interest-rate" :label "Rentevoet" :readonly t)
+	  (label-input "monthly-payment" :label "Maandlast" :readonly t)))
+	(str (script-tag 
+	      (ps ($$ "#input_formula" 
+		      (change (lambda ()
+				($$ "#input_interest-rate"
+				    (val ($$ this (val))))))
+		      (change)))))
+	(str (label-textarea "data" :label "Data"))
 	(:br :class "clearfloat")
 	(:input :type :submit :value "Submit")
     ))))
@@ -1299,6 +1307,7 @@
 	       (:option :value 7 "Wettelijk samenwonend")
 	       (:option :value 8 "Weduwe")
 	       (:option :value 9 "Weduwnaar"))
+	   (:br)
 	   (:label :for (+ "input_" "cr_worker_type-" cr-id) "Worker type *")
 	   (:select :name (+ "cr_worker_type-" cr-id) 
 		    :id (+ "input_" "cr_worker_type-" cr-id)
@@ -1306,6 +1315,7 @@
 	       (:option :value 3 "Vrij beroep") (:option :value 4 "Handelaar")
 	       (:option :value 5 "Bedrijfsleider") (:option :value 6 "Ambtenaar")
 	       (:option :value 7 "Diplomaat") (:option :value 8 "Zelfstandig"))
+	   (:br)
 	   (:div :id (+ "cr_worker_type_div_" cr-id "-" 1)
 		 :class "worker_type_div"
 	     (:label :for (+ "cr_wt_1_contract_type-" cr-id)
