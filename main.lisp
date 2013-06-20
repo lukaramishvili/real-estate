@@ -614,13 +614,14 @@
                               Tel: 0995 568 12 31 14")))
 
 
-(htoot-handler (zml-submit-page-handler "/zml-submit-express"
+(htoot-handler (zml-submit-express-page-handler "/zml-submit-express"
     ())
   (format nil "~a" 
 	  "todo 1. POST parameters 2. saving them to db 3. emailing them"))
 
 
-(htoot-handler (zml-submit-page-handler "/zml-submit-advanced"
-    ())
+(htoot-handler (zml-submit-advanced-page-handler "/zml-submit-advanced"
+    ((adv-form-result :parameter-type 'string)))
   (format nil "~a" 
-	  "todo 1. POST parameters 2. saving them to db 3. emailing them"))
+    (+s adv-form-result
+	"todo 1. POST parameters 2. saving them to db 3. emailing them")))

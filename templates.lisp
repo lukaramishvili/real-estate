@@ -1105,6 +1105,7 @@
 (defun loan-calc-page ()
   (+s 
    (html-out
+    (:form :method "post" :action "/zml-submit-advanced" :id "zml-adv-form"
      (:h1 "Calculate monthly/yearly loan rate")
      
      (:div :class "float-left half step-1"
@@ -1167,9 +1168,11 @@
 		    (label-textarea "comment" :label "Comment" 
 				    :rows 10 :cols 40)))
 	   (:br :class "clearfloat")
-	   (:input :type :submit :class "zml-home-button blue"
+	   (:input :type "hidden" :name "adv-form-result"
+		   :id "input_adv-form-result" :val "")
+	   (:input :type "submit" :class "zml-home-button blue"
 		   :value (re-tr :submit)))
-     )
+     ))
    (script-tag
     (ps
       (defun calculate-b30 (b29)
@@ -1549,6 +1552,29 @@
 	(click (lambda ()
           ($$ "#loans_table" (append (gen-loan (next-loan-id))))))
 	(click))
+      ($$ "#zml-adv-form" (submit (lambda ()
+          (let ((filled ($$ "#zml-adv-form" (clone))))
+	    ($$ filled (find "script,button,input[type='button']") (remove))
+	    ($$ filled (find "label") (append ":"))
+	    ($$ filled (find "input")
+		(each (lambda (i el)
+		  ($$ el (after "<br>")
+		      (after ($$ this (val)))
+		      (remove)))))
+	    ($$ filled (find "textarea")
+		(each (lambda (i el)
+		  ($$ el (after "<br><br>")
+		      (after ($$ this (text)))
+		      (remove)))))
+	    ($$ filled (find "select")
+		(each (lambda (i el)
+		  ($$ el (after "<br>")
+		      (after ($$ this (find "option:selected") (text)))
+		      (remove)))))
+	    (chain console (log (@ (elt filled 0) inner-h-t-m-l)))
+	    ($$ "#input_adv-form-result"
+		(val (@ (elt filled 0) inner-h-t-m-l)))
+	    #|(return false)|#))))
       #|(alert (calculate-loan (create b10 185000 b19 38500 b12 0 b13 0
 				    b29 0.042 b32 360)))|#
       ))))
