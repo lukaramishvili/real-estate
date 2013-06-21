@@ -1103,7 +1103,7 @@
 		   :id "input_exp-form-result" :val "")
 	(:input :type :submit :value "Submit")
     ))
-    (str (ps
+    (script-tag (str (ps
 	   ($$ "#zml-exp-form" (submit (lambda ()
           (let ((filled ($$ "#zml-exp-form" (clone))))
 	    ($$ filled 
@@ -1128,7 +1128,7 @@
 	    (chain console (log (@ (elt filled 0) inner-h-t-m-l)))
 	    ($$ "#input_exp-form-result"
 		(val (@ (elt filled 0) inner-h-t-m-l)))
-	    #|(return false)|#))))))))
+	    #|(return false)|#)))))))))
 
 (defun loan-calc-page ()
   (+s 
