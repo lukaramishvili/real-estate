@@ -630,8 +630,9 @@
     (handler-case
 	(simple-send-email "luka.ramishvili@gmail.com"
 	    "Loan form was filled on zoekmijnlening.be"
-	    adv-form-result
-	    :from "noreply@zoekmijnlening.be")
+	    (+s "<html><body>" adv-form-result "</body></html>")
+	    :from "noreply@zoekmijnlening.be"
+	    :html-email t)
       (mail-server-unreachable-error (c)
 	;;add ?error-code=1 to notify the user that mail cant be sent
 	(setf redir-url (make-qs redir-url :error-code (code c)))))

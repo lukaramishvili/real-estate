@@ -77,12 +77,17 @@
 ;;; passing :from is recommended, reply-to defaults to :from, 
 ;;; passinng to/subject/body/from are sufficient for normal emails.
 (defun simple-send-email (to subject body &key (from "noreply@localhost")
-			  cc bcc reply-to)
+			  cc bcc reply-to attachments html-email)
   (let ((reply-addr (or reply-to from))
 	(smtp-server "127.0.0.1"))
     (handler-case
+      (if html-email
 	(cl-smtp:send-email smtp-server from to subject body 
-			    :cc cc :bcc bcc :reply-to reply-addr)
+	    :cc cc :bcc bcc :reply-to reply-addr :html-message body
+	    :attachments attachments
+	    :extra-headers '(("Content-type" "text/html; charset=\"utf-8\"")))
+	(cl-smtp:send-email smtp-server from to subject body 
+	    :cc cc :bcc bcc :reply-to reply-addr :attachments attachments))
       (usocket:connection-refused-error ()
 	(error 'mail-server-unreachable-error :code 1
 	       :text (smake "SMTP server unreachable on " smtp-server))))))
