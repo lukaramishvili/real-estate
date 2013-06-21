@@ -615,9 +615,22 @@
 
 
 (htoot-handler (zml-submit-express-page-handler "/zml-submit-express"
-    ())
-  (format nil "~a" 
-	  "todo 1. POST parameters 2. saving them to db 3. emailing them"))
+    ((exp-form-result :parameter-type 'string)))
+  (let ((redir-url "/zml-home"))
+  (when exp-form-result
+    (with-re-db 
+      (make-dao 'zml-app :date (get-universal-time)
+		:filled-form exp-form-result))
+    (handler-case
+	(simple-send-email "luka.ramishvili@gmail.com"
+	    "Express loan form was filled on zoekmijnlening.be"
+	    (+s "<html><body>" exp-form-result "</body></html>")
+	    :from "noreply@zoekmijnlening.be"
+	    :html-email t)
+      (mail-server-unreachable-error (c)
+	;;add ?error-code=1 to notify the user that mail cant be sent
+	(setf redir-url (make-qs redir-url :error-code (code c)))))
+    (redirect redir-url))))
 
 
 (htoot-handler (zml-submit-advanced-page-handler "/zml-submit-advanced"

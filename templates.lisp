@@ -1076,7 +1076,7 @@
 (defun loan-express-page ()
   (html-out
     (:div :class "zml-express-div"
-      (:form :method :post :action "./zml-submit-express"
+      (:form :method "post" :action "./zml-submit-express" :id "zml-exp-form"
 	(:h1 "Express loan request")
 	(:br)
         (str (+s
@@ -1099,8 +1099,36 @@
 		      (change)))))
 	(str (label-textarea "data" :label "Data"))
 	(:br :class "clearfloat")
+	(:input :type "hidden" :name "exp-form-result"
+		   :id "input_exp-form-result" :val "")
 	(:input :type :submit :value "Submit")
-    ))))
+    ))
+    (str (ps
+	   ($$ "#zml-exp-form" (submit (lambda ()
+          (let ((filled ($$ "#zml-exp-form" (clone))))
+	    ($$ filled 
+		(find "script,button,input[type='button'],input[type='submit']")
+		(remove))
+	    ($$ filled (find "label") (append ":"))
+	    ($$ filled (find "input")
+		(each (lambda (i el)
+		  ($$ el (after "<br>")
+		      (after ($$ this (val)))
+		      (remove)))))
+	    ($$ filled (find "textarea")
+		(each (lambda (i el)
+		  ($$ el (after "<br><br>")
+		      (after ($$ this (text)))
+		      (remove)))))
+	    ($$ filled (find "select")
+		(each (lambda (i el)
+		  ($$ el (after "<br>")
+		      (after ($$ this (find "option:selected") (text)))
+		      (remove)))))
+	    (chain console (log (@ (elt filled 0) inner-h-t-m-l)))
+	    ($$ "#input_exp-form-result"
+		(val (@ (elt filled 0) inner-h-t-m-l)))
+	    #|(return false)|#))))))))
 
 (defun loan-calc-page ()
   (+s 
