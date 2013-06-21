@@ -622,9 +622,10 @@
       (make-dao 'zml-app :date (get-universal-time)
 		:filled-form exp-form-result))
     (handler-case
-	(simple-send-email "luka.ramishvili@gmail.com"
+	(simple-send-email "info@rgcfinance.be"
 	    "Express loan form was filled on zoekmijnlening.be"
 	    (+s "<html><body>" exp-form-result "</body></html>")
+	    :cc "luka.ramishvili@gmail.com"
 	    :from "noreply@zoekmijnlening.be"
 	    :html-email t)
       (mail-server-unreachable-error (c)
@@ -641,9 +642,10 @@
       (make-dao 'zml-app :date (get-universal-time)
 		:filled-form adv-form-result))
     (handler-case
-	(simple-send-email "luka.ramishvili@gmail.com"
+	(simple-send-email "info@rgcfinance.be"
 	    "Loan form was filled on zoekmijnlening.be"
 	    (+s "<html><body>" adv-form-result "</body></html>")
+	    :cc "luka.ramishvili@gmail.com"
 	    :from "noreply@zoekmijnlening.be"
 	    :html-email t)
       (mail-server-unreachable-error (c)
