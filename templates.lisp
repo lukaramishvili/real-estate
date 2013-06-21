@@ -1103,7 +1103,7 @@
 		   :id "input_exp-form-result" :val "")
 	(:input :type :submit :value "Submit")
     ))
-    (script-tag (str (ps
+    (str (script-tag (ps
 	   ($$ "#zml-exp-form" (submit (lambda ()
           (let ((filled ($$ "#zml-exp-form" (clone))))
 	    ($$ filled 
