@@ -622,6 +622,17 @@
 
 (htoot-handler (zml-submit-advanced-page-handler "/zml-submit-advanced"
     ((adv-form-result :parameter-type 'string)))
-  (format nil "~a" 
-    (+s adv-form-result
-	"todo 1. POST parameters 2. saving them to db 3. emailing them")))
+  (let ((redir-url "/zml-home"))
+  (when adv-form-result
+    (with-re-db 
+      (make-dao 'zml-app :date (get-universal-time)
+		:filled-form adv-form-result))
+    (handler-case
+	(simple-send-email "luka.ramishvili@gmail.com"
+	    "Loan form was filled on zoekmijnlening.be"
+	    adv-form-result
+	    :from "noreply@zoekmijnlening.be")
+      (mail-server-unreachable-error (c)
+	;;add ?error-code=1 to notify the user that mail cant be sent
+	(setf redir-url (make-qs redir-url :error-code (code c)))))
+    (redirect redir-url))))

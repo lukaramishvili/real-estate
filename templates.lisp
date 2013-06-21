@@ -1554,7 +1554,9 @@
 	(click))
       ($$ "#zml-adv-form" (submit (lambda ()
           (let ((filled ($$ "#zml-adv-form" (clone))))
-	    ($$ filled (find "script,button,input[type='button']") (remove))
+	    ($$ filled 
+		(find "script,button,input[type='button'],input[type='submit']")
+		(remove))
 	    ($$ filled (find "label") (append ":"))
 	    ($$ filled (find "input")
 		(each (lambda (i el)

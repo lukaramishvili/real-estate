@@ -301,6 +301,14 @@
 
 (defclass zml-app ()
   ((ix-zml-app :col-type serial :initarg :ix-zml-app :accessor ix-zml-app)
+   (date :col-type bigint :initarg :date :accessor date :initform 0)
+   (filled-form :col-type string :initarg :filled-form :accessor filled-form
+		:initform 0))
+  (:metaclass dao-class)
+  (:keys ix-zml-app))
+
+(defclass zml-app-with-fields ()
+  ((ix-zml-app :col-type serial :initarg :ix-zml-app :accessor ix-zml-app)
    (app-type :col-type string :initarg :app-type :accessor app-type 
 	      :initform "")
    ;; common fields - used both in express and advanced applications
