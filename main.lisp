@@ -183,6 +183,19 @@
 	    (list :message "success" :ix-tr (ix-tr saved-tr))
 	    (list :message "failed" :ix-tr 0))))))
 
+(htoot-handler (save-tr-handler "/view-zml-app"
+    ((ix-zml-app :parameter-type 'integer)))
+  (with-re-db
+    (require-admin-login
+      (let ((app (get-dao 'zml-app ix-zml-app)))
+	(with-admin-template
+	    (html-out
+	      (:h1 (str (format-date "~d-~m-~Y" (date app)))
+		   (:a :href "javascript:history.back(-1);" 
+		       (str (re-tr :back))))
+	      (:br)
+	      (:div (str (filled-form app)))))))))
+
 (htoot-handler
  (log-in-handler
   "/login-handler"
