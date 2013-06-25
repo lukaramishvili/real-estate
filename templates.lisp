@@ -325,17 +325,20 @@
 	  (:li :class "first" (:a :href "admin?page=estates" 
 	   (:span :class "outer" (:span :class "inner dashboard" 
 	    (str (tr :real-estates lang))))))
-	  (:li (:a :href "admin?page=text" 
-	   (:span :class "outer" (:span :class "inner content" 
+	  (:li (:a :href "admin?page=text"
+	   (:span :class "outer" (:span :class "inner content"
 	    (str (tr :text-pages lang))))))
-	  (:li (:a :href "admin?page=trans" 
-	   (:span :class "outer" (:span :class "inner trans" 
+	  (:li (:a :href "admin?page=zml-apps"
+	   (:span :class "outer" (:span :class "inner content"
+	    (str (tr :applications lang))))))
+	  (:li (:a :href "admin?page=trans"
+	   (:span :class "outer" (:span :class "inner trans"
 	    (str (tr :translations lang))))))
-	  (:li (:a :href "admin?page=users" 
-	   (:span :class "outer" (:span :class "inner users" 
+	  (:li (:a :href "admin?page=users"
+	   (:span :class "outer" (:span :class "inner users"
 	    (str (tr :users lang))))))
-	  (:li :class "last" (:a :href "admin?page=settings" 
-	   (:span :class "outer" (:span :class "inner settings" 
+	  (:li :class "last" (:a :href "admin?page=settings"
+	   (:span :class "outer" (:span :class "inner settings"
 	    (str (tr :settings lang))))))
 	  )))
        (:div :class  "grid_16"
@@ -410,6 +413,17 @@
 	 ($$ "[id|='btn_remove_tr']" 
 	     (click (lambda () 
 		      (alert 6))))))))))
+
+(defun admin-page-zml-apps (page-num)
+  (cl-who:with-html-output-to-string
+	(*standard-output* nil :prologue nil :indent t)
+    (:table :id "box-table-a" 
+     (loop for e in (all-zml-apps-paged page-num) do 
+	  (htm (:tr
+		(:td (str (format-date "~d-~m-~Y" (date e))))
+		(:td :class "td-action"
+		     (:a :href (smake "view-zml-app?ix-zml-app=" (ix-zml-app e))
+			 "View"))))))))
 
 (defun user-management-page ()
   (cl-who:with-html-output-to-string
@@ -1138,40 +1152,47 @@
      
      (:div :class "float-left half step-1"
        (:h2 "Aankoop")
-       (:label :for "select_b9" "beschrijf")
+       (:label :for "select_b9" "Beschrijf")
        (:select :id "select_b9" :name "b9"
 		(:option :value "0.11" "Grootbeschrijf 10%")
-		(:option :value "0.63" "Grootbeschrijf 5%"))
+		(:option :value "0.063" "Grootbeschrijf 5%"))
        (str (+s
-         (label-input "b10" :val "185000" :label "aankoopprijs")
+         (label-input "b10" :val "185000" :label "Aankoopprijs")
 	 (label-input "b11" :val "0" :label "Notaris &amp; regk" :readonly t)
-	 (label-input "b12" :val "0" :label "bijkomend voor renovatie")
+	 (label-input "b12" :val "0" :label "Bijkomend voor renovatie")
 	 (label-input "b13" :val "0" :label "Kostprijs nieuwbouw (incl.btw)")
-	 (label-input "b15" :val "0" :label "subtotaal" :readonly t)
-	 (label-input "b16" :val "0" :label "hypotheekkosten" :readonly t)
-	 (label-input "b18" :val "0" :label "totaal" :readonly t)
-	 (label-input "b19" :val "38500" :label "eigen inbreng")
-	 (label-input "b21" :val "0" :label "gevraagd kredietbedrag" :readonly t)
-	 (label-input "b22" :val "0" :readonly t
-		      :label "Venale waard van het onroerend goed")
+	 #|(label-input "b15" :val "0" :label "Subtotaal" :readonly t)|#
+	 (html-out (:input :name "b15" :id "input_b15" :type "hidden" :val "0"))
+	 (label-input "b16" :val "0" :label "Hypotheekkosten" :readonly t)
+	 (label-input "b18" :val "0" :label "Totaal" :readonly t)
+	 (label-input "b19" :val "38500" :label "Eigen inbreng")
+	 (label-input "b21" :val "0" :label "Gevraagd kredietbedrag" :readonly t)
+	 (html-out (:input :name "b22" :id "input_b22" :type "hidden" :val "0"))
+	 #|(label-input "b22" :val "0" :readonly t
+		      :label "Venale waard van het onroerend goed")|#
 	 (label-select "b25" :label "Aard van het pand"
-           :options `(("grond") ("appartement") ("huis") ("villa")
-		      ("nieuwbouw") ("opbrengsteigendom") ("andere")))
+           :options `(("grond" "Grond") ("appartement" "Appartement")
+		      ("huis" "Huis") ("villa" "Villa")
+		      ("nieuwbouw" "Nieuwbouw")
+		      ("opbrengsteigendom" "Opbrengsteigendom")
+		      ("andere" "Andere")))
 	 ;;(:button :type "button" :id "btn-calc" "Calculate")
-	 (label-input "calc-result" :val "0" :label "maandlast" :readonly t))))
+	 (label-input "calc-result" :val "0" :label "Maandlast" :readonly t))))
      (:div :class "float-left half step-1"
-       (:h3 "klassieke lening")
+       (:h3 "Klassieke lening")
        (str (+s
-         (label-input "b28" :val "0" :label "bedrag" :readonly t)
+         (label-input "b28" :val "0" :label "Bedrag" :readonly t)
 	 (label-input "b29" :val "0.042" :label "Rentevoet")
-	 (label-input "b30" :val "0" :label "maandelijks rentevoet" :readonly t)
+	 (label-input "b30" :val "0" :label "Maandelijks rentevoet" :readonly t)
 	 (label-select "b31" :label "Renteformule"
 	   :options (list "20 jaar vast"
 			  "25 jaar vast"
 			  "30 jaar vast"
 			  "Accordeon 15-18"
 			  "Accordeon 20-25"))
-	 (label-input "b32" :val "360" :label "looptijd (maanden)"))))
+	 (label-select "b32" :label "Looptijd (maanden)"
+	   :options (loop for i from 10 to 30
+		       collecting (list (* i 12) i))))))
      (:div :id "creditors_div" :class "step-2"
 	   (:h2 "Kredietaanvragers")
 	   (:button :type "button" :id "add_creditor_btn" 
@@ -1181,8 +1202,8 @@
        (:h2 "Maandelijkse lasten")
        (:table :id "loans_table" :border 1 :cellspacing 0 :cellpadding 0
          (:tr (:th "Type krediet") (:th "Bank") (:th "Ontleend bedrag") 
-	      (:th "openstaand saldo") (:th "begindatum") (:th "looptijd") 
-	      (:th "rentevoet %") (:th "maandlast") (:th "Overnemen")
+	      (:th "Openstaand saldo") (:th "Begindatum") (:th "Looptijd") 
+	      (:th "Rentevoet %") (:th "Maandlast") (:th "Overnemen")
 	      ))
        (:button :type "button" :id "add_loan_btn" :class "simple-blue-button"
 		(str (re-tr :add-loan))))

@@ -54,6 +54,39 @@
   (let ((unix-difference (encode-universal-time 0 0 0 1 1 1970 0)))
     (+ unix-time unix-difference)))
 
+;;; format universal-date in a human-readable way
+;;; I've chosen PHP date format, because it's widespread and intuitive
+;;; prefix with tilde (~). doc: http://php.net/manual/en/function.date.php
+(defun format-date (arg-format &optional (arg-date (get-universal-time)))
+  (labels ((add-zeros (arg &key (len 2))
+	     (if (> len (length (smake arg))) (smake "0" arg) arg)))
+  (multiple-value-bind (s min h d mon y dow dl-sav tz)
+      (decode-universal-time arg-date)
+      (let ((result arg-format)
+	    (formats (list (list "s" (add-zeros s))
+			   (list "i" (add-zeros min))
+			   (list "g" (rem h 12))
+			   (list "G" h)
+			   (list "h" (add-zeros (rem h 12)))
+			   (list "H" (add-zeros h))
+			   (list "d" (add-zeros d))
+			   (list "j" d)
+			   (list "n" mon)
+			   (list "m" (add-zeros mon))
+			   (list "Y" y)
+			   (list "y" (rem y 100))
+			   (list "N" (+ 1 dow))
+			   (list "I" (if dl-sav 1 0))
+			   (list "O" (smake (if (plusp tz) "-" "+")
+					    (add-zeros (- (* tz 100)) :len 4)))
+			   (list "P" (smake (if (plusp tz) "-" "+")
+					    (add-zeros (- tz)) ":00")))))
+	(loop for fmt in formats
+	     do (setf result (cl-ppcre:regex-replace-all 
+			      (smake "~" (car fmt)) result (smake (cdr fmt)))))
+	result
+))))
+
 (defun slot-name-symbols (class-name)
   "returns a list of slot names for class-name CLOS class using closer-mop"
   (mapcar #'closer-mop:slot-definition-name 

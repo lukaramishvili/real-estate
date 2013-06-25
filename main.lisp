@@ -156,6 +156,8 @@
 	    (case page 
 	      (:estates (admin-page-estates))
 	      (:estate (estate-edit-handler))
+	      (:zml-apps (admin-page-zml-apps 1))
+	      (:zml-app (admin-page-zml-app))
 	      (:trans (admin-page-tr))
 	      (:users (user-management-page))
 	      (:user (edit-user-handler))

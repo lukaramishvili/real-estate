@@ -276,6 +276,12 @@
 	     (:limit (:order-by (:select :* :from :estate) :ix-estate)
 		     per-page (* (- page 1) per-page)))))
 
+(defun all-zml-apps-paged (page &key (per-page 10))
+  (with-re-db 
+  (query-dao 'zml-app
+	     (:limit (:order-by (:select :* :from :zml-app) :ix-zml-app)
+		     per-page (* (- page 1) per-page)))))
+
 (defclass pic ()
   ((ix-pic :col-type serial :initarg :ix-pic :accessor ix-pic)
    (ix-estate :col-type integer :initarg :ix-estate 
