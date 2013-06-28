@@ -33,6 +33,11 @@
 (defun project-load (file-path)
   (load (concatenate 'string *project-load-path* file-path)))
 
+;;; loan manageable fields; jkp is APR, annual percentage rate
+;;; they are here because they're used in utils.lisp
+(defparameter *loan-annual-percentage-rate* 0.0375)
+(defparameter *loan-duration* 300)
+
 (project-load "utils.lisp")
 (project-load "orm.lisp")
 (project-load "templates.lisp")

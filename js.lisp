@@ -117,7 +117,10 @@
 	     "' id='estate-main-img-a' rel='estate-gallery'>" 
 	     "<img id='estate-main-img' src='" (@ main-pic path) "' />" 
 	     "<span class='price-overlay'>" (lisp (re-tr :price)) ": " 
-	     (aref fields "price") " &euro;</span>" "</a>")
+	     (aref fields "price") " &euro;, " 
+	     (-math.round (calculate-monthly-payment (aref fields "price")) 2)
+	     "&euro;/month" "</span>" 
+	     "</a>")
 	 (+= div "<div id='other-imgs'>")
 	 (for-in 
 	  (op other-pics)

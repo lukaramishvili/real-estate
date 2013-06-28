@@ -517,11 +517,11 @@
 	       '(:= :apt-type (car (assoc :apt-type f-a))))))
 	))))
 
-(defun max-e-price-for-dmp (dmp) ; dmp is b27
+(defun max-e-price-for-dmp (dmp) ; dmp is b27, desired monthly pay
   "Calculates how costly house you can buy by paying no more than ,dmp monthly"
-  (let* ((apr 0.0375) ; apr = annual percentage rate, b28
+  (let* ((apr *loan-annual-percentage-rate*) ; apr = annual percentage rate, b28
 	 (mir (- (expt (1+ apr) 1/12) 1)) ; mir = monthly interest rate, b29
-	 (duration 300)) ; duration, in months, b30
+	 (duration *loan-duration*)) ; duration, in months, b30
     (- (pv mir duration dmp))))
 
 (defun filter-estates (filters-alist &key (count 10000) (offset 0))

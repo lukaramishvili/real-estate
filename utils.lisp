@@ -250,7 +250,12 @@
 	    (/ (- (* (/ (- 1 (expt r1 Nper))
 			Rate)
 		     (if Type r1 1) payment) Fv)
-	       (expt r1 Nper)))))))
+	       (expt r1 Nper)))))
+    (defun calculate-monthly-payment (estate-price)
+  (let* ((apr ,*loan-annual-percentage-rate*) ; apr = annual percentage rate, b28
+	 (mir (- (expt (1+ apr) 1/12) 1)) ; mir = monthly interest rate, b29
+	 (duration ,*loan-duration*)) ; duration, in months, b30
+    (- (pmt mir duration estate-price))))))
 
 ;; because financial-formulas are also used by parenscript to generate javascript
 ;; versions, we store them as data and eval in both ps and lisp
