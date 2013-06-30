@@ -1152,6 +1152,12 @@
      
      (:div :class "float-left half step-1"
        (:h2 "Aankoop")
+       (str (label-select "b25" :label "Aard van het pand"
+           :options `(("grond" "Grond") ("appartement" "Appartement")
+		      ("huis" "Huis") ("villa" "Villa")
+		      ("nieuwbouw" "Nieuwbouw")
+		      ("opbrengsteigendom" "Opbrengsteigendom")
+		      ("andere" "Andere"))))
        (:label :for "select_b9" "Beschrijf")
        (:select :id "select_b9" :name "b9"
 		(:option :value "0.11" "Grootbeschrijf 10%")
@@ -1170,14 +1176,7 @@
 	 (html-out (:input :name "b22" :id "input_b22" :type "hidden" :val "0"))
 	 #|(label-input "b22" :val "0" :readonly t
 		      :label "Venale waard van het onroerend goed")|#
-	 (label-select "b25" :label "Aard van het pand"
-           :options `(("grond" "Grond") ("appartement" "Appartement")
-		      ("huis" "Huis") ("villa" "Villa")
-		      ("nieuwbouw" "Nieuwbouw")
-		      ("opbrengsteigendom" "Opbrengsteigendom")
-		      ("andere" "Andere")))
-	 ;;(:button :type "button" :id "btn-calc" "Calculate")
-	 (label-input "calc-result" :val "0" :label "Maandlast" :readonly t))))
+	 )))
      (:div :class "float-left half step-1"
        (:h3 "Klassieke lening")
        (str (+s
@@ -1192,7 +1191,9 @@
 			  "Accordeon 20-25"))
 	 (label-select "b32" :label "Looptijd (maanden)"
 	   :options (loop for i from 10 to 30
-		       collecting (list (* i 12) i))))))
+		       collecting (list (* i 12) i)))
+	 ;;(:button :type "button" :id "btn-calc" "Calculate")
+	 (label-input "calc-result" :val "0" :label "Maandlast" :readonly t))))
      (:div :id "creditors_div" :class "step-2"
 	   (:h2 "Kredietaanvragers")
 	   (:button :type "button" :id "add_creditor_btn" 
@@ -1590,6 +1591,7 @@
 	   (:td (js-input (+ "ln_interest_rate-" ln-id)))
 	   (:td (js-input (+ "ln_monthly_payment-" ln-id)))
 	   (:td (js-input (+ "ln_take_over-" ln-id)))
+	   (:td (:button :type "button" :id (+ "remove_loan_btn-" ln-id) "X"))
 	   )))
       (defun next-loan-id ()
 	  (let ((retval 1))
@@ -1601,6 +1603,12 @@
 	(click (lambda ()
           ($$ "#loans_table" (append (gen-loan (next-loan-id))))))
 	(click))
+      ($$ "[id|='remove_loan_btn']"
+        (live "click" (lambda ()
+	  (let ((loan-id (elt (chain ($$ this (attr "id")) 
+				     (split "-")) 
+			      1)))
+	    ($$ (+ "#loan_div-" loan-id) (remove))))))
       ($$ "#zml-adv-form" (submit (lambda ()
           (let ((filled ($$ "#zml-adv-form" (clone))))
 	    ($$ filled 
