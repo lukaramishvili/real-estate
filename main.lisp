@@ -188,7 +188,7 @@
 	    (list :message "success" :ix-tr (ix-tr saved-tr))
 	    (list :message "failed" :ix-tr 0))))))
 
-(htoot-handler (save-tr-handler "/view-zml-app"
+(htoot-handler (view-zml-app-handler "/view-zml-app"
     ((ix-zml-app :parameter-type 'integer)))
   (with-re-db
     (require-admin-login
