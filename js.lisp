@@ -573,7 +573,7 @@
       // The response object is returned with a status field that lets the app know the current
       // login status of the person. In this case, we're handling the situation where they 
       // have logged in to the app.
-      testAPI();
+      fbLoginHandler();
     } else if (response.status === 'not_authorized') {
       // In this case, the person is logged into Facebook, but not into the app, so we call
       // FB.login() to prompt them to do so. 
@@ -594,12 +594,17 @@
   });
   
     // Here we run a very simple test of the Graph API after login is successful. 
-  // This testAPI() function is only called in those cases. 
-  function testAPI() {
+  // This fbLoginHandler() function is only called in those cases. 
+  function fbLoginHandler() {
     console.log('Welcome!  Fetching your information.... ');
     FB.api('/me', function(response) {
       console.debug(response);
       console.log('Good to see you, ' + response.name + '.');
+      //TODO here:
+      //1. open login div and fill the fields with local var response attributes
+      //2. user should have an additional fb-id field
+      //3. from here, set hidden field fb-id in login div to response.id
+      //4. in the register handler set the user's fb-id field to hidden fb-id val
     });
   }
   ")
