@@ -702,13 +702,15 @@
 	      (cl-who:str (+s "Logged in as " 
 			      (username (session-value 'user-authed)))))
 	  (:a :href "./logout" :id "top-logout-link" (str (re-tr :log-out))))
-	 (cl-who:htm
-	  (:a :href "#login-form-div" :id "top-login-link" 
-	      :class "fancybox.inline" (str (re-tr :login)))
+	 (cl-who:htm	  
 	  (:a :href "#reg-div" :id "top-reg-link" :class "fancybox.inline" 
 	      (str (re-tr :register)))
 	  (:a :href "#reg-broker-div" :id "top-reg-broker-link"
-	      :class "fancybox.inline" (str (re-tr :register-as-broker)))))
+	      :class "fancybox.inline" (str (re-tr :register-as-broker)))
+	  (:a :href "#login-form-div" :id "top-login-link" 
+	      :class "fancybox.inline" (str (re-tr :login)))
+	  ;; show-faces='false' max-rows='1' width='200'
+	  "<fb:login-button id='top-fb-login-btn'></fb:login-button>"))
      (:a :href "./contact" :id "top-contact-link" :class "fancybox.iframe" 
 	 (str (re-tr :contact)))
      (:a :href "./faq" :id "top-faq-link" :class "fancybox.iframe" 

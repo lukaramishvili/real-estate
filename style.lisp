@@ -18,6 +18,7 @@
   #top-menu #top-search-btn { margin-left:32px; }
   #top-menu #top-contact-link { float:right; }
   #top-menu #top-faq-link { float:right; }
+  #top-menu $top-fb-login-btn { display:block; float:right; }
   
   #search-bar { position:fixed; left:-250px; top:0px; width:250px; height:100%;
     background:transparent url(css/img/gray-bg.png) left top repeat; 
