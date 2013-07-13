@@ -374,6 +374,7 @@
     });
 
     // Additional init code here
+    " js-code "
 
   };
 
