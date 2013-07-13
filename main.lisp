@@ -53,7 +53,8 @@
   (list :default-lang "nl"
 	:domain "luka.ge:4343"
 	:host "http://luka.ge:4343"
-	:securehost "https://luka.ge:4343"))
+	:securehost "https://luka.ge:4343"
+	:fb-app-id "546440602058384"))
 
 (defun config-value (config-name)
   (getf (config) config-name))
@@ -187,6 +188,9 @@
 	(if (slot-boundp saved-tr 'ix-tr)
 	    (list :message "success" :ix-tr (ix-tr saved-tr))
 	    (list :message "failed" :ix-tr 0))))))
+
+(htoot-handler (edit-user-handler "/channel.html" ())
+  "<script src='//connect.facebook.net/en_US/all.js'></script>")
 
 (htoot-handler (view-zml-app-handler "/view-zml-app"
     ((ix-zml-app :parameter-type 'integer)))

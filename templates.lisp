@@ -303,7 +303,13 @@
 
 (defun re-main (&key title body)
   (html-combine :head (re-head :title title)
-		:body (main-template body)))
+		:body (+s (re-fb-root-div)
+			  (main-template body))))
+
+(defun re-fb-root-div ()
+  (fb-root-div (config-value :fb-app-id)
+	       :channel-file (+s (config-value :host) "/channel.html")
+	       :js-code (re-fb-auth-code)))
 
 (defun with-admin-template (content &key lang (title "Dashboard"))
   (let ((lang (or lang (default-lang))))
@@ -353,6 +359,33 @@
 	     (:div :id "content-inner"
 		   (cl-who:str content)))
        (:br :class "clearfloat"))))))
+
+(defun fb-root-div (fb-app-id &key (channel-file "") (js-code ""))
+  (smake "<div id='fb-root'></div>
+<script>
+  // Additional JS functions here
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '" fb-app-id "', // App ID
+      channelUrl : '" channel-file "', // Channel File
+      status     : true, // check login status
+      cookie     : true, // enable cookies to allow the server to access the session
+      xfbml      : true  // parse XFBML
+    });
+
+    // Additional init code here
+
+  };
+
+  // Load the SDK asynchronously
+  (function(d){
+     var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement('script'); js.id = id; js.async = true;
+     js.src = '//connect.facebook.net/en_US/all.js';
+     ref.parentNode.insertBefore(js, ref);
+   }(document));
+</script>"))
 
 (defun admin-page-estates ()
   (cl-who:with-html-output-to-string
@@ -408,8 +441,9 @@
 				type "GET"
 				data-type "json"
 				success (lambda (data)
-					  (alert (@ data ix-tr))
-					  (alert (@ data message))))))))))
+					  #|(alert (@ data ix-tr))|#
+					  (alert (@ data message))
+					  (document.location.reload)))))))))
 	 ($$ "[id|='btn_remove_tr']" 
 	     (click (lambda () 
 		      (alert 6))))))))))
