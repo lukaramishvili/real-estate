@@ -11,6 +11,11 @@
 
 (defun re-formulas-js ()
   (ps
+    (defun parse-percent (v)
+      (var r (/ (parse-float (chain v (replace " " "")
+				    (replace "%" "")
+				    (replace "," "."))) 100))
+      r)
     (lisp (financial-formulas))))
 
 (defun re-main-js ()

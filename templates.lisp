@@ -1218,7 +1218,7 @@
        (:h3 "Klassieke lening")
        (str (+s
          (label-input "b28" :val "0" :label "Bedrag" :readonly t)
-	 (label-input "b29" :val "0.042" :label "Rentevoet")
+	 (label-input "b29" :val "4.2%" :label "Rentevoet")
 	 (label-input "b30" :val "0" :label "Maandelijks rentevoet" :readonly t)
 	 (label-select "b31" :label "Renteformule"
 	   :options (list "20 jaar vast"
@@ -1268,17 +1268,17 @@
 	(let* ((b9  (parse-float (@ params b9)))
 	       (b10 (parse-float (@ params b10)))
 	       (b12 (parse-float (@ params b12)))
-	       (b13 (parse-float (@ params b13)))
+	       ;(b13 (parse-float (@ params b13)))
 	       (b19 (parse-float (@ params b19)))
-	       (b29 (parse-float (@ params b29)))
+	       (b29 (parse-percent (@ params b29)))
 	       (b32 (parse-int (@ params b32)))
 	       ;;now follow the derived variables
 	       (b11 (* b10 b9))
-	       (b15 (+ b10 b11 b12 b13))
+	       (b15 (+ b10 b11 b12));+ b13
 	       (b16 (+ (* (- b15 b19) 0.01881234) 1200))
 	       (b18 (+ b15 b16))
 	       (b21 (- b18 b19))
-	       (b22 (+ b10 b13))
+	       (b22 (+ b10));+b13
 	       (b28 b21)
 	       (b30 (calculate-b30 b29))
 	       (b31 "todo dropdown")
@@ -1298,7 +1298,8 @@
 	      (val (chain (+ (parse-float ($$ "#input_b10" (val)))
 			     (parse-float ($$ "#input_b11" (val)))
 			     (parse-float ($$ "#input_b12" (val)))
-			     (parse-float ($$ "#input_b13" (val))))
+			     ;;(parse-float ($$ "#input_b13" (val)))
+			     )
 			  (to-fixed 2)))
 	      (change)#|trigger programmatic onchange handlers|#)))
 	(change))
@@ -1331,7 +1332,8 @@
 	(change (lambda ()
           ($$ "#input_b22"
 	      (val (chain (+ (parse-float ($$ "#input_b10" (val)))
-			     (parse-float ($$ "#input_b13" (val))))
+			     ;;(parse-float ($$ "#input_b13" (val)))
+			     )
 			  (to-fixed 2)))
 	      (change)#|trigger programmatic onchange handlers|#)))
 	(change))
@@ -1345,8 +1347,10 @@
       ($$ "#input_b29"
 	(change (lambda ()
           ($$ "#input_b30"
-	      (val (chain (calculate-b30 (parse-float ($$ "#input_b29" (val))))
-			  (to-fixed 6)))
+	      (val (+ (* (chain (calculate-b30 (parse-percent ($$ "#input_b29" 
+								  (val))))
+				(to-fixed 6)) 100)
+		      "%"))
 	      (change)#|trigger programmatic onchange handlers|#)))
 	(change))
       ;;($$ "#btn-calc" (click (lambda ()
@@ -1356,7 +1360,7 @@
 			      (create b9  ($$ "#select_b9" (val))
 				      b10 ($$ "#input_b10" (val))
 				      b12 ($$ "#input_b12" (val))
-				      b13 ($$ "#input_b13" (val))
+				      ;;b13 ($$ "#input_b13" (val))
 				      b19 ($$ "#input_b19" (val))
 				      b29 ($$ "#input_b29" (val))
 				      b32 ($$ "#input_b32" (val))))))
