@@ -9,6 +9,7 @@
 (ql:quickload :postmodern)
 (ql:quickload :css-lite)
 (ql:quickload :cl-fad)
+(ql:quickload :cl-gd)
 
 ;;; declare package
 (defpackage :re
@@ -120,9 +121,34 @@
 (defun linkable-tmp-path (tmp-path)
   (+s "/tmp/" (file-namestring tmp-path)))
 
+(defun pic-thumb-path (p w h)
+  (declare (type pic p))
+  (let* ((fname (file-namestring (path p)))
+	 (fname-without-ext (car (split-by-char "." fname)))
+	 (ext (cadr (split-by-char "." fname))))
+    (smake *upload-dir* "pics/" (ix-pic p) 
+	   "/" fname-without-ext "-" w "x" h "." ext)))
+
 (defun linkable-pic-path (p)
   (declare (type pic p))
   (smake "/uploads/pics/" (ix-pic p) "/" (file-namestring (path p))))
+
+(defun linkable-pic-thumb-path (p w h)
+  (declare (type pic p))
+  (let* ((fname (file-namestring (path p)))
+	 (fname-without-ext (car (split-by-char "." fname)))
+	 (ext (cadr (split-by-char "." fname))))
+    (smake "/uploads/pics/" (ix-pic p) 
+	   "/" fname-without-ext "-" w "x" h "." ext)))
+
+(defun make-pic-thumb (p w h &key (bg-r 0) (bg-g 0) (bg-b 0))
+  (with-resized-image (resized-img (path p) w h
+				   :bg-r bg-r :bg-g bg-g :bg-b bg-b)
+    (cl-gd:write-image-to-file (pic-thumb-path p w h)
+			       :image resized-img :if-exists :supersede)))
+;; create 150x150 and 300x300 thumbs for all images:
+;; (with-re-db (loop for pic in (select-dao 'pic) do (make-pic-thumb pic 150 150)))
+;; (with-re-db (loop for pic in (select-dao 'pic) do (make-pic-thumb pic 300 300)))
 
 (defun broker-logo-url (ix-user)
   (if (cl-fad:file-exists-p (smake *upload-dir* "users/" ix-user "/logo.png"))

@@ -441,6 +441,9 @@
 				      " class='td-4x' colspan='2' rowspan='2' "
 				      ""))
 		  (let ((e (aref es ie)))
+		    (var e-pic-path (if this-pic-4x-p
+					(@ (@ e main-pic) path-300x300)
+					(@ (@ e main-pic) path-150x150)))
 		    (var 
 		     e-gen 
 		     (+ "<td align='left' valign='top' " 
@@ -448,7 +451,7 @@
 			"<a href='" (@ e link) "' " 
 			" class='fp-estate-link'" 
 			" ixestate='" (@ e ix-estate) "'>"
-			"<img src='" (@ (@ e main-pic) path)  
+			"<img src='" e-pic-path  
 			"' /></a></td>"))
 		    (+= tbl e-gen))
 		  (+= col-offset 1)

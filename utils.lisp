@@ -4,6 +4,17 @@
 (ql:quickload :closer-mop)
 (ql:quickload :cl-smtp)
 
+(defun split-by-char (separator str)
+  (let ((sep (character separator))
+	(parts (list))
+	(accum ""))
+    (loop for c across str
+       do (if (equal sep c)
+	      (progn (setf parts (append parts (list accum))) (setf accum ""))
+	      (setf accum (+s accum c))))
+    (if (plusp (length accum)) (setf parts (append parts (list accum))))
+    parts))
+
 (defun +s (&rest args)
   (apply #'concatenate
 	 (cons 'string
@@ -120,6 +131,40 @@
       (usocket:connection-refused-error ()
 	(error 'mail-server-unreachable-error :code 1
 	       :text (smake "SMTP server unreachable on " smtp-server))))))
+
+
+(defmacro with-resized-image ((resized-name img-path new-w new-h 
+			      &key (bg-r 255) (bg-g 255) (bg-b 255))
+			      &body body)
+  `(when (and (not (equal "" ,img-path)) (cl-fad:file-exists-p ,img-path))
+  (cl-gd:with-image-from-file (old-img ,img-path)
+    (multiple-value-bind (old-w old-h)
+	(cl-gd:image-size old-img)
+      (cl-gd:with-image (,resized-name ,new-w ,new-h)
+	(let* ((old-orientation (if (> old-w old-h) :landscape :portrait))
+	       (new-orientation (if (> ,new-w ,new-h) :landscape :portrait))
+	       (old-proportion (/ old-w old-h))
+	       (new-proportion (/ ,new-w ,new-h))
+	       (thumb-vars 
+		(if (< new-proportion old-proportion)
+		  (list :w ,new-w :h (round (/ ,new-w old-proportion))
+		      :x 0 :y (round (/ (- ,new-h (/ ,new-w old-proportion)) 2)))
+		  (list :w (* ,new-h old-proportion) :h ,new-h 
+		      :x (round (- ,new-w (* ,new-h old-proportion))) :y 0))))
+	  ;; black bg, 0-255
+	  (cl-gd:allocate-color ,bg-r ,bg-g ,bg-b :image ,resized-name)
+	  (cl-gd:copy-image old-img ,resized-name 0 0 
+			    (getf thumb-vars :x) (getf thumb-vars :y) 
+			    old-w old-h :resize t :resample t
+			    :dest-width (getf thumb-vars :w) 
+			    :dest-height (getf thumb-vars :h))
+	  ,@body))))))
+;; example: write file
+;; (with-resized-image (asd (path (with-re-db (get-dao 'pic 100))) 150 150)
+;;   (cl-gd:write-image-to-file "/home/luka/zappa-green.jpg" :image asd 
+;;                              :if-exists :supersede))
+
+
 
 ;;; cl-rss
 

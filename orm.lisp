@@ -443,7 +443,9 @@
 	       :order (order p)
 	       :path (if make-path-linkable
 			 (linkable-pic-path p)
-			 (path p)))
+			 (path p))
+	       :path-150x150 (linkable-pic-thumb-path p 150 150)
+	       :path-300x300 (linkable-pic-thumb-path p 300 300))
 	 :test #'equal))))
 
 (defun estate-nonmain-pics (estate)
