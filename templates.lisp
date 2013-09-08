@@ -388,16 +388,21 @@
    }(document));
 </script>"))
 
-(defun admin-page-estates ()
+(defun admin-page-estates (&optional (page-num 1) (items-per-page 10))
   (cl-who:with-html-output-to-string
 	(*standard-output* nil :prologue nil :indent t)
     (:table :id "box-table-a" 
-     (loop for e in (all-estates-paged 1) do 
+     (loop for e in (all-estates-paged page-num) do 
 	  (htm (:tr
-		(:td (str (pst-code e)))
+		(:td (str (title-for-estate e)))
 		(:td :class "td-action"
 		     (:a :href (smake "edit-estate?ix-estate=" (ix-estate e))
-			 "Edit"))))))))
+			 "Edit"))))))
+    (loop for i from 1
+       to (+ 1 (/ (get-dao-count 'estate 'ix-estate) items-per-page)) do
+	 (htm (:a :href (make-qs "/admin" :page "estates" :page-num i)
+		  :style (str (if (equal page-num i) "color:red;" ""))
+		  (str i))))))
 
 (defun admin-page-tr (&key (lang (re-lang)))
   (html-out
@@ -449,7 +454,7 @@
 	     (click (lambda () 
 		      (alert 6))))))))))
 
-(defun admin-page-zml-apps (page-num)
+(defun admin-page-zml-apps (&optional (page-num 1) (items-per-page 10))
   (cl-who:with-html-output-to-string
 	(*standard-output* nil :prologue nil :indent t)
     (:table :id "box-table-a" 
@@ -458,19 +463,27 @@
 		(:td (str (format-date "~d-~m-~Y" (date e))))
 		(:td :class "td-action"
 		     (:a :href (smake "view-zml-app?ix-zml-app=" (ix-zml-app e))
-			 "View"))))))))
+			 "View"))))))
+    (loop for i from 1
+       to (+ 1 (/ (get-dao-count 'zml-app 'zml-app) items-per-page)) do
+	 (htm (:a :href (make-qs "/admin" :page "zml-apps" :page-num i)
+		  :style (str (if (equal page-num i) "color:red;" ""))
+		  (str i))))))
 
-(defun user-management-page ()
+(defun user-management-page (&optional (page-num 1) (items-per-page 10))
   (cl-who:with-html-output-to-string
 	(*standard-output* nil :prologue nil :indent t)
     (:table :id "box-table-a" 
-     (loop for u in (all-users-paged 1) do 
-      (htm 
-       (:tr
-	(:td (str (username u)))
-	(:td :class "td-action"
-	     (:a :href (smake "admin?page=user&ix-user=" (ix-user u)) 
-		 "Edit"))))))))
+     (loop for u in (all-users-paged page-num) do 
+      (htm (:tr (:td (str (username u)))
+		(:td :class "td-action"
+		     (:a :href (smake "admin?page=user&ix-user=" (ix-user u)) 
+			 "Edit"))))))
+    (loop for i from 1
+       to (+ 1 (/ (get-dao-count 'user 'ix-user) items-per-page)) do
+	 (htm (:a :href (make-qs "/admin" :page "users" :page-num i)
+		  :style (str (if (equal page-num i) "color:red;" ""))
+		  (str i))))))
 
 (defun account-page (ix-user)
   (let* ((acc-user (single-user ix-user))

@@ -145,6 +145,11 @@
 	     (+= div "<a class='view-estate-edit-link' " 
 		 " href='./edit-estate?ix-estate=" (@ e ix-estate) 
 		 "' >Edit estate</a>") "")
+	 (if (= "true" (@ e has-edit-link)) 
+	     (+= div "<a class='view-estate-remove-link' " 
+		 " href='./remove-estate?ix-estate=" (@ e ix-estate) 
+		 "' onclick='return confirm(\"Are you sure to delete it?\");'>"
+		 "Delete estate</a>") "")
 	 (+= div "</div>");</#estate-images>
 	 (+= div "<div id='estate-fields'>")
 	 (for-in (k fields)
@@ -398,7 +403,8 @@
 			       true)))
 	 ($$ "#fp-preloader" (show))
 	 ($.ajax
-	  (create 
+	  (create
+	   ;; ./filter works on both ht and apache, but /filter works only on ht
 	   url "/filter" type :post data-type :json
 	   data (create :preds (-j-s-o-n.stringify 
 				(gen-json-filter))

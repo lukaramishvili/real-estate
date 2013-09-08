@@ -131,6 +131,7 @@
 
 (defun linkable-pic-path (p)
   (declare (type pic p))
+  ;; "/re-home/uploads/..." for apache, "/uploads/..." for hunchentoot
   (smake "/uploads/pics/" (ix-pic p) "/" (file-namestring (path p))))
 
 (defun linkable-pic-thumb-path (p w h)
@@ -138,11 +139,12 @@
   (let* ((fname (file-namestring (path p)))
 	 (fname-without-ext (car (split-by-char "." fname)))
 	 (ext (cadr (split-by-char "." fname))))
+    ;; "/re-home/uploads/..." for apache, "/uploads/..." for hunchentoot
     (smake "/uploads/pics/" (ix-pic p) 
 	   "/" fname-without-ext "-" w "x" h "." ext)))
 
-(defun make-pic-thumb (p w h &key (bg-r 0) (bg-g 0) (bg-b 0))
-  (with-resized-image (resized-img (path p) w h
+(defun make-pic-thumb (p w h &key (crop nil) (bg-r 0) (bg-g 0) (bg-b 0))
+  (with-resized-image (resized-img (path p) w h :crop crop
 				   :bg-r bg-r :bg-g bg-g :bg-b bg-b)
     (cl-gd:write-image-to-file (pic-thumb-path p w h)
 			       :image resized-img :if-exists :supersede)))
@@ -181,20 +183,21 @@
 		   (login-page :redir "/account")))))
 
 (htoot-handler (account-page-handler "/admin" 
-    ((page :init-form :default :parameter-type 'keyword)))
+    ((page :init-form :default :parameter-type 'keyword)
+     (page-num :parameter-type 'integer :init-form 1)))
   (if (session-value 'logged-in-p) 
       (with-admin-template 
 	  (let ((ix-admin (ix-user (session-value 'user-authed))))
 	    (case page 
-	      (:estates (admin-page-estates))
+	      (:estates (admin-page-estates page-num))
 	      (:estate (estate-edit-handler))
-	      (:zml-apps (admin-page-zml-apps 1))
+	      (:zml-apps (admin-page-zml-apps page-num))
 	      (:zml-app (admin-page-zml-app))
 	      (:trans (admin-page-tr))
-	      (:users (user-management-page))
+	      (:users (user-management-page page-num))
 	      (:user (edit-user-handler))
 	      ;;(:default (admin-default-page))
-	      (otherwise (admin-page-estates))))
+	      (otherwise (admin-page-estates page-num))))
 	:lang (re-lang))
       (+s 
        ;;(re-tr :not-logged-in-please-log-in)
@@ -406,6 +409,29 @@
 		 :body (estate-edit-form ed-estate :message message)))
    (login-page :redir "/edit-estate")))
 
+(htoot-handler
+    (estate-remove-handler
+     "/remove-estate"
+     ((ix-estate :request-type :GET :parameter-type 'integer)
+      (message :request-type :GET :parameter-type 'string :init-form "")))
+  (disable-http-cache)
+  (if (session-value 'logged-in-p)
+      ;;TODO: also check if current user has the right to remove this estate
+      (with-re-db
+	(let ((ed-estate (or (get-dao 'estate ix-estate)
+			     (make-instance 'estate))))
+	  (when ed-estate
+	    ;; remove picture files and picture database rows
+	    (loop for pic in (estate-pics ed-estate) do
+		 (remove-pic pic))
+	    (delete-dao ed-estate)
+	    (re-main :title "Real estate was removed"
+	      :body (smake "<p class='white'>Real estate \""
+			   (title-for-estate ed-estate) "\" was successfully "
+			   "removed. <a href='javascript:history.back();'>"
+			   "Go back</a></p>")))))
+      (login-page :redir "/")))
+
 ;;;returns a list of success (bool), ix-estate, error message
 (defun save-estate-and-pics (ix-estate save-e e-pics &key main-pic-uuid)
   (if (> ix-estate 0) (setf (ix-estate save-e) ix-estate))
@@ -539,6 +565,11 @@
 	 "-for-" (status e)
 	 "-in-" (pst-code e) "-" (munic e) "-" (get-country (ix-country e))
 	 
+	 ))
+
+(defun title-for-estate (e)
+  (smake (apt-type e) " for " (status e) " in " (pst-code e) ", " (munic e)
+	 ", " (get-country (ix-country e))	 
 	 ))
 
 (defun estate-for-json (e &key short)

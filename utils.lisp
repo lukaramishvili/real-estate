@@ -132,28 +132,42 @@
 	(error 'mail-server-unreachable-error :code 1
 	       :text (smake "SMTP server unreachable on " smtp-server))))))
 
-
+;;if crop is nil, then the image will be scaled and letterboxed
+;;if crop is t, then the image will fill new size but overflows will be cropped
 (defmacro with-resized-image ((resized-name img-path new-w new-h 
-			      &key (bg-r 255) (bg-g 255) (bg-b 255))
+			      &key (bg-r 255) (bg-g 255) (bg-b 255) (crop nil))
 			      &body body)
   `(when (and (not (equal "" ,img-path)) (cl-fad:file-exists-p ,img-path))
   (cl-gd:with-image-from-file (old-img ,img-path)
     (multiple-value-bind (old-w old-h)
 	(cl-gd:image-size old-img)
-      (cl-gd:with-image (,resized-name ,new-w ,new-h)
+      (cl-gd:with-image (,resized-name ,new-w ,new-h t)
 	(let* ((old-orientation (if (> old-w old-h) :landscape :portrait))
-	       (new-orientation (if (> ,new-w ,new-h) :landscape :portrait))
-	       (old-proportion (/ old-w old-h))
-	       (new-proportion (/ ,new-w ,new-h))
-	       (thumb-vars 
-		(if (< new-proportion old-proportion)
-		  (list :w ,new-w :h (round (/ ,new-w old-proportion))
-		      :x 0 :y (round (/ (- ,new-h (/ ,new-w old-proportion)) 2)))
-		  (list :w (* ,new-h old-proportion) :h ,new-h 
-		      :x (round (- ,new-w (* ,new-h old-proportion))) :y 0))))
+	  (new-orientation (if (> ,new-w ,new-h) :landscape :portrait))
+	  (old-proportion (/ old-w old-h))
+	  (new-proportion (/ ,new-w ,new-h))
+	  (thumb-vars 
+	   (if crop
+	       (if (< new-proportion old-proportion)
+		   (list :w (round (* ,new-h old-proportion)) :h ,new-h 
+		       :src-x 0 :src-y 0
+		       :x (round (- ,new-w (* ,new-h old-proportion))) :y 0)
+		   (list :w ,new-w :h (round (/ ,new-w old-proportion))
+		       :src-x 0 :src-y 0
+		       :x 0 :y (round (/ (- ,new-h 
+					      (/ ,new-w old-proportion)) 2))))
+	       (if (< new-proportion old-proportion)
+		   (list :w ,new-w :h (round (/ ,new-w old-proportion))
+		       :src-x 0 :src-y 0
+		       :x 0 :y (round (/ (- ,new-h 
+					      (/ ,new-w old-proportion)) 2)))
+		   (list :w (* ,new-h old-proportion) :h ,new-h 
+		       :src-x 0 :src-y 0
+		       :x (round (- ,new-w (* ,new-h old-proportion))) :y 0)))))
 	  ;; black bg, 0-255
 	  (cl-gd:allocate-color ,bg-r ,bg-g ,bg-b :image ,resized-name)
-	  (cl-gd:copy-image old-img ,resized-name 0 0 
+	  (cl-gd:copy-image old-img ,resized-name
+			    (getf thumb-vars :src-x) (getf thumb-vars :src-y)
 			    (getf thumb-vars :x) (getf thumb-vars :y) 
 			    old-w old-h :resize t :resample t
 			    :dest-width (getf thumb-vars :w) 

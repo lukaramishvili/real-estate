@@ -282,6 +282,10 @@
 	     (:limit (:order-by (:select :* :from :zml-app) :ix-zml-app)
 		     per-page (* (- page 1) per-page)))))
 
+(defun get-dao-count (class &optional primary-key)
+  (let ((pri-key (or primary-key (make-symbol (+s "ix-" (smake class))))))
+    (with-re-db (caar (query (:select (:count pri-key) :from class))))))
+
 (defclass pic ()
   ((ix-pic :col-type serial :initarg :ix-pic :accessor ix-pic)
    (ix-estate :col-type integer :initarg :ix-estate 
@@ -290,6 +294,12 @@
    (path :col-type string :initarg :path :accessor path :initform ""))
   (:metaclass dao-class)
   (:keys ix-pic))
+
+(defun remove-pic (pic)
+  (with-re-db
+    (cl-fad:delete-directory-and-files
+        (smake *upload-dir* "pics/" (ix-pic pic) "/") :if-does-not-exist :ignore)
+    (delete-dao pic)))
 
 (defclass fav ()
   ((ix-fav :col-type serial :initarg :ix-fav :accessor ix-fav)
