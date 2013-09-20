@@ -974,8 +974,19 @@
 				       (attr "rem-pic-uuid"))))))
 	      (chain ($ "a[id|='remove_pic_btn']")
 	        (live "click" (lambda ()
-		   (let ((pic-uuid (chain ($ this) (attr "rem-pic-uuid"))))
-		     (alert (+ "remove pic " pic-uuid))))))
+		   (let ((pic-uuid (chain ($ this) (attr "rem-pic-uuid")))
+			 (pic-div-id
+			   (aref (chain (chain ($ this) (attr "id")) 
+					(to-string) (split "-")) 1)))
+		     (chain $ (ajax 
+		  	(create url "./del-pic"
+				data (create :del-pic-uuid pic-uuid)
+				type "GET"
+				data-type "json"
+				success (lambda (data)
+					  ($$ (+ "#pic_div-" pic-div-id)
+					      (remove))
+					  (alert (@ data message))))))))))
 	      (when (!= "undefined" (typeof google))
 		(defvar estate-map (create-map-for-id "edit-estate-map"))
 		(defvar loc-marker 

@@ -451,7 +451,12 @@
 		       (path e-p)
 		       (smake *upload-dir* "pics/" (ix-pic e-p) "/" 
 			      (file-namestring (path e-p))))))
-	    (save-dao e-p);now save to update path
+	    (save-dao e-p);now save to update the path field in db
+	    ;;make 150x150 and 300x300 thumbs in the pic dir with a suffix
+	    (make-pic-thumb e-p 150 150)
+	    (make-pic-thumb e-p 300 300)
+	    ;;if the pic hash key matches main-pic-uuid, then it's a main picture
+	    ;;of the estate, so update ix-main-pic of the estate to reflect that
 	    (when (and main-pic-uuid (plusp (length main-pic-uuid)) 
 		       (string= e-p-k main-pic-uuid)) 
 		(setf (ix-main-pic save-e) (ix-pic e-p))
@@ -541,23 +546,43 @@
       (ix-pic :parameter-type 'integer :init-form 0)
       (ix-estate :parameter-type 'integer :init-form 0)
       (order :parameter-type 'integer :init-form 0)))
-  (let ((uploaded-img (post-parameter "img")))
-    (if uploaded-img
-	(destructuring-bind (path file-name content-type)
-	    uploaded-img
-	  (let* ((uniq-rem-pic-uuid (if (plusp (length rem-pic-uuid))
-				       rem-pic-uuid 
-				       (+s (uuid:make-v4-uuid))))
-		 (path-tmp (+s *project-tmp-dir* uniq-rem-pic-uuid ".jpg"))
-		 (path-tmp-linkable (linkable-tmp-path path-tmp))
-		 (pic-to-rem
-		  (make-instance 
-		   'pic :path path-tmp :order order :ix-estate ix-estate)))
-	    (if (< 0 ix-pic) (setf (ix-pic pic-to-rem) ix-pic))
-	    (cl-fad:copy-file path path-tmp :overwrite t)
-	    (setf (gethash uniq-rem-pic-uuid (session-value 'rem-pics)) 
-		  pic-to-rem)
-	    (estate-form-pic-box uniq-rem-pic-uuid))))))
+  (require-login
+    (let ((uploaded-img (post-parameter "img")))
+      (if uploaded-img
+	  (destructuring-bind (path file-name content-type)
+	      uploaded-img
+	    (let* ((uniq-rem-pic-uuid (if (plusp (length rem-pic-uuid))
+					  rem-pic-uuid 
+					  (+s (uuid:make-v4-uuid))))
+		   (path-tmp (+s *project-tmp-dir* uniq-rem-pic-uuid ".jpg"))
+		   (path-tmp-linkable (linkable-tmp-path path-tmp))
+		   (pic-to-rem
+		    (make-instance 
+		     'pic :path path-tmp :order order :ix-estate ix-estate)))
+	      (if (< 0 ix-pic) (setf (ix-pic pic-to-rem) ix-pic))
+	      (cl-fad:copy-file path path-tmp :overwrite t)
+	      (setf (gethash uniq-rem-pic-uuid (session-value 'rem-pics)) 
+		    pic-to-rem)
+	      (estate-form-pic-box uniq-rem-pic-uuid)))))))
+
+(htoot-handler
+    (delete-pic
+     "/del-pic"
+     ((del-pic-uuid :parameter-type 'string)))
+  (require-login 
+     (let* ((pic-to-del (gethash del-pic-uuid (session-value 'rem-pics)))
+	    (existing-pic-p (slot-boundp pic-to-del 'ix-pic))
+	    (success t))
+       (if existing-pic-p
+	   (remove-pic pic-to-del)
+	   ;;not-yet-saved pics aren't in db yet, so just delete the file
+	   (cl-fad::delete-file (path pic-to-del)))
+       ;;remove the pic data from session cache
+       (remhash del-pic-uuid (session-value 'rem-pics))
+       (json:encode-json-plist-to-string
+	(if success
+	    (list :message "success")
+	    (list :message "failed"))))))
 
 (defun link-for-estate (e)
   (smake "/#estate-" (ix-estate e) 
