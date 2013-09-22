@@ -119,18 +119,18 @@
     (:style :type "text/css"
 	     (cl-who:str code))))
 
-(defun label-input (name &key val label (type "text") (size-attr "") disabled
-		    readonly)
+(defun label-input (name &key val label (type "text") (size-attr "") id
+		    disabled readonly multiple)
   (cl-who:with-html-output-to-string 
       (*standard-output* nil :prologue nil :indent t)
-    (:label :for (+s "input_" name)
+    (:label :for (or id (+s "input_" name))
 	    :id (+s "label_" name) :class "label-left"
 	    (cl-who:str (or label name)))
-    (:input :type type :id (+s "input_" name)  
+    (:input :type type :id (or id (+s "input_" name))
 	    :class (+s "input_" name)
 	    :value (or (smake val) "")
 	    :name name :size size-attr
-	    :disabled disabled :readonly readonly)))
+	    :disabled disabled :readonly readonly :multiple multiple)))
 
 (defun label-textarea (name &key val label (rows 4) (cols 20))
   (cl-who:with-html-output-to-string 
@@ -1023,17 +1023,15 @@
 			       "")))))
 	    ))))))
 
-(defun estate-form-pic-box (&optional (rem-pic-uuid ""))
+(defun estate-form-pic-box (&optional (rem-pic-uuid "") additional-img-uuid-s)
   (let ((saved-pic (gethash rem-pic-uuid (session-value 'rem-pics))))
     (cl-who:with-html-output-to-string 
 	(*standard-output* nil :prologue nil :indent t)
       (cl-who:str (head "" :js-files '("/js/jquery-1.7.2.min.js")))
       (cl-who:str (style-tag  (style-pic-box-iframe)))
-      (:form 
-       :action "/rem-pic" :method :post :enctype "multipart/form-data"
+      (:form :action "/rem-pic" :method :post :enctype "multipart/form-data"
        :class "form-in-pic-box-iframe"
-       (:div
-	:class "div-in-pic-box-iframe"
+       (:div :class "div-in-pic-box-iframe"
 	(:input :type "hidden" :name "rem-pic-uuid" :value rem-pic-uuid)
 	(if (and saved-pic
 		 (slot-boundp saved-pic 'ix-pic)
@@ -1044,33 +1042,28 @@
 	(:img :src (if saved-pic (linkable-tmp-path (path saved-pic)) 
 		       "/css/img/no-pic.jpg"))
 	(cl-who:str 
-	 (label-input "img" :type "file" :label "Choose Image:" 
-		      :size-attr 4))
+	 (label-input "img[]" :type "file" :label "Choose Image:" 
+		      :size-attr 4 :multiple t :id "input_img"))
 	;;(:input :type "submit" :value "Update image")
-	(:script
-	 :type "text/javascript"
-	 (cl-who:str 
-	  (ps:ps
-	    (chain
-	     ($ "[name='img']")
-	     (change 
-	      (lambda
-		  () (chain ($ ".form-in-pic-box-iframe")
-			    (submit)
-			    ))))
+	(:script :type "text/javascript" (cl-who:str (ps:ps
+	    ;;if more than one img was uploaded, then add boxes for them
+            (var more-uuids (lisp (append (list 'array) additional-img-uuid-s)))
+	    (loop for one-more-uuid in more-uuids
+	       do (window.parent.add-pic-box one-more-uuid))
+	    ;;
+	    (chain ($ "#input_img") (change (lambda ()
+	    	(chain ($ ".form-in-pic-box-iframe")
+		       (submit)))))
 	    (when (< 0 (chain (ps:lisp rem-pic-uuid) length))
 	      ;;$(window.parent.document).find("iframe").each(function(i, el){if((el.contentWindow || el.contentDocument) == window){/*here, el is the iframe#pic_iframe-3, so show a#set_main_pic_btn-3*/};});
-	      (chain 
-	       ($ window.parent.document)
+	      (chain ($ window.parent.document)
 	       (find "iframe")
-	       (each 
-		(lambda (i el)
+	       (each (lambda (i el)
 		  (when (== (or (@ el content-window)
 				(@ el content-document))
 			    window)
-		    (let ((pic-id 
-			   (aref (chain (chain ($ el) (attr "id")) 
-					(to-string) (split "-")) 1)))
+		    (let ((pic-id (aref (chain (chain ($ el) (attr "id")) 
+					       (to-string) (split "-")) 1)))
 		      (chain ($ el) 
 			     (parents "body")
 			     (find (+ "#set_main_pic_btn-" pic-id

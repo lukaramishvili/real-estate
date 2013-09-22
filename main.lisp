@@ -76,6 +76,16 @@
      (setf (hunchentoot:content-type*) "text/html")
      ,@body))
 
+;; returns a list of multiple uploaded files <input :multiple "multiple" />
+;; e.g. '( (path filename mime-type) (path filename mime-type))
+(defun htoot-get-multiple-uploads (parameter-name &optional request)
+  (let ((req (or request *request*)))
+    (when req
+      (let ((all-params (post-parameters* *request*)))
+	(loop for par in all-params
+	   when (string= parameter-name (car par))
+	   collecting (cdr par))))))
+
 (defun disable-http-cache ()
     (setf (hunchentoot:header-out :expires)
 	  (hunchentoot:rfc-1123-date))
@@ -450,7 +460,8 @@
 		  (+s (rename-file 
 		       (path e-p)
 		       (smake *upload-dir* "pics/" (ix-pic e-p) "/" 
-			      (file-namestring (path e-p))))))
+			      (file-namestring (path e-p)))
+		       :if-exists :supersede)))
 	    (save-dao e-p);now save to update the path field in db
 	    ;;make 150x150 and 300x300 thumbs in the pic dir with a suffix
 	    (make-pic-thumb e-p 150 150)
@@ -547,11 +558,23 @@
       (ix-estate :parameter-type 'integer :init-form 0)
       (order :parameter-type 'integer :init-form 0)))
   (require-login
-    (let ((uploaded-img (post-parameter "img")))
-      (if uploaded-img
+    (let* ((first-uuid rem-pic-uuid) 
+	   (additional-img-uuid-s (list))
+	   (all-post-file-uploads (htoot-get-multiple-uploads "img[]" *request*))
+	   (more-than-one-image-p (> (length all-post-file-uploads) 1))
+	   ;;if we have only one image, then the user clearly wanted to replace
+	   ;;the image with rem-pic-uuid with the uploaded one.
+	   ;;but if we have more than one image,then add them but dont delete old
+	   (only-one-img-p (not more-than-one-image-p)))
+      (loop for uploaded-img in all-post-file-uploads
+	 do
+        (if uploaded-img
 	  (destructuring-bind (path file-name content-type)
 	      uploaded-img
-	    (let* ((uniq-rem-pic-uuid (if (plusp (length rem-pic-uuid))
+	    ;;if there are multiple images, then don't use rem-pic-uuid and
+	    ;;create a new uuid for each new image, dont overwrite old
+	    (let* ((uniq-rem-pic-uuid (if (and only-one-img-p
+					       (plusp (length rem-pic-uuid)))
 					  rem-pic-uuid 
 					  (+s (uuid:make-v4-uuid))))
 		   (path-tmp (+s *project-tmp-dir* uniq-rem-pic-uuid ".jpg"))
@@ -563,7 +586,16 @@
 	      (cl-fad:copy-file path path-tmp :overwrite t)
 	      (setf (gethash uniq-rem-pic-uuid (session-value 'rem-pics)) 
 		    pic-to-rem)
-	      (estate-form-pic-box uniq-rem-pic-uuid)))))))
+	      ;;if we've two or more pics, then pass the uuid's to the script
+	      (if more-than-one-image-p
+		  (setf additional-img-uuid-s
+			(append additional-img-uuid-s (list uniq-rem-pic-uuid))))
+	      ))))
+      ;;finally, return pic box for the first image and pass additional uuid-s
+      ;; to it, and the box script will add more boxes for each of the images
+      ;;if there are >1 images, then the current one is left intact and all
+      ;;the images are uploaded separately, with separate boxes
+      (estate-form-pic-box first-uuid additional-img-uuid-s))))
 
 (htoot-handler
     (delete-pic

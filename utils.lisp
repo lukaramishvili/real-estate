@@ -161,7 +161,7 @@
 		       :src-x 0 :src-y 0
 		       :x 0 :y (round (/ (- ,new-h 
 					      (/ ,new-w old-proportion)) 2)))
-		   (list :w (* ,new-h old-proportion) :h ,new-h 
+		   (list :w (round (* ,new-h old-proportion)) :h ,new-h 
 		       :src-x 0 :src-y 0
 		       :x (round (- ,new-w (* ,new-h old-proportion))) :y 0)))))
 	  ;; black bg, 0-255
