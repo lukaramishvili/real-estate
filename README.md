@@ -1,20 +1,27 @@
 # real-estate
 
-This is a real-estate web-app written in Common Lisp.
+This is a web-app written in Common Lisp for a real-estate company.
 
-It's mainly useful because it uses all the libraries and features that a typical web-app would use (database, encryption, smtp, templating, image resizing, etc).
+It's mainly useful because it uses all the libraries and features that a typical web-app would use (templating, database access, encryption, smtp, image resizing, etc).
 
 Features:
 * ORM
+* template engine
 * Password hashing
 * image resizing
-* financial calculations
+* financial calculator forms and formulas
 * query string parsing
 * date formatting
 * email
 * RSS
 * QR code generation
-* smtp, templating, image resizing, etc).
+* string helpers
+* fake data generator
+* styled admin page
+* form generation
+* masonry-like (but horizontal) grid system
+* standard pages like FAQ/Contact
+* 
 
 Uses:
 * cl-smtp for sending emails
